@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Equipe — XVI C.O.R Jovem</title>
+<meta name="color-scheme" content="light dark">
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('cor_dash_theme');
+    if(t !== 'light' && t !== 'dark'){
+      t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -30,20 +44,38 @@
 </div>
 
 <div class="app" id="app">
-  <header class="shell">
-    <div class="brand">
-      <h1>XVI C.O.R <span>Jovem</span></h1>
-      <p id="subtitle">Paróquia Santo Antônio — Bacaxá</p>
-      <div class="user-chip" id="userChip" hidden></div>
+  <header class="shell" id="shell">
+    <div class="shell-main">
+      <div class="brand">
+        <p class="brand-eyebrow">Painel da equipe</p>
+        <h1>XVI C.O.R <span>Jovem</span></h1>
+        <p class="brand-place" id="subtitle">Paróquia Santo Antônio — Bacaxá</p>
+        <div class="welcome" id="welcomeBlock" hidden>
+          <div class="welcome-avatar" id="welcomeAvatar" aria-hidden="true">?</div>
+          <p class="welcome-line">
+            <span class="welcome-hello" id="welcomeHello">Seja bem-vindo(a),</span>
+            <strong class="welcome-name" id="welcomeName"></strong>
+          </p>
+        </div>
+      </div>
+      <div class="shell-tools">
+        <button type="button" class="theme-btn" id="themeBtn" title="Alternar modo noturno" aria-label="Ativar modo noturno">
+          <span class="theme-icon theme-icon-moon" aria-hidden="true"></span>
+          <span class="theme-icon theme-icon-sun" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menu" aria-expanded="false" aria-controls="headerActions">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
-    <div class="actions">
+    <nav class="actions" id="headerActions" aria-label="Ações do painel">
       <a class="btn btn-ghost" href="index.html" target="_blank" rel="noopener" title="Abrir inscrição de cursistas"><span class="lbl-long">Ficha cursistas</span><span class="lbl-short">Cursistas</span></a>
       <a class="btn btn-ghost" href="servos.html" target="_blank" rel="noopener" title="Abrir inscrição de servos"><span class="lbl-long">Ficha servos</span><span class="lbl-short">Servos</span></a>
       <span class="sep" aria-hidden="true"></span>
-      <button class="btn btn-ghost" type="button" id="refreshBtn" title="Recarregar dados"><span class="lbl-long">Atualizar</span><span class="lbl-short">Atualizar</span></button>
       <button class="btn btn-primary" type="button" id="exportBtn">Exportar</button>
+      <button class="btn btn-ghost" type="button" id="changePassBtn" title="Alterar senha"><span class="lbl-long">Senha</span><span class="lbl-short">Senha</span></button>
       <button class="btn btn-ghost" type="button" id="logoutBtn">Sair</button>
-    </div>
+    </nav>
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Seções do painel">
@@ -310,6 +342,21 @@
 <div class="toast" id="toast"></div>
 <div id="printSheet"></div>
 
+<div class="pwd-overlay" id="pwdOverlay" aria-hidden="true">
+  <div class="pwd-dialog" role="dialog" aria-modal="true" aria-labelledby="pwdTitle">
+    <h2 id="pwdTitle">Alterar senha</h2>
+    <p class="hint" id="pwdHint">Escolha uma senha nova para o seu acesso ao painel.</p>
+    <p class="gate-err" id="pwdErr">Não foi possível alterar.</p>
+    <form id="pwdForm">
+      <label for="pwdNew">Nova senha</label>
+      <input type="password" id="pwdNew" minlength="6" autocomplete="new-password" required placeholder="Mínimo 6 caracteres">
+      <label for="pwdConfirm">Confirmar senha</label>
+      <input type="password" id="pwdConfirm" minlength="6" autocomplete="new-password" required placeholder="Repita a nova senha">
+      <button class="btn btn-primary" type="submit" id="pwdSubmit" style="width:100%;margin-top:8px">Salvar nova senha</button>
+    </form>
+  </div>
+</div>
+
 <div class="export-overlay" id="exportOverlay" aria-hidden="true">
   <div class="export-dialog" role="dialog" aria-labelledby="exportDialogTitle">
     <div class="export-handle" aria-hidden="true"></div>
@@ -408,15 +455,54 @@
   function openApp(){
     gate.style.display = 'none';
     app.classList.add('open');
-    const email = window.COR_AUTH && window.COR_AUTH.userEmail();
+    const auth = window.COR_AUTH;
+    const name = (auth && auth.userDisplayName()) || '';
+    const email = (auth && auth.userEmail()) || '';
+    const display = (name && name !== email) ? name : (name || email || 'Equipe');
     const sub = document.getElementById('subtitle');
-    const chip = document.getElementById('userChip');
+    const welcome = document.getElementById('welcomeBlock');
+    const welcomeName = document.getElementById('welcomeName');
+    const welcomeHello = document.getElementById('welcomeHello');
+    const avatar = document.getElementById('welcomeAvatar');
     if(sub) sub.textContent = 'Paróquia Santo Antônio — Bacaxá';
-    if(chip){
-      if(email){ chip.textContent = email; chip.hidden = false; }
-      else chip.hidden = true;
+    if(welcome && welcomeName){
+      welcomeHello.textContent = 'Seja bem-vindo(a),';
+      welcomeName.textContent = display;
+      if(email) welcome.title = email;
+      if(avatar) avatar.textContent = (display.trim().charAt(0) || '?').toUpperCase();
+      welcome.hidden = false;
     }
     load();
+    if(auth && auth.mustChangePassword()){
+      openPasswordModal(true);
+    }
+  }
+
+  function openPasswordModal(forced){
+    const overlay = document.getElementById('pwdOverlay');
+    const title = document.getElementById('pwdTitle');
+    const hint = document.getElementById('pwdHint');
+    const err = document.getElementById('pwdErr');
+    err.classList.remove('show');
+    document.getElementById('pwdForm').reset();
+    overlay.dataset.forced = forced ? '1' : '0';
+    if(forced){
+      title.textContent = 'Troque a senha de primeiro acesso';
+      hint.textContent = 'Por segurança, defina uma senha pessoal agora. A senha de primeiro acesso não deve continuar em uso.';
+    }else{
+      title.textContent = 'Alterar senha';
+      hint.textContent = 'Escolha uma senha nova para o seu acesso ao painel.';
+    }
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden','false');
+    setTimeout(()=> document.getElementById('pwdNew').focus(), 50);
+  }
+
+  function closePasswordModal(){
+    const overlay = document.getElementById('pwdOverlay');
+    if(overlay.dataset.forced === '1') return;
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden','true');
   }
 
   async function bootAuth(){
@@ -477,9 +563,102 @@
     }
   });
 
+  const shell = document.getElementById('shell');
+  const menuBtn = document.getElementById('menuBtn');
+  const headerActions = document.getElementById('headerActions');
+  const themeBtn = document.getElementById('themeBtn');
+  const THEME_KEY = 'cor_dash_theme';
+
+  function currentTheme(){
+    return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  }
+
+  function syncThemeUi(){
+    const dark = currentTheme() === 'dark';
+    if(themeBtn){
+      themeBtn.setAttribute('aria-label', dark ? 'Ativar modo claro' : 'Ativar modo noturno');
+      themeBtn.title = dark ? 'Modo claro' : 'Modo noturno';
+    }
+  }
+
+  function setTheme(theme){
+    const next = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem(THEME_KEY, next); }catch(_){}
+    syncThemeUi();
+  }
+
+  function toggleTheme(){
+    setTheme(currentTheme() === 'dark' ? 'light' : 'dark');
+  }
+
+  syncThemeUi();
+  if(themeBtn) themeBtn.addEventListener('click', toggleTheme);
+
+  function setMenuOpen(open){
+    if(!shell || !menuBtn) return;
+    shell.classList.toggle('menu-open', !!open);
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    menuBtn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  }
+
+  if(menuBtn){
+    menuBtn.addEventListener('click', ()=>{
+      setMenuOpen(!shell.classList.contains('menu-open'));
+    });
+  }
+  if(headerActions){
+    headerActions.addEventListener('click', (e)=>{
+      if(e.target.closest('a,button')) setMenuOpen(false);
+    });
+  }
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') setMenuOpen(false);
+  });
+
   document.getElementById('logoutBtn').addEventListener('click', async ()=>{
     if(window.COR_AUTH) await window.COR_AUTH.logout();
     location.reload();
+  });
+
+  document.getElementById('changePassBtn').addEventListener('click', ()=>{
+    openPasswordModal(false);
+  });
+
+  document.getElementById('pwdForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const err = document.getElementById('pwdErr');
+    const btn = document.getElementById('pwdSubmit');
+    const nova = document.getElementById('pwdNew').value;
+    const conf = document.getElementById('pwdConfirm').value;
+    err.classList.remove('show');
+    if(nova.length < 6){
+      err.textContent = 'A senha precisa ter pelo menos 6 caracteres.';
+      err.classList.add('show');
+      return;
+    }
+    if(nova !== conf){
+      err.textContent = 'As senhas não coincidem.';
+      err.classList.add('show');
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Salvando…';
+    try{
+      await window.COR_AUTH.updatePassword(nova, { must_change_password: false });
+      const overlay = document.getElementById('pwdOverlay');
+      overlay.dataset.forced = '0';
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden','true');
+      toast('Senha atualizada!');
+    }catch(ex){
+      console.error(ex);
+      err.textContent = (ex && ex.message) || 'Não foi possível alterar a senha.';
+      err.classList.add('show');
+    }finally{
+      btn.disabled = false;
+      btn.textContent = 'Salvar nova senha';
+    }
   });
 
   function toast(msg){
@@ -2406,8 +2585,6 @@
       renderServos();
     });
   });
-
-  document.getElementById('refreshBtn').addEventListener('click', ()=> load());
 
   document.getElementById('exportBtn').addEventListener('click', ()=> openExportModal());
   document.getElementById('exportInscBtn').addEventListener('click', ()=> openExportModal('inscricoes'));

@@ -1,7 +1,7 @@
 -- XVI C.O.R Jovem — sql/auth-rls.sql
 -- Use se as tabelas já existem e só precisa endurecer Auth/RLS
--- 1) Authentication → Users → Add user (e-mail + senha da equipe)
--- 2) Authentication → Providers → Email → desative "Enable sign ups" (opcional, recomendado)
+-- 1) Crie/confirme os usuários da equipe (veja sql/confirm-staff.sql)
+-- 2) Authentication → Providers → Email → desative "Enable sign ups" (recomendado)
 -- 3) Rode este SQL (ou sql/setup.sql completo)
 
 -- Remover políticas abertas antigas

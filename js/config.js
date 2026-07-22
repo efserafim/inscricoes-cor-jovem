@@ -58,6 +58,50 @@ window.COR_AUTH = {
     return (s && s.user && s.user.email) || '';
   },
 
+  userDisplayName() {
+    const s = this.getSession();
+    const u = s && s.user;
+    if (!u) return '';
+    const meta = u.user_metadata || {};
+    return String(meta.display_name || meta.full_name || meta.name || '').trim() || u.email || '';
+  },
+
+  mustChangePassword() {
+    const s = this.getSession();
+    const meta = (s && s.user && s.user.user_metadata) || {};
+    return meta.must_change_password === true || meta.must_change_password === 'true';
+  },
+
+  async updatePassword(newPassword, extraMeta) {
+    const token = await this.getAccessToken();
+    if (!token) throw new Error('Sessão expirada. Faça login de novo.');
+    const c = window.COR_CONFIG;
+    const body = { password: String(newPassword || '') };
+    if (extraMeta && typeof extraMeta === 'object') body.data = extraMeta;
+    const res = await fetch(this.authUrl('/user'), {
+      method: 'PUT',
+      headers: {
+        apikey: c.supabaseKey,
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const msg = data.error_description || data.msg || data.error || 'Não foi possível alterar a senha';
+      throw new Error(msg);
+    }
+    const s = this.getSession() || {};
+    this.saveSession({
+      access_token: s.access_token,
+      refresh_token: s.refresh_token,
+      expires_at: s.expires_at,
+      user: data || s.user
+    });
+    return data;
+  },
+
   async getAccessToken() {
     const s = this.getSession();
     if (!s || !s.access_token) return null;
@@ -81,8 +125,12 @@ window.COR_AUTH = {
       headers: {
         apikey: c.supabaseKey,
         'Content-Type': 'application/json'
+        /* não enviar Authorization: Bearer com sb_publishable_ (não é JWT) */
       },
-      body: JSON.stringify({ email: String(email || '').trim(), password })
+      body: JSON.stringify({
+        email: String(email || '').trim().toLowerCase(),
+        password: String(password || '')
+      })
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
