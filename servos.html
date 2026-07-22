@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XVI C.O.R Jovem — Inscrição de Servos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+
+<div class="saint-peeks" id="saintPeeks" aria-hidden="true">
+  <div class="peek peek-left" data-i="0">
+    <div class="peek-bubble"></div>
+    <div class="peek-fig">
+      <img src="image/peek-frassati.png" alt="" width="300" height="400" decoding="async">
+    </div>
+  </div>
+  <div class="peek peek-left" data-i="1">
+    <div class="peek-bubble"></div>
+    <div class="peek-fig">
+      <img src="image/peek-teresinha.png" alt="" width="300" height="400" decoding="async">
+    </div>
+  </div>
+  <div class="peek peek-right" data-i="2">
+    <div class="peek-bubble"></div>
+    <div class="peek-fig">
+      <img src="image/peek-carlo.png" alt="" width="300" height="400" decoding="async">
+    </div>
+  </div>
+  <div class="peek peek-right" data-i="3">
+    <div class="peek-bubble"></div>
+    <div class="peek-fig">
+      <img src="image/peek-jp2.png" alt="" width="300" height="400" decoding="async">
+    </div>
+  </div>
+</div>
+
+<header class="hero" aria-label="XVI C.O.R Jovem — Servos">
+  <img class="hero-photo" src="image/montanha-azul.jpg" alt="" width="1600" height="900" decoding="async" fetchpriority="high">
+  <div class="hero-inner">
+    <div class="hero-logos" aria-label="Parceiros">
+      <img class="hero-logo hero-logo-pascom" src="image/logo-1.png" alt="Pascom — Paróquia Santo Antônio" width="120" height="160" decoding="async">
+      <img class="hero-logo hero-logo-geracao" src="image/logo-2.png" alt="Geração Eucarística" width="120" height="120" decoding="async">
+    </div>
+      <p class="parish">Paróquia Santo Antônio — Bacaxá · Arquidiocese de Niterói</p>
+      <h1 class="brand">XVI C.O.R<em>Jovem</em></h1>
+      <a class="hero-cta" href="#inscricao">Inscrição de servos</a>
+  </div>
+  <span class="motto" aria-hidden="true">Verso l'alto</span>
+</header>
+
+<section class="showcase" aria-label="Sobre o serviço">
+  <div class="trail" id="trailMeta">
+    <div class="trail-card">
+      <div>
+        <span class="k">Retiro</span>
+        <span class="v">12 e 13 · SET</span>
+      </div>
+      <div>
+        <span class="k">Para</span>
+        <span class="v sm">Equipe de serviço</span>
+      </div>
+      <div>
+        <span class="k">Ficha</span>
+        <span class="v sm">3 passos</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="quote-band" id="quoteBand">
+    <blockquote>
+      <p>“A caridade é o sal da terra.”</p>
+      <cite>— Beato Pier Giorgio Frassati</cite>
+    </blockquote>
+  </div>
+</section>
+
+<main class="climb" id="inscricao">
+  <div class="board">
+    <div class="board-head">
+      <h2>Ficha do servo</h2>
+      <p>Três passos para servir no XVI C.O.R Jovem. Esta inscrição é separada da ficha dos cursistas.</p>
+    </div>
+
+    <form id="servoForm" novalidate>
+      <div class="progress" id="progress" aria-hidden="true">
+        <span class="current"></span><span></span><span></span>
+      </div>
+      <p class="step-label" id="stepLabel"><strong>Passo 1 de 3</strong> — Seus dados</p>
+
+      <section class="step active" data-step="0" aria-labelledby="step1-title">
+        <h2 class="sr-only" id="step1-title">Dados pessoais</h2>
+        <p class="section-lead">Comece pelos seus dados básicos.</p>
+
+        <div class="field">
+          <label class="lbl" for="nome">Nome completo <span class="req">*</span></label>
+          <input class="ctrl" type="text" id="nome" name="nome" autocomplete="name" required placeholder="Seu nome e sobrenome">
+          <p class="field-error" data-for="nome">Informe seu nome completo.</p>
+        </div>
+
+        <div class="field">
+          <div class="row2">
+            <div>
+              <label class="lbl" for="nascimento">Data de nascimento <span class="req">*</span></label>
+              <input class="ctrl" type="date" id="nascimento" name="nascimento" required>
+              <p class="field-error" data-for="nascimento">Informe a data de nascimento.</p>
+            </div>
+            <div>
+              <label class="lbl" for="idade">Idade <span class="req">*</span></label>
+              <input class="ctrl" type="number" id="idade" name="idade" min="12" max="99" readonly tabindex="-1" placeholder="Auto">
+              <p class="hint">Calculada pela data</p>
+              <p class="field-error" data-for="idade">Informe a data para calcular a idade.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="lbl" for="telefone">Telefone / WhatsApp <span class="req">*</span></label>
+          <input class="ctrl" type="tel" id="telefone" name="telefone" inputmode="numeric" autocomplete="tel" required placeholder="(21) 90000-0000">
+          <p class="field-error" data-for="telefone">Informe um telefone válido com DDD.</p>
+        </div>
+
+        <div class="field">
+          <label class="lbl" for="endereco">Endereço <span class="req">*</span></label>
+          <textarea class="ctrl" id="endereco" name="endereco" rows="3" required placeholder="Rua, número, bairro, cidade…"></textarea>
+          <p class="field-error" data-for="endereco">Informe o endereço.</p>
+        </div>
+      </section>
+
+      <section class="step" data-step="1" aria-labelledby="step2-title">
+        <h2 class="sr-only" id="step2-title">Serviço e camisa</h2>
+        <p class="section-lead">Conte em qual equipe deseja servir e se quer camisa.</p>
+
+        <div class="field">
+          <span class="lbl">Vai querer camisa? <span class="req">*</span></span>
+          <div class="choice-group" data-group="camisa">
+            <label class="choice"><input type="radio" name="camisa" value="sim" required>Sim</label>
+            <label class="choice"><input type="radio" name="camisa" value="nao">Não</label>
+          </div>
+          <p class="field-error" data-for="camisa">Informe se deseja camisa.</p>
+        </div>
+
+        <div class="field" id="tamanhoWrap" hidden>
+          <label class="lbl" for="tamanho">Tamanho da camisa <span class="req">*</span></label>
+          <select class="ctrl" id="tamanho">
+            <option value="">Selecione…</option>
+            <option>PP</option><option>P</option><option>M</option>
+            <option>G</option><option>GG</option><option>XG</option>
+          </select>
+          <p class="field-error" data-for="tamanho">Selecione o tamanho.</p>
+        </div>
+
+        <div class="field">
+          <label class="lbl" for="equipe">Qual equipe servirá? <span class="req">*</span></label>
+          <select class="ctrl" id="equipe" required>
+            <option value="">Selecione…</option>
+            <option>Cozinha</option>
+            <option>Liturgia</option>
+            <option>Música</option>
+            <option>Acolhida</option>
+            <option>Estrutura / Logística</option>
+            <option>Comunicação / Mídia</option>
+            <option>Enfermaria</option>
+            <option>Coordenação</option>
+            <option>Outro</option>
+          </select>
+          <p class="field-error" data-for="equipe">Informe a equipe.</p>
+        </div>
+        <div class="field" id="equipeOutroWrap" hidden>
+          <label class="lbl" for="equipeOutro">Qual equipe? <span class="req">*</span></label>
+          <input class="ctrl" type="text" id="equipeOutro" placeholder="Descreva a equipe">
+          <p class="field-error" data-for="equipeOutro">Informe a equipe.</p>
+        </div>
+
+        <div class="field">
+          <label class="lbl" for="anoCor">Qual ano você vivenciou seu COR Jovem? <span class="req">*</span></label>
+          <input class="ctrl" type="text" id="anoCor" required placeholder="Ex: 2022 ou XVI">
+          <p class="field-error" data-for="anoCor">Informe o ano em que vivenciou o COR Jovem.</p>
+        </div>
+      </section>
+
+      <section class="step" data-step="2" aria-labelledby="step3-title">
+        <h2 class="sr-only" id="step3-title">Fé e foto</h2>
+        <p class="section-lead">Conte um pouco da sua caminhada e, se quiser, envie uma foto.</p>
+
+        <div class="field">
+          <label class="lbl" for="marcoCor">O que mais te marcou no COR Jovem quando vivenciou? <span class="req">*</span></label>
+          <textarea class="ctrl" id="marcoCor" rows="4" required placeholder="Texto de resposta longa"></textarea>
+          <p class="field-error" data-for="marcoCor">Conte o que mais te marcou.</p>
+        </div>
+
+        <div class="field">
+          <label class="lbl" for="oracao">Como está sua vida de oração e vivência nos sacramentos? <span class="req">*</span></label>
+          <textarea class="ctrl" id="oracao" rows="4" required placeholder="Texto de resposta longa"></textarea>
+          <p class="field-error" data-for="oracao">Conte sobre sua vida de oração.</p>
+        </div>
+
+        <div class="field">
+          <span class="lbl">Quais sacramentos você já possui? <span class="req">*</span></span>
+          <div class="check-grid" id="sacramentos">
+            <label class="chk"><input type="checkbox" value="Batismo">Batismo</label>
+            <label class="chk"><input type="checkbox" value="Primeira Eucaristia">Primeira Eucaristia</label>
+            <label class="chk"><input type="checkbox" value="Crisma">Crisma</label>
+            <label class="chk"><input type="checkbox" value="Outro" id="sacOutroCheck">Outro</label>
+          </div>
+          <input class="ctrl" type="text" id="sacOutro" placeholder="Qual outro sacramento?" hidden style="margin-top:8px">
+          <p class="field-error" data-for="sacramentos">Selecione ao menos um sacramento.</p>
+        </div>
+
+        <div class="field">
+          <label class="lbl" for="foto">Envie uma foto que destaque seu rosto <span class="opt">(opcional)</span></label>
+          <input class="ctrl" type="file" id="foto" accept="image/*">
+          <p class="hint">JPG ou PNG · até cerca de 5 MB</p>
+          <p id="fotoName" class="hint" hidden></p>
+        </div>
+
+        <div class="consent">
+          <label class="consent-check">
+            <input type="checkbox" id="consentCheck">
+            <span>Declaro que as informações preenchidas nesta ficha são verdadeiras e desejo servir no XVI C.O.R Jovem, nos dias 12 e 13 de setembro.</span>
+          </label>
+          <p class="field-error" data-for="consentCheck">Marque a declaração para confirmar a inscrição.</p>
+        </div>
+      </section>
+
+      <div class="nav">
+        <button type="button" class="btn btn-ghost" id="prevBtn" hidden>Voltar</button>
+        <button type="button" class="btn btn-primary" id="nextBtn">Continuar</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn" hidden>Confirmar inscrição</button>
+      </div>
+      <p class="privacy">Suas informações serão usadas apenas pela organização do retiro</p>
+      <p class="banner-err" id="errorMsg" role="alert"></p>
+    </form>
+
+    <div class="success" id="successPanel">
+      <div class="badge" aria-hidden="true">✓</div>
+      <h2>Ficha enviada!</h2>
+      <p>Que alegria, <span class="name" id="successName"></span>!</p>
+      <p>A equipe recebeu sua inscrição de servo. Em breve entraremos em contato pelo telefone informado.</p>
+      <p class="privacy" style="margin-top:18px" id="successId"></p>
+      <p class="privacy" style="margin-top:8px"><a href="index.html">Inscrição de cursistas</a></p>
+    </div>
+  </div>
+</main>
+
+<section id="contatoEquipe"></section>
+
+<script src="js/config.js"></script>
+<script src="js/site-common.js"></script>
+<script>
+(function(){
+  const STEPS = [
+    { label: 'Seus dados' },
+    { label: 'Serviço e camisa' },
+    { label: 'Fé e foto' }
+  ];
+  const DRAFT_KEY = 'cor_servo_draft_v1';
+
+  const form = document.getElementById('servoForm');
+  const steps = [...form.querySelectorAll('.step')];
+  const progress = document.getElementById('progress');
+  const stepLabel = document.getElementById('stepLabel');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  const errorMsg = document.getElementById('errorMsg');
+  const nascimento = document.getElementById('nascimento');
+  const idade = document.getElementById('idade');
+  const telefone = document.getElementById('telefone');
+
+  let current = 0;
+
+  function showError(msg){
+    errorMsg.textContent = msg || '';
+    errorMsg.classList.toggle('show', !!msg);
+  }
+
+  function markInvalid(id, on){
+    const el = document.getElementById(id) || form.querySelector('[name="'+id+'"]');
+    const err = form.querySelector('.field-error[data-for="'+id+'"]');
+    if(el) el.classList.toggle('is-invalid', !!on);
+    if(err) err.classList.toggle('show', !!on);
+  }
+
+  function clearFieldErrors(scope){
+    (scope || form).querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    (scope || form).querySelectorAll('.field-error.show').forEach(el => el.classList.remove('show'));
+  }
+
+  function calcAge(iso){ return window.COR_SITE.calcAge(iso); }
+
+  function maskPhone(v){ return window.COR_SITE.maskPhone(v); }
+
+  nascimento.addEventListener('change', ()=>{
+    const a = calcAge(nascimento.value);
+    idade.value = a != null ? a : '';
+  });
+  telefone.addEventListener('input', ()=>{ telefone.value = maskPhone(telefone.value); });
+
+  form.querySelectorAll('input[name="camisa"]').forEach(r=>{
+    r.addEventListener('change', ()=>{
+      const sim = form.querySelector('input[name="camisa"]:checked')?.value === 'sim';
+      document.getElementById('tamanhoWrap').hidden = !sim;
+      if(!sim) document.getElementById('tamanho').value = '';
+    });
+  });
+
+  document.getElementById('equipe').addEventListener('change', ()=>{
+    const outro = document.getElementById('equipe').value === 'Outro';
+    document.getElementById('equipeOutroWrap').hidden = !outro;
+    if(!outro) document.getElementById('equipeOutro').value = '';
+  });
+
+  document.getElementById('sacOutroCheck').addEventListener('change', (e)=>{
+    document.getElementById('sacOutro').hidden = !e.target.checked;
+    if(!e.target.checked) document.getElementById('sacOutro').value = '';
+  });
+
+  document.getElementById('foto').addEventListener('change', (e)=>{
+    const f = e.target.files && e.target.files[0];
+    const el = document.getElementById('fotoName');
+    if(f){
+      el.hidden = false;
+      el.textContent = 'Arquivo: ' + f.name;
+    }else{
+      el.hidden = true;
+      el.textContent = '';
+    }
+  });
+
+  function saveDraft(){
+    try{
+      const draft = { step: current, fields: {}, radios: {}, checks: [] };
+      form.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="file"]), textarea, select').forEach(el=>{
+        if(el.id) draft.fields[el.id] = el.value;
+      });
+      form.querySelectorAll('input[type="radio"]:checked').forEach(el=>{
+        draft.radios[el.name] = el.value;
+      });
+      form.querySelectorAll('#sacramentos input:checked').forEach(el=>{
+        draft.checks.push(el.value);
+      });
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    }catch(_){}
+  }
+
+  function restoreDraft(){
+    try{
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if(!raw) return;
+      const draft = JSON.parse(raw);
+      Object.keys(draft.fields || {}).forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.value = draft.fields[id];
+      });
+      Object.keys(draft.radios || {}).forEach(name=>{
+        const el = form.querySelector('input[name="'+name+'"][value="'+draft.radios[name]+'"]');
+        if(el){ el.checked = true; el.dispatchEvent(new Event('change')); }
+      });
+      (draft.checks || []).forEach(v=>{
+        const el = form.querySelector('#sacramentos input[value="'+v+'"]');
+        if(el){ el.checked = true; el.dispatchEvent(new Event('change')); }
+      });
+      if(typeof draft.step === 'number') current = draft.step;
+      const a = calcAge(nascimento.value);
+      if(a != null) idade.value = a;
+      const eq = document.getElementById('equipe');
+      if(eq.value === 'Outro') document.getElementById('equipeOutroWrap').hidden = false;
+    }catch(_){}
+  }
+
+  function clearDraft(){
+    try{ localStorage.removeItem(DRAFT_KEY); }catch(_){}
+  }
+
+  function goTo(n){
+    if(n < 0 || n >= STEPS.length) return;
+    current = n;
+    steps.forEach((s,i)=> s.classList.toggle('active', i === current));
+    [...progress.children].forEach((s,i)=> s.classList.toggle('current', i === current));
+    stepLabel.innerHTML = '<strong>Passo '+(current+1)+' de '+STEPS.length+'</strong> — '+STEPS[current].label;
+    prevBtn.hidden = current === 0;
+    nextBtn.hidden = current === STEPS.length - 1;
+    submitBtn.hidden = current !== STEPS.length - 1;
+    showError('');
+    clearFieldErrors();
+    saveDraft();
+    window.scrollTo({ top: document.getElementById('inscricao').offsetTop - 20, behavior: 'smooth' });
+  }
+
+  function validateStep(n){
+    clearFieldErrors(steps[n]);
+    showError('');
+    let ok = true;
+
+    if(n === 0){
+      const nome = document.getElementById('nome').value.trim();
+      const nasc = nascimento.value;
+      const age = calcAge(nasc);
+      const tel = telefone.value.replace(/\D/g, '');
+      const end = document.getElementById('endereco').value.trim();
+      if(!nome || nome.split(/\s+/).length < 2){ markInvalid('nome', true); ok = false; }
+      if(!nasc){ markInvalid('nascimento', true); ok = false; }
+      if(age == null || age < 12){ markInvalid('idade', true); ok = false; }
+      else idade.value = age;
+      if(tel.length < 10){ markInvalid('telefone', true); ok = false; }
+      if(!end){ markInvalid('endereco', true); ok = false; }
+    }
+
+    if(n === 1){
+      const camisa = form.querySelector('input[name="camisa"]:checked');
+      if(!camisa){ markInvalid('camisa', true); ok = false; }
+      else if(camisa.value === 'sim' && !document.getElementById('tamanho').value){
+        markInvalid('tamanho', true); ok = false;
+      }
+      const eq = document.getElementById('equipe').value;
+      if(!eq){ markInvalid('equipe', true); ok = false; }
+      if(eq === 'Outro' && !document.getElementById('equipeOutro').value.trim()){
+        markInvalid('equipeOutro', true); ok = false;
+      }
+      if(!document.getElementById('anoCor').value.trim()){
+        markInvalid('anoCor', true); ok = false;
+      }
+    }
+
+    if(n === 2){
+      if(!document.getElementById('marcoCor').value.trim()){ markInvalid('marcoCor', true); ok = false; }
+      if(!document.getElementById('oracao').value.trim()){ markInvalid('oracao', true); ok = false; }
+      const sacs = [...document.querySelectorAll('#sacramentos input:checked')];
+      if(!sacs.length){ markInvalid('sacramentos', true); ok = false; }
+      if(document.getElementById('sacOutroCheck').checked && !document.getElementById('sacOutro').value.trim()){
+        markInvalid('sacramentos', true); ok = false;
+      }
+      if(!document.getElementById('consentCheck').checked){
+        markInvalid('consentCheck', true);
+        showError('Marque a declaração no final do formulário para confirmar.');
+        ok = false;
+      }
+      const file = document.getElementById('foto').files[0];
+      if(file && file.size > 5.5 * 1024 * 1024){
+        showError('A foto deve ter no máximo cerca de 5 MB.');
+        ok = false;
+      }
+    }
+
+    if(!ok && !errorMsg.classList.contains('show')){
+      showError('Confira os campos destacados neste passo.');
+    }
+    return ok;
+  }
+
+  prevBtn.addEventListener('click', ()=> goTo(current - 1));
+  nextBtn.addEventListener('click', ()=>{
+    if(validateStep(current)) goTo(current + 1);
+  });
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    if(!validateStep(2)) return;
+    if(!window.COR_API){
+      showError('Configuração não carregou. Abra a pasta completa do projeto.');
+      return;
+    }
+
+    const nome = document.getElementById('nome').value.trim();
+    const tel = telefone.value.trim();
+    const camisa = form.querySelector('input[name="camisa"]:checked')?.value || null;
+    let equipe = document.getElementById('equipe').value;
+    if(equipe === 'Outro') equipe = document.getElementById('equipeOutro').value.trim();
+
+    let sacramentos = [...document.querySelectorAll('#sacramentos input:checked')].map(i=>i.value);
+    if(sacramentos.includes('Outro')){
+      const outro = document.getElementById('sacOutro').value.trim();
+      sacramentos = sacramentos.filter(s => s !== 'Outro');
+      if(outro) sacramentos.push(outro);
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando…';
+
+    try{
+      const dupes = await window.COR_API.findServoByTelefone(tel);
+      const active = dupes.filter(d => d.status !== 'cancelada');
+      if(active.length){
+        showError('Já existe uma inscrição de servo com este telefone (' + (active[0].nome || 'outro') + '). Fale com a organização se precisar corrigir.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Confirmar inscrição';
+        return;
+      }
+
+      let foto_url = null;
+      const file = document.getElementById('foto').files[0];
+      if(file){
+        try{
+          foto_url = await window.COR_API.uploadServoFoto(file);
+        }catch(upErr){
+          console.warn(upErr);
+          /* foto é opcional — segue sem ela se o storage falhar */
+        }
+      }
+
+      const row = {
+        nome,
+        idade: parseInt(idade.value, 10),
+        nascimento: nascimento.value,
+        endereco: document.getElementById('endereco').value.trim(),
+        telefone: tel,
+        camisa,
+        tamanho_camisa: camisa === 'sim' ? (document.getElementById('tamanho').value || null) : null,
+        equipe,
+        ano_cor_jovem: document.getElementById('anoCor').value.trim(),
+        marco_cor: document.getElementById('marcoCor').value.trim(),
+        oracao_sacramentos: document.getElementById('oracao').value.trim(),
+        sacramentos,
+        foto_url,
+        status: 'nova'
+      };
+
+      const saved = await window.COR_API.insertServo(row);
+      const id = Array.isArray(saved) && saved[0] ? saved[0].id : null;
+      clearDraft();
+      document.getElementById('successName').textContent = nome.split(' ')[0];
+      if(id){
+        document.getElementById('successId').textContent = 'Protocolo: ' + String(id).slice(0, 8).toUpperCase();
+      }
+      form.style.display = 'none';
+      document.querySelector('.board-head').style.display = 'none';
+      const tm = document.getElementById('trailMeta');
+      const qb = document.getElementById('quoteBand');
+      if(tm) tm.style.display = 'none';
+      if(qb) qb.style.display = 'none';
+      document.getElementById('successPanel').classList.add('show');
+    }catch(err){
+      console.error(err);
+      showError('Não deu pra enviar agora. Verifique sua conexão e se a tabela de servos foi criada no Supabase.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Confirmar inscrição';
+    }
+  });
+
+  restoreDraft();
+  goTo(current);
+
+  window.COR_SITE.renderContato('#contatoEquipe');
+  window.COR_SITE.initSaintPeeks('saintPeeks', [
+    { who:'Pier Giorgio Frassati', text:'Servir no alto é amar no concreto. Preencha com o coração.' },
+    { who:'Sta. Teresinha', text:'Pequenas coisas, grande amor — comece pelo seu nome.' },
+    { who:'Carlo Acutis', text:'A Eucaristia alimenta quem serve. Dá o próximo passo.' },
+    { who:'João Paulo II', text:'Não tenham medo de servir! O C.O.R Jovem precisa de você.' }
+  ]);
+})();
+</script>
+</body>
+</html>

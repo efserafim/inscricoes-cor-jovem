@@ -6,403 +6,52 @@
 <title>Equipe — XVI C.O.R Jovem</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --ink:#1e262c; --charcoal:#1c2227; --stone:#5a6570; --mist:#cfd8e0;
-    --paper:#f7fafc; --paper2:#eef3f7; --gold:#c45c26; --gold-soft:rgba(196,92,38,.12);
-    --white:#ffffff; --ok:#2a8f52; --err:#9c4a3a;
-    --nova:#2f6f8f; --conf:#2a8f52; --espera:#c45c26; --canc:#8a949c;
-    --ease:cubic-bezier(.22,.7,.25,1);
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  body{
-    font-family:'Outfit',sans-serif; color:var(--ink); min-height:100vh;
-    background:
-      radial-gradient(ellipse 90% 50% at 50% -8%, #d4e4f0 0%, transparent 55%),
-      linear-gradient(180deg, #c5d9e8 0%, #e8eef3 40%, #dfe7ee 100%);
-  }
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/dash.css">
 
-  .gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-  .gate-box{
-    width:100%;max-width:400px;background:var(--paper);border-radius:4px;padding:32px 26px;
-    box-shadow:0 28px 60px -24px rgba(42,50,56,.4);
-    border:1px solid rgba(255,255,255,.7);
-  }
-  .gate-box .eyebrow{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin:0 0 8px}
-  .gate-box h1{font-family:'Oswald',sans-serif;font-size:32px;margin:0 0 8px;letter-spacing:.04em;text-transform:uppercase}
-  .gate-box p{margin:0 0 20px;color:var(--stone);font-size:13.5px;line-height:1.5}
-  .gate-box input{
-    width:100%;padding:13px 14px;border-radius:3px;border:1.5px solid var(--mist);
-    font:inherit;font-size:15px;background:var(--white);margin-bottom:12px;
-  }
-  .gate-box input:focus{outline:none;border-color:#2f6f8f;box-shadow:0 0 0 3px rgba(47,111,143,.15)}
-  .gate-err{display:none;color:var(--err);font-size:13px;font-weight:600;margin:0 0 10px}
-  .gate-err.show{display:block}
-
-  .app{display:none;max-width:1280px;margin:0 auto;padding:18px 14px 56px}
-  .app.open{display:block}
-
-  .top{
-    display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;
-    margin-bottom:18px;
-  }
-  .brand h1{font-family:'Oswald',sans-serif;font-size:clamp(28px,5vw,38px);margin:0;letter-spacing:.03em;line-height:.95;text-transform:uppercase}
-  .brand h1 span{color:var(--gold)}
-  .brand p{margin:6px 0 0;color:var(--stone);font-size:12.5px;font-weight:600}
-  .actions{display:flex;flex-wrap:wrap;gap:8px}
-
-  .btn{
-    border:none;border-radius:6px;padding:11px 15px;font:inherit;font-size:13px;font-weight:700;
-    cursor:pointer;transition:transform .12s,background .15s,opacity .15s;
-  }
-  .btn:active{transform:scale(.98)}
-  .btn:disabled{opacity:.5;cursor:default;transform:none}
-  .btn-primary{background:var(--ink);color:var(--white)}
-  .btn-primary:hover{background:#000}
-  .btn-ghost{background:var(--white);color:var(--ink);border:1.5px solid var(--mist)}
-  .btn-ghost:hover{border-color:var(--stone)}
-  .btn-sm{padding:8px 12px;font-size:12px}
-
-  .stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-bottom:16px}
-  @media(max-width:1000px){.stats{grid-template-columns:repeat(3,1fr)}}
-  @media(max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}}
-  .stat{
-    background:var(--paper);border-radius:4px;padding:14px 12px;
-    box-shadow:0 8px 22px -16px rgba(0,0,0,.28);cursor:pointer;
-    border:1.5px solid transparent;transition:border-color .15s,transform .12s;
-  }
-  .stat:hover{border-color:var(--mist)}
-  .stat.active{border-color:var(--gold);background:var(--gold-soft)}
-  .stat .k{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--gold);text-transform:uppercase}
-  .stat .v{font-family:'Oswald',sans-serif;font-size:30px;letter-spacing:.02em;margin-top:2px;line-height:1}
-
-  .layout{display:grid;grid-template-columns:1fr 300px;gap:14px;align-items:start}
-  @media(max-width:960px){.layout{grid-template-columns:1fr}}
-
-  .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}
-  .search{
-    flex:1;min-width:180px;padding:11px 13px;border-radius:3px;border:1.5px solid var(--mist);
-    font:inherit;font-size:14px;background:var(--white);
-  }
-  .search:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
-  .filters{display:flex;flex-wrap:wrap;gap:8px}
-  .filters select{
-    padding:10px 11px;border-radius:3px;border:1.5px solid var(--mist);
-    font:inherit;font-size:12.5px;font-weight:600;background:var(--white);
-  }
-
-  .panel{
-    background:rgba(247,250,252,.9); border-radius:10px; overflow:hidden;
-    box-shadow:0 1px 0 rgba(255,255,255,.75) inset, 0 16px 40px -22px rgba(0,0,0,.28);
-    border:1px solid rgba(255,255,255,.7);
-    backdrop-filter:blur(12px);
-  }
-  .table-wrap{overflow-x:auto}
-  table{width:100%;border-collapse:collapse;min-width:680px}
-  th,td{text-align:left;padding:11px 12px;font-size:13px;border-bottom:1px solid var(--mist);vertical-align:middle}
-  th{
-    font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
-    color:var(--stone);background:var(--paper2);position:sticky;top:0;
-  }
-  tr{cursor:pointer;transition:background .12s}
-  tr:hover td{background:rgba(154,118,52,.06)}
-  tr.active td{background:var(--gold-soft)}
-  .empty{padding:36px 18px;text-align:center;color:var(--stone);font-weight:600}
-  .muted{color:var(--stone);font-size:12px}
-  .status-bar{padding:11px 14px;font-size:12.5px;font-weight:600;color:var(--stone);border-top:1px solid var(--mist);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-
-  .pill{
-    display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;
-    font-size:11px;font-weight:800;white-space:nowrap;
-  }
-  .pill-nova{background:rgba(61,90,128,.12);color:var(--nova)}
-  .pill-confirmada{background:rgba(42,143,82,.12);color:var(--conf)}
-  .pill-lista_espera{background:var(--gold-soft);color:var(--espera)}
-  .pill-cancelada{background:rgba(138,133,128,.18);color:var(--canc)}
-  .tag{display:inline-block;padding:2px 7px;border-radius:6px;font-size:10.5px;font-weight:800;margin-left:4px}
-  .tag-minor{background:#f5e8e4;color:var(--err)}
-  .tag-health{background:#f3e6c8;color:#8a6420}
-  .tag-shirt{background:var(--gold-soft);color:var(--gold)}
-
-  .side .panel{padding:16px}
-  .side h3{font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:.04em;margin:0 0 12px}
-  .side h3 + h3, .side .block + .block{margin-top:20px}
-  .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12.5px;font-weight:600}
-  .bar-row .lab{width:36px;color:var(--stone)}
-  .bar-row .track{flex:1;height:8px;background:var(--paper2);border-radius:4px;overflow:hidden}
-  .bar-row .fill{height:100%;background:var(--ink);border-radius:4px}
-  .bar-row .num{width:28px;text-align:right}
-  .alert-list{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow:auto}
-  .alert-item{
-    background:var(--paper2);border-radius:3px;padding:10px 11px;cursor:pointer;
-    border-left:3px solid #8a6420;font-size:12.5px;font-weight:600;
-  }
-  .alert-item:hover{background:#e8e4d8}
-  .alert-item .sub{display:block;color:var(--stone);font-weight:500;font-size:11.5px;margin-top:2px}
-
-  .toast{
-    position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);
-    background:var(--ink);color:var(--white);padding:12px 18px;border-radius:3px;
-    font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:all .25s var(--ease);z-index:80;
-  }
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-  .overlay{
-    position:fixed;inset:0;background:rgba(22,22,20,.48);opacity:0;pointer-events:none;
-    transition:opacity .25s var(--ease);z-index:40;
-  }
-  .overlay.open{opacity:1;pointer-events:auto}
-  .drawer{
-    position:fixed;top:0;right:0;height:100%;width:min(520px,100%);
-    background:var(--paper);transform:translateX(100%);transition:transform .3s var(--ease);
-    z-index:50;display:flex;flex-direction:column;box-shadow:-20px 0 50px -20px rgba(0,0,0,.4);
-  }
-  .drawer.open{transform:translateX(0)}
-  .drawer-head{
-    display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
-    padding:18px 18px 12px;border-bottom:1px solid var(--mist);
-  }
-  .drawer-head h2{font-family:'Oswald',sans-serif;font-size:26px;margin:0;letter-spacing:.03em;line-height:1.05}
-  .drawer-head .meta{margin-top:6px;font-size:12.5px;color:var(--stone);font-weight:600}
-  .icon-btn{
-    width:36px;height:36px;border-radius:3px;border:1.5px solid var(--mist);
-    background:var(--white);cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;
-  }
-  .drawer-tools{
-    display:flex;flex-wrap:wrap;gap:8px;padding:12px 18px;border-bottom:1px solid var(--mist);
-    background:var(--paper2);
-  }
-  .drawer-tools select, .drawer-tools textarea{
-    font:inherit;border:1.5px solid var(--mist);border-radius:3px;background:var(--white);padding:9px 11px;
-  }
-  .drawer-tools select{font-size:13px;font-weight:700}
-  .drawer-tools textarea{width:100%;min-height:64px;font-size:13px;resize:vertical}
-  .drawer-body{overflow:auto;padding:6px 18px 28px;flex:1}
-  .sec{margin-top:16px}
-  .sec h3{
-    font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:.04em;margin:0 0 10px;
-    padding-bottom:6px;border-bottom:2px dashed var(--mist);
-  }
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  @media(max-width:420px){.grid{grid-template-columns:1fr}}
-  .item{background:var(--paper2);border-radius:3px;padding:10px 11px}
-  .item.full{grid-column:1/-1}
-  .item .l{display:block;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
-  .item .d{font-size:13.5px;font-weight:600;line-height:1.4;word-break:break-word}
-  .item .d.empty{color:#a8a59c;font-weight:500}
-  .wa{display:inline-flex;margin-top:8px;color:var(--ok);font-weight:800;font-size:13px;text-decoration:none}
-  .wa:hover{text-decoration:underline}
-  .loading{opacity:.55;pointer-events:none}
-  .btn-danger{background:#9c4a3a;color:#fff}
-  .btn-danger:hover{background:#7e3a2e}
-
-  .tabs{
-    display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap;
-  }
-  .tab{
-    border:1.5px solid var(--mist); background:var(--white); color:var(--stone);
-    border-radius:3px; padding:10px 16px; font:inherit; font-size:13px; font-weight:800;
-    cursor:pointer; letter-spacing:.04em; text-transform:uppercase;
-  }
-  .tab.active{ background:var(--ink); color:var(--white); border-color:var(--ink); }
-
-  .view{ display:none; }
-  .view.active{ display:block; }
-
-  .shirt-toolbar{
-    display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;
-    padding:16px; border-bottom:1px solid var(--mist); background:var(--paper2);
-  }
-  .shirt-toolbar .field-mini{ min-width:120px; }
-  .shirt-toolbar label{
-    display:block; font-size:10px; font-weight:800; letter-spacing:.06em;
-    text-transform:uppercase; color:var(--gold); margin-bottom:4px;
-  }
-  .shirt-toolbar select, .shirt-toolbar input{
-    width:100%; padding:9px 10px; border-radius:3px; border:1.5px solid var(--mist);
-    font:inherit; font-size:13px; background:var(--white);
-  }
-  .print-opts{
-    display:flex; flex-wrap:wrap; gap:10px 14px; padding:12px 16px;
-    border-bottom:1px solid var(--mist); font-size:13px; font-weight:600;
-  }
-  .print-opts label{ display:inline-flex; align-items:center; gap:6px; cursor:pointer; }
-  .shirt-summary{
-    display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px; border-bottom:1px solid var(--mist);
-  }
-  .shirt-chip{
-    background:var(--gold-soft); color:var(--gold); font-size:12px; font-weight:800;
-    padding:6px 10px; border-radius:3px;
-  }
-  .shirt-chip strong{ color:var(--ink); }
-
-  .decuria-form{
-    display:grid; grid-template-columns: 1.4fr .7fr .7fr 1.2fr auto;
-    gap:10px; align-items:end; padding:16px; border-bottom:1px solid var(--mist);
-  }
-  @media(max-width:900px){
-    .decuria-form{ grid-template-columns:1fr 1fr; }
-  }
-  .decuria-form label{
-    display:block; font-size:11px; font-weight:800; letter-spacing:.06em;
-    text-transform:uppercase; color:var(--gold); margin-bottom:5px;
-  }
-  .decuria-form input, .decuria-form select{
-    width:100%; padding:10px 11px; border-radius:3px; border:1.5px solid var(--mist);
-    font:inherit; font-size:14px; background:var(--white);
-  }
-  .decuria-grid{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-    gap:12px; padding:16px;
-  }
-  .decuria-card{
-    background:var(--paper2); border:1.5px solid var(--mist); border-radius:4px;
-    padding:14px; display:flex; flex-direction:column; gap:10px;
-  }
-  .decuria-card h4{
-    margin:0; font-family:'Oswald',sans-serif; font-size:20px;
-    letter-spacing:.03em; text-transform:uppercase;
-  }
-  .decuria-card .meta{ font-size:12.5px; color:var(--stone); font-weight:600; line-height:1.45; }
-  .decuria-card .members{
-    list-style:none; margin:0; padding:0; max-height:180px; overflow:auto;
-  }
-  .decuria-card .members li{
-    display:flex; justify-content:space-between; align-items:center; gap:8px;
-    padding:7px 0; border-top:1px solid var(--mist); font-size:13px; font-weight:600;
-  }
-  .decuria-card .members li:first-child{ border-top:none; }
-  .decuria-card .actions-row{ display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; }
-  .decuria-card select.add-member{
-    flex:1; min-width:140px; padding:8px; border-radius:3px; border:1.5px solid var(--mist);
-    font:inherit; font-size:12.5px; background:var(--white);
-  }
-
-  .edit-field{display:flex;flex-direction:column;gap:4px}
-  .edit-field label{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
-  .edit-field input,.edit-field select,.edit-field textarea{
-    width:100%;padding:9px 10px;border-radius:3px;border:1.5px solid var(--mist);
-    font:inherit;font-size:13.5px;background:var(--white);color:var(--ink);
-  }
-  .edit-field.full{grid-column:1/-1}
-  .edit-actions{
-    display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--mist);
-  }
-  .tool-row{display:flex;flex-wrap:wrap;gap:8px;width:100%;align-items:center}
-  .edit-field{display:flex;flex-direction:column;gap:4px}
-  .edit-field label{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
-  .edit-field input,.edit-field select,.edit-field textarea{
-    width:100%;padding:9px 10px;border-radius:8px;border:1.5px solid var(--mist);
-    font:inherit;font-size:13.5px;background:var(--white);color:var(--ink);
-  }
-  .edit-field input:focus,.edit-field select:focus,.edit-field textarea:focus{
-    outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft);
-  }
-  .edit-field.full{grid-column:1/-1}
-  .edit-field textarea{min-height:64px;resize:vertical}
-  .edit-actions{
-    display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--mist);
-  }
-  .tool-row{display:flex;flex-wrap:wrap;gap:8px;width:100%;align-items:center}
-
-  /* Export modal */
-  .export-overlay{
-    position:fixed; inset:0; background:rgba(22,22,20,.52); z-index:70;
-    display:none; align-items:center; justify-content:center; padding:18px;
-  }
-  .export-overlay.open{ display:flex; }
-  .export-dialog{
-    width:min(640px,100%); max-height:min(92vh,820px); overflow:auto;
-    background:var(--paper); border-radius:6px; padding:22px 20px 18px;
-    box-shadow:0 28px 60px -20px rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.7);
-  }
-  .export-dialog h2{
-    font-family:'Oswald',sans-serif; font-size:26px; margin:0 0 4px;
-    letter-spacing:.03em; text-transform:uppercase;
-  }
-  .export-dialog .hint{ margin:0 0 16px; color:var(--stone); font-size:13px; font-weight:600; line-height:1.45; }
-  .export-dialog .field{ margin-bottom:14px; }
-  .export-dialog .field > label{
-    display:block; font-size:10px; font-weight:800; letter-spacing:.07em;
-    text-transform:uppercase; color:var(--gold); margin-bottom:5px;
-  }
-  .export-dialog input[type="text"]{
-    width:100%; padding:11px 12px; border-radius:3px; border:1.5px solid var(--mist);
-    font:inherit; font-size:14px; background:var(--white);
-  }
-  .export-cols{
-    display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px 10px;
-    padding:12px; background:var(--paper2); border-radius:4px; border:1px solid var(--mist);
-  }
-  @media(max-width:520px){ .export-cols{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
-  .export-cols label{
-    display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; cursor:pointer;
-  }
-  .export-presets{ display:flex; flex-wrap:wrap; gap:6px; margin:0 0 10px; }
-  .export-presets button{
-    border:1.5px solid var(--mist); background:var(--white); border-radius:3px;
-    padding:6px 10px; font:inherit; font-size:11.5px; font-weight:700; cursor:pointer; color:var(--stone);
-  }
-  .export-presets button:hover{ border-color:var(--ink); color:var(--ink); }
-  .export-checks{ display:flex; flex-direction:column; gap:8px; margin:12px 0 16px; }
-  .export-checks label{ display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer; }
-  .export-actions{ display:flex; flex-wrap:wrap; gap:8px; }
-  .export-actions .btn{ flex:1; min-width:120px; }
-  .btn-excel{ background:#1d6f42; color:#fff; }
-  .btn-excel:hover{ background:#155734; }
-  .btn-pdf{ background:#9c4a3a; color:#fff; }
-  .btn-pdf:hover{ background:#7e3a2e; }
-
-  /* Print / PDF sheet */
-  #printSheet{display:none}
-  @media print{
-    body *{visibility:hidden}
-    #printSheet, #printSheet *{visibility:visible}
-    #printSheet{
-      display:block !important;position:absolute;left:0;top:0;width:100%;
-      padding:0;background:#fff;color:#000;
-    }
-    .no-print{display:none !important}
-    @page{ margin:14mm 12mm; }
-  }
-</style>
 </head>
 <body>
 
 <div class="gate" id="gate">
   <div class="gate-box">
-    <p class="eyebrow">Área da organização</p>
-    <h1>XVI C.O.R Jovem</h1>
-    <p>Painel das fichas de inscrição. Use a senha da equipe — não compartilhe este link com os cursistas.</p>
-    <p class="gate-err" id="gateErr">Senha incorreta.</p>
+    <p class="eyebrow">Painel da equipe</p>
+    <h1>XVI C.O.R<em>Jovem</em></h1>
+    <p>Acesse com o e-mail e a senha da organização. Só a equipe deve entrar aqui.</p>
+    <p class="gate-err" id="gateErr">Não foi possível entrar.</p>
     <form id="gateForm">
-      <input type="password" id="gatePass" placeholder="Senha da equipe" autocomplete="current-password" required>
-      <button class="btn btn-primary" type="submit" style="width:100%">Entrar no painel</button>
+      <label for="gateEmail">E-mail</label>
+      <input type="email" id="gateEmail" placeholder="seu@email.com" autocomplete="username" required>
+      <label for="gatePass">Senha</label>
+      <input type="password" id="gatePass" placeholder="••••••••" autocomplete="current-password" required>
+      <button class="btn btn-primary" type="submit" id="gateSubmit" style="width:100%">Entrar</button>
     </form>
+    <p class="gate-hint">Dúvidas de acesso? Fale com a coordenação do retiro.</p>
   </div>
 </div>
 
 <div class="app" id="app">
-  <div class="top">
+  <header class="shell">
     <div class="brand">
       <h1>XVI C.O.R <span>Jovem</span></h1>
-      <p id="subtitle">Painel da equipe · Paróquia Santo Antônio — Bacaxá</p>
+      <p id="subtitle">Paróquia Santo Antônio — Bacaxá</p>
+      <div class="user-chip" id="userChip" hidden></div>
     </div>
     <div class="actions">
-      <a class="btn btn-ghost" href="index.html" target="_blank" rel="noopener">Abrir inscrição</a>
-      <button class="btn btn-ghost" type="button" id="refreshBtn">Atualizar</button>
+      <a class="btn btn-ghost" href="index.html" target="_blank" rel="noopener" title="Abrir inscrição de cursistas">Ficha cursistas</a>
+      <a class="btn btn-ghost" href="servos.html" target="_blank" rel="noopener" title="Abrir inscrição de servos">Ficha servos</a>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="btn btn-ghost" type="button" id="refreshBtn" title="Recarregar dados">Atualizar</button>
       <button class="btn btn-primary" type="button" id="exportBtn">Exportar</button>
       <button class="btn btn-ghost" type="button" id="logoutBtn">Sair</button>
     </div>
-  </div>
+  </header>
 
-  <div class="tabs" role="tablist">
-    <button type="button" class="tab active" data-view="inscricoes">Inscrições</button>
-    <button type="button" class="tab" data-view="decurias">Decúrias</button>
-    <button type="button" class="tab" data-view="camisas">Camisas</button>
-  </div>
+  <nav class="tabs" role="tablist" aria-label="Seções do painel">
+    <button type="button" class="tab active" data-view="inscricoes" role="tab" aria-selected="true">Inscrições</button>
+    <button type="button" class="tab" data-view="servos" role="tab" aria-selected="false">Servos</button>
+    <button type="button" class="tab" data-view="decurias" role="tab" aria-selected="false">Decúrias</button>
+    <button type="button" class="tab" data-view="camisas" role="tab" aria-selected="false">Camisas</button>
+  </nav>
 
   <div class="view active" id="viewInscricoes">
   <div class="stats" id="stats">
@@ -455,7 +104,7 @@
             <tbody id="tbody"></tbody>
           </table>
         </div>
-        <div class="empty" id="empty" hidden>Nenhuma inscrição neste filtro.</div>
+        <div class="empty" id="empty" hidden>Nenhuma inscrição neste filtro.<br><span class="muted">Ajuste a busca ou o status acima.</span></div>
         <div class="status-bar">
           <span id="statusText">Carregando…</span>
           <span id="autoText" class="muted">Atualiza a cada 45s</span>
@@ -499,16 +148,23 @@
         <button class="btn btn-primary" type="submit">Criar Decúria</button>
       </form>
       <div class="decuria-grid" id="decuriaGrid"></div>
-      <div class="empty" id="decuriaEmpty" hidden>Nenhuma Decúria criada ainda.</div>
+      <div class="empty" id="decuriaEmpty" hidden>Nenhuma Decúria ainda.<br><span class="muted">Crie a primeira no formulário acima.</span></div>
     </div>
   </div>
 
   <div class="view" id="viewCamisas">
     <div class="panel">
       <div class="shirt-toolbar">
+        <div class="field-mini">
+          <label for="shirtTipo">Lista</label>
+          <select id="shirtTipo">
+            <option value="cursistas">Cursistas</option>
+            <option value="servos">Servos</option>
+          </select>
+        </div>
         <div class="field-mini" style="flex:1;min-width:160px;">
           <label for="shirtSearch">Buscar</label>
-          <input type="search" id="shirtSearch" placeholder="Nome ou WhatsApp…">
+          <input type="search" id="shirtSearch" placeholder="Nome ou telefone…">
         </div>
         <div class="field-mini">
           <label for="shirtStatus">Status</label>
@@ -534,7 +190,7 @@
             <option value="nome">Nome A–Z</option>
             <option value="tamanho">Tamanho</option>
             <option value="idade">Idade</option>
-            <option value="decuria">Decúria</option>
+            <option value="grupo">Decúria / Equipe</option>
           </select>
         </div>
         <button type="button" class="btn btn-primary" id="shirtExportBtn">Exportar / Imprimir</button>
@@ -550,17 +206,63 @@
               <th>Nome</th>
               <th>Tamanho</th>
               <th>Idade</th>
-              <th>WhatsApp</th>
-              <th>Decúria</th>
+              <th id="shirtColPhone">WhatsApp</th>
+              <th id="shirtColGroup">Decúria</th>
               <th>Status</th>
             </tr>
           </thead>
           <tbody id="shirtTbody"></tbody>
         </table>
       </div>
-      <div class="empty" id="shirtEmpty" hidden>Ninguém com pedido de camisa neste filtro.</div>
+      <div class="empty" id="shirtEmpty" hidden>Nenhum pedido de camisa neste filtro.<br><span class="muted">Altere Lista (cursistas/servos) ou o status.</span></div>
       <div class="status-bar">
         <span id="shirtStatusText">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="viewServos">
+    <div class="stats" id="servoStats">
+      <div class="stat active" data-servo-status=""><div class="k">Todos</div><div class="v" id="servoStatTotal">0</div></div>
+      <div class="stat" data-servo-status="nova"><div class="k">Novas</div><div class="v" id="servoStatNova">0</div></div>
+      <div class="stat" data-servo-status="confirmada"><div class="k">Confirmadas</div><div class="v" id="servoStatConf">0</div></div>
+      <div class="stat" data-servo-status="lista_espera"><div class="k">Espera</div><div class="v" id="servoStatEspera">0</div></div>
+      <div class="stat" data-servo-status="cancelada"><div class="k">Canceladas</div><div class="v" id="servoStatCanc">0</div></div>
+    </div>
+    <div class="panel">
+      <div class="toolbar">
+        <input class="search" id="servoSearch" type="search" placeholder="Buscar nome, telefone, equipe…">
+        <div class="filters">
+          <select id="servoFilterEquipe">
+            <option value="">Equipe: todas</option>
+          </select>
+          <select id="servoFilterSort">
+            <option value="recent">Mais recentes</option>
+            <option value="nome">Nome A–Z</option>
+            <option value="equipe">Equipe</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Nome</th>
+              <th>Idade</th>
+              <th>Equipe</th>
+              <th>Telefone</th>
+              <th>Camisa</th>
+              <th>Ano COR</th>
+              <th>Quando</th>
+            </tr>
+          </thead>
+          <tbody id="servoTbody"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="servoEmpty" hidden>Nenhum servo neste filtro.<br><span class="muted">Troque o status ou limpe a busca.</span></div>
+      <div class="status-bar">
+        <span id="servoStatusText">—</span>
       </div>
     </div>
   </div>
@@ -641,10 +343,9 @@
   </div>
 </div>
 
-<script src="config.js"></script>
+<script src="js/config.js"></script>
 <script>
 (function(){
-  const AUTH_KEY = 'cor-jovem-dash-auth';
   const STATUS_LABEL = {
     nova: 'Nova',
     confirmada: 'Confirmada',
@@ -661,48 +362,98 @@
   const toastEl = document.getElementById('toast');
 
   let rows = [];
+  let servoRows = [];
   let decurias = [];
   let selectedId = null;
+  let selectedServoId = null;
+  let drawerMode = 'inscricao';
   let statusFilter = '';
+  let servoStatusFilter = '';
   let quickFilter = '';
   let toastTimer = null;
   let editing = false;
+  const gateErr = document.getElementById('gateErr');
+  try { sessionStorage.removeItem('cor-jovem-dash-auth'); } catch (_) {}
 
-  function unlocked(){ return sessionStorage.getItem(AUTH_KEY) === '1'; }
+  function showGateError(msg){
+    gateErr.textContent = msg || 'Não foi possível entrar.';
+    gateErr.classList.add('show');
+  }
+
   function openApp(){
     gate.style.display = 'none';
     app.classList.add('open');
+    const email = window.COR_AUTH && window.COR_AUTH.userEmail();
+    const sub = document.getElementById('subtitle');
+    const chip = document.getElementById('userChip');
+    if(sub) sub.textContent = 'Paróquia Santo Antônio — Bacaxá';
+    if(chip){
+      if(email){ chip.textContent = email; chip.hidden = false; }
+      else chip.hidden = true;
+    }
     load();
   }
 
-  if(unlocked()) openApp();
+  async function bootAuth(){
+    if(!window.COR_AUTH){
+      showGateError('config.js não carregou.');
+      return;
+    }
+    const ok = await window.COR_AUTH.ensureSession();
+    if(ok) openApp();
+  }
+
+  bootAuth();
 
   document.querySelectorAll('.tab').forEach(tab=>{
     tab.addEventListener('click', ()=>{
-      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t=>{
+        t.classList.remove('active');
+        t.setAttribute('aria-selected','false');
+      });
       document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
       tab.classList.add('active');
-      const map = { inscricoes:'viewInscricoes', decurias:'viewDecurias', camisas:'viewCamisas' };
+      tab.setAttribute('aria-selected','true');
+      const map = {
+        inscricoes:'viewInscricoes',
+        servos:'viewServos',
+        decurias:'viewDecurias',
+        camisas:'viewCamisas'
+      };
       const view = document.getElementById(map[tab.dataset.view] || 'viewInscricoes');
       if(view) view.classList.add('active');
       if(tab.dataset.view === 'camisas') renderShirts();
+      if(tab.dataset.view === 'servos') renderServos();
     });
   });
 
-  document.getElementById('gateForm').addEventListener('submit', (e)=>{
+  document.getElementById('gateForm').addEventListener('submit', async (e)=>{
     e.preventDefault();
+    gateErr.classList.remove('show');
+    const email = document.getElementById('gateEmail').value.trim();
     const pass = document.getElementById('gatePass').value;
-    const expected = (window.COR_CONFIG && window.COR_CONFIG.dashPassword) || 'corjovem2025';
-    if(pass === expected){
-      sessionStorage.setItem(AUTH_KEY, '1');
+    const btn = document.getElementById('gateSubmit');
+    btn.disabled = true;
+    btn.textContent = 'Entrando…';
+    try{
+      await window.COR_AUTH.login(email, pass);
       openApp();
-    }else{
-      document.getElementById('gateErr').classList.add('show');
+    }catch(err){
+      console.error(err);
+      const raw = String(err && err.message || '');
+      let msg = 'E-mail ou senha incorretos.';
+      if(/confirm|not confirmed/i.test(raw)) msg = 'Confirme o e-mail no Supabase (ou desative a confirmação).';
+      else if(/invalid/i.test(raw)) msg = 'E-mail ou senha incorretos.';
+      else if(raw) msg = raw;
+      showGateError(msg);
+    }finally{
+      btn.disabled = false;
+      btn.textContent = 'Entrar no painel';
     }
   });
 
-  document.getElementById('logoutBtn').addEventListener('click', ()=>{
-    sessionStorage.removeItem(AUTH_KEY);
+  document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+    if(window.COR_AUTH) await window.COR_AUTH.logout();
     location.reload();
   });
 
@@ -757,24 +508,43 @@
       app.classList.add('loading');
     }
     try{
-      const [ins, dec] = await Promise.all([
+      const [ins, dec, serv] = await Promise.all([
         window.COR_API.list(),
-        window.COR_API.listDecurias().catch(()=>[])
+        window.COR_API.listDecurias().catch(()=>[]),
+        window.COR_API.listServos().catch(()=>[])
       ]);
       rows = ins;
+      servoRows = Array.isArray(serv) ? serv : [];
       decurias = Array.isArray(dec) ? dec : [];
       fillDecuriaSelects();
+      fillServoEquipeFilter();
       render();
       renderDecurias();
       renderShirts();
-      if(selectedId && !editing){
+      renderServos();
+      if(drawerMode === 'inscricao' && selectedId && !editing){
         const cur = rows.find(r => r.id === selectedId);
         if(cur) fillDrawer(cur);
       }
+      if(drawerMode === 'servo' && selectedServoId){
+        const cur = servoRows.find(r => r.id === selectedServoId);
+        if(cur) fillServoDrawer(cur);
+      }
+      if(!silent){
+        document.getElementById('statusText').textContent =
+          rows.length + ' inscrição(ões) · ' + servoRows.length + ' servo(s)';
+      }
     }catch(err){
       console.error(err);
-      document.getElementById('statusText').textContent =
-        'Erro ao carregar. Rode o supabase-setup.sql no Supabase se ainda não rodou.';
+      const st = document.getElementById('statusText');
+      const msg = String(err && err.message || '');
+      if(/Sessão expirada|401|JWT|permission/i.test(msg)){
+        st.textContent = 'Sessão inválida. Faça login de novo.';
+        if(window.COR_AUTH) await window.COR_AUTH.logout();
+        setTimeout(()=> location.reload(), 800);
+      }else{
+        st.textContent = 'Erro ao carregar. Rode sql/setup.sql (ou sql/auth-rls.sql) no Supabase.';
+      }
       tbody.innerHTML = '';
       empty.hidden = false;
     }finally{
@@ -993,13 +763,131 @@
 
   function setToolbarEditing(on){
     editing = !!on;
-    document.getElementById('editBtn').hidden = on;
+    document.getElementById('editBtn').hidden = on || drawerMode === 'servo';
     document.getElementById('deleteBtn').hidden = on;
-    document.getElementById('printBtn').hidden = on;
+    document.getElementById('printBtn').hidden = on || drawerMode === 'servo';
     document.getElementById('saveNotesBtn').hidden = on;
     document.getElementById('dStatus').disabled = on;
-    document.getElementById('dDecuria').disabled = on;
+    document.getElementById('dDecuria').disabled = on || drawerMode === 'servo';
+    document.getElementById('dDecuria').hidden = drawerMode === 'servo';
     document.getElementById('dNotes').disabled = on;
+  }
+
+  function fillServoEquipeFilter(){
+    const sel = document.getElementById('servoFilterEquipe');
+    if(!sel) return;
+    const cur = sel.value;
+    const equipes = [...new Set(servoRows.map(r => r.equipe).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+    sel.innerHTML = '<option value="">Equipe: todas</option>' +
+      equipes.map(e => '<option value="'+esc(e)+'">'+esc(e)+'</option>').join('');
+    sel.value = [...sel.options].some(o=>o.value===cur) ? cur : '';
+  }
+
+  function filteredServos(){
+    const q = (document.getElementById('servoSearch').value || '').trim().toLowerCase();
+    const eq = document.getElementById('servoFilterEquipe').value;
+    const sort = document.getElementById('servoFilterSort').value;
+    let list = servoRows.slice();
+    if(servoStatusFilter) list = list.filter(r => (r.status || 'nova') === servoStatusFilter);
+    if(eq) list = list.filter(r => r.equipe === eq);
+    if(q){
+      list = list.filter(r => {
+        const blob = [r.nome, r.telefone, r.equipe, r.ano_cor_jovem, r.endereco].join(' ').toLowerCase();
+        return blob.includes(q);
+      });
+    }
+    if(sort === 'nome') list.sort((a,b)=>(a.nome||'').localeCompare(b.nome||'','pt-BR'));
+    else if(sort === 'equipe') list.sort((a,b)=>(a.equipe||'').localeCompare(b.equipe||'','pt-BR') || (a.nome||'').localeCompare(b.nome||'','pt-BR'));
+    else list.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+    return list;
+  }
+
+  function renderServos(){
+    const tbody = document.getElementById('servoTbody');
+    const empty = document.getElementById('servoEmpty');
+    if(!tbody) return;
+
+    const total = servoRows.length;
+    const by = s => servoRows.filter(r => (r.status||'nova') === s).length;
+    document.getElementById('servoStatTotal').textContent = total;
+    document.getElementById('servoStatNova').textContent = by('nova');
+    document.getElementById('servoStatConf').textContent = by('confirmada');
+    document.getElementById('servoStatEspera').textContent = by('lista_espera');
+    document.getElementById('servoStatCanc').textContent = by('cancelada');
+
+    const list = filteredServos();
+    tbody.innerHTML = list.map(r => {
+      const st = r.status || 'nova';
+      const camisa = r.camisa === 'sim' ? (r.tamanho_camisa || 'Sim') : (r.camisa === 'nao' ? 'Não' : '—');
+      return '<tr data-servo-id="'+esc(r.id)+'"'+(r.id===selectedServoId?' class="active"':'')+'>' +
+        '<td><span class="pill pill-'+esc(st)+'">'+esc(STATUS_LABEL[st]||st)+'</span></td>' +
+        '<td><strong>'+esc(r.nome||'—')+'</strong></td>' +
+        '<td>'+esc(r.idade != null ? r.idade : '—')+'</td>' +
+        '<td>'+esc(r.equipe||'—')+'</td>' +
+        '<td>'+esc(r.telefone||'—')+'</td>' +
+        '<td>'+esc(camisa)+'</td>' +
+        '<td>'+esc(r.ano_cor_jovem||'—')+'</td>' +
+        '<td>'+esc(fmtDate(r.created_at))+'</td>' +
+      '</tr>';
+    }).join('');
+
+    empty.hidden = list.length > 0;
+    document.getElementById('servoStatusText').textContent =
+      list.length + ' de ' + total + ' servo(s)';
+  }
+
+  function fillServoDrawer(r){
+    document.getElementById('dNome').textContent = r.nome || '—';
+    document.getElementById('dMeta').textContent =
+      'Servo · Protocolo ' + protocol(r.id) +
+      (r.idade ? ' · ' + r.idade + ' anos' : '') +
+      (r.equipe ? ' · ' + r.equipe : '') +
+      ' · ' + fmtDate(r.created_at);
+
+    const wa = waLink(r.telefone);
+    const waEl = document.getElementById('dWa');
+    if(wa){ waEl.href = wa; waEl.hidden = false; }
+    else waEl.hidden = true;
+
+    document.getElementById('dStatus').value = r.status || 'nova';
+    document.getElementById('dNotes').value = r.observacoes || '';
+    setToolbarEditing(false);
+
+    const foto = r.foto_url
+      ? '<div class="sec"><h3>Foto</h3><p><a href="'+esc(r.foto_url)+'" target="_blank" rel="noopener"><img src="'+esc(r.foto_url)+'" alt="Foto" style="max-width:100%;border-radius:6px;border:1px solid var(--mist)"></a></p></div>'
+      : '';
+
+    document.getElementById('drawerBody').innerHTML =
+      '<div class="sec"><h3>Dados</h3><div class="grid">' +
+        item('Nome completo', r.nome, true) +
+        item('Nascimento', fmtDay(r.nascimento)) +
+        item('Idade', r.idade) +
+        item('Telefone', r.telefone) +
+        item('Endereço', r.endereco, true) +
+      '</div></div>' +
+      '<div class="sec"><h3>Serviço</h3><div class="grid">' +
+        item('Equipe', r.equipe) +
+        item('Ano COR Jovem', r.ano_cor_jovem) +
+        item('Quer camisa', simNao(r.camisa)) +
+        item('Tamanho', r.tamanho_camisa) +
+      '</div></div>' +
+      '<div class="sec"><h3>Fé</h3><div class="grid">' +
+        item('O que mais marcou', r.marco_cor, true) +
+        item('Oração e sacramentos', r.oracao_sacramentos, true) +
+        item('Sacramentos', r.sacramentos, true) +
+      '</div></div>' +
+      foto;
+  }
+
+  function openServoDetail(r){
+    drawerMode = 'servo';
+    selectedId = null;
+    selectedServoId = r.id;
+    fillServoDrawer(r);
+    renderServos();
+    overlay.classList.add('open');
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden','false');
   }
 
   function fillDrawerView(r){
@@ -1245,8 +1133,11 @@
   }
 
   function openDetail(r){
+    drawerMode = 'inscricao';
+    selectedServoId = null;
     selectedId = r.id;
     setToolbarEditing(false);
+    document.getElementById('dDecuria').hidden = false;
     fillDrawer(r);
     render();
     overlay.classList.add('open');
@@ -1261,7 +1152,11 @@
     drawer.classList.remove('open');
     drawer.setAttribute('aria-hidden','true');
     selectedId = null;
+    selectedServoId = null;
+    drawerMode = 'inscricao';
+    document.getElementById('dDecuria').hidden = false;
     render();
+    renderServos();
   }
 
   document.getElementById('closeDrawer').addEventListener('click', closeDetail);
@@ -1269,6 +1164,7 @@
   document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDetail(); });
 
   document.getElementById('editBtn').addEventListener('click', ()=>{
+    if(drawerMode !== 'inscricao') return;
     const r = rows.find(x => x.id === selectedId);
     if(!r) return;
     setToolbarEditing(true);
@@ -1276,6 +1172,26 @@
   });
 
   document.getElementById('deleteBtn').addEventListener('click', async ()=>{
+    if(drawerMode === 'servo'){
+      const r = servoRows.find(x => x.id === selectedServoId);
+      if(!r) return;
+      const ok = confirm('Excluir definitivamente a ficha do servo "' + (r.nome || 'este servo') + '"?\n\nEssa ação não pode ser desfeita.');
+      if(!ok) return;
+      try{
+        await window.COR_API.removeServo(selectedServoId);
+        servoRows = servoRows.filter(x => x.id !== selectedServoId);
+        selectedServoId = null;
+        overlay.classList.remove('open');
+        drawer.classList.remove('open');
+        drawer.setAttribute('aria-hidden','true');
+        renderServos();
+        toast('Servo excluído');
+      }catch(err){
+        console.error(err);
+        toast('Erro ao excluir servo.');
+      }
+      return;
+    }
     const r = rows.find(x => x.id === selectedId);
     if(!r) return;
     const ok = confirm('Excluir definitivamente a inscrição de "' + (r.nome || 'este jovem') + '"?\n\nEssa ação não pode ser desfeita.');
@@ -1299,8 +1215,24 @@
   });
 
   document.getElementById('dStatus').addEventListener('change', async (e)=>{
-    if(!selectedId || editing) return;
+    if(editing) return;
     const status = e.target.value;
+    if(drawerMode === 'servo'){
+      if(!selectedServoId) return;
+      try{
+        await window.COR_API.updateServo(selectedServoId, { status });
+        const r = servoRows.find(x => x.id === selectedServoId);
+        if(r) r.status = status;
+        renderServos();
+        toast('Status atualizado: ' + (STATUS_LABEL[status] || status));
+      }catch(err){
+        console.error(err);
+        toast('Não foi possível salvar o status.');
+        load(true);
+      }
+      return;
+    }
+    if(!selectedId) return;
     try{
       await window.COR_API.update(selectedId, { status });
       const r = rows.find(x => x.id === selectedId);
@@ -1441,22 +1373,34 @@
     });
   }
 
+  function shirtTipo(){
+    const el = document.getElementById('shirtTipo');
+    return (el && el.value) || 'cursistas';
+  }
+
   function shirtList(){
     const q = (document.getElementById('shirtSearch').value || '').trim().toLowerCase();
     const st = document.getElementById('shirtStatus').value;
     const size = document.getElementById('shirtSize').value;
     const sort = document.getElementById('shirtSort').value;
     const order = ['PP','P','M','G','GG','XG'];
+    const tipo = shirtTipo();
+    const isServo = tipo === 'servos';
 
-    let list = rows.filter(r => r.camisa === 'sim' && r.status !== 'cancelada');
+    let list = (isServo ? servoRows : rows).filter(r =>
+      r.camisa === 'sim' && r.status !== 'cancelada'
+    );
     if(st) list = list.filter(r => (r.status||'nova') === st);
     if(size === '__empty__') list = list.filter(r => !r.tamanho_camisa);
     else if(size) list = list.filter(r => r.tamanho_camisa === size);
     if(q){
-      list = list.filter(r =>
-        String(r.nome||'').toLowerCase().includes(q) ||
-        String(r.whatsapp||'').toLowerCase().includes(q)
-      );
+      list = list.filter(r => {
+        const phone = isServo ? r.telefone : r.whatsapp;
+        const grupo = isServo ? r.equipe : decuriaName(r.decuria_id);
+        return String(r.nome||'').toLowerCase().includes(q) ||
+          String(phone||'').toLowerCase().includes(q) ||
+          String(grupo||'').toLowerCase().includes(q);
+      });
     }
 
     if(sort === 'tamanho'){
@@ -1466,8 +1410,12 @@
       });
     }else if(sort === 'idade'){
       list.sort((a,b)=> (a.idade||0)-(b.idade||0) || String(a.nome).localeCompare(String(b.nome),'pt-BR'));
-    }else if(sort === 'decuria'){
-      list.sort((a,b)=> decuriaName(a.decuria_id).localeCompare(decuriaName(b.decuria_id),'pt-BR') || String(a.nome).localeCompare(String(b.nome),'pt-BR'));
+    }else if(sort === 'grupo' || sort === 'decuria'){
+      list.sort((a,b)=>{
+        const ga = isServo ? (a.equipe||'') : decuriaName(a.decuria_id);
+        const gb = isServo ? (b.equipe||'') : decuriaName(b.decuria_id);
+        return ga.localeCompare(gb,'pt-BR') || String(a.nome).localeCompare(String(b.nome),'pt-BR');
+      });
     }else{
       list.sort((a,b)=> String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR'));
     }
@@ -1480,6 +1428,12 @@
     const summary = document.getElementById('shirtSummary');
     if(!tbody) return;
 
+    const isServo = shirtTipo() === 'servos';
+    const phoneHead = document.getElementById('shirtColPhone');
+    const groupHead = document.getElementById('shirtColGroup');
+    if(phoneHead) phoneHead.textContent = isServo ? 'Telefone' : 'WhatsApp';
+    if(groupHead) groupHead.textContent = isServo ? 'Equipe' : 'Decúria';
+
     const list = shirtList();
     const sizes = ['PP','P','M','G','GG','XG'];
     const counts = {};
@@ -1490,14 +1444,17 @@
       else sem++;
     });
 
+    const tipoLabel = isServo ? 'Servos' : 'Cursistas';
     summary.innerHTML =
-      '<span class="shirt-chip">Total: <strong>'+list.length+'</strong></span>' +
+      '<span class="shirt-chip">'+tipoLabel+' · Total: <strong>'+list.length+'</strong></span>' +
       sizes.map(s => '<span class="shirt-chip">'+s+': <strong>'+counts[s]+'</strong></span>').join('') +
       (sem ? '<span class="shirt-chip">Sem tamanho: <strong>'+sem+'</strong></span>' : '');
 
     tbody.innerHTML = '';
     emptyEl.hidden = list.length > 0;
     list.forEach((r, idx)=>{
+      const phone = isServo ? (r.telefone||'—') : (r.whatsapp||'—');
+      const grupo = isServo ? (r.equipe||'—') : (decuriaName(r.decuria_id)||'—');
       const tr = document.createElement('tr');
       tr.style.cursor = 'pointer';
       tr.innerHTML =
@@ -1505,14 +1462,17 @@
         '<td><strong>'+esc(r.nome)+'</strong></td>' +
         '<td><span class="tag tag-shirt">'+esc(r.tamanho_camisa||'—')+'</span></td>' +
         '<td>'+esc(r.idade)+'</td>' +
-        '<td>'+esc(r.whatsapp)+'</td>' +
-        '<td>'+esc(decuriaName(r.decuria_id)||'—')+'</td>' +
+        '<td>'+esc(phone)+'</td>' +
+        '<td>'+esc(grupo)+'</td>' +
         '<td><span class="pill pill-'+esc(r.status||'nova')+'">'+esc(STATUS_LABEL[r.status||'nova'])+'</span></td>';
-      tr.addEventListener('click', ()=> openDetail(r));
+      tr.addEventListener('click', ()=>{
+        if(isServo) openServoDetail(r);
+        else openDetail(r);
+      });
       tbody.appendChild(tr);
     });
     document.getElementById('shirtStatusText').textContent =
-      list.length + ' pedido(s) de camisa neste filtro';
+      list.length + ' pedido(s) de camisa · ' + tipoLabel.toLowerCase();
   }
 
   /* ——— Exportação personalizada (Excel / PDF / Impressão) ——— */
@@ -1521,8 +1481,8 @@
     { id:'status', label:'Status', group:'essencial', get:r => STATUS_LABEL[r.status||'nova'] },
     { id:'idade', label:'Idade', group:'essencial', get:r => r.idade },
     { id:'nascimento', label:'Nascimento', group:'completo', get:r => fmtDay(r.nascimento) },
-    { id:'whatsapp', label:'WhatsApp', group:'contato', get:r => r.whatsapp },
-    { id:'decuria', label:'Decúria', group:'essencial', get:r => decuriaName(r.decuria_id) || '—' },
+    { id:'whatsapp', label:'WhatsApp / Tel.', group:'contato', get:r => r.whatsapp || r.telefone },
+    { id:'decuria', label:'Decúria / Equipe', group:'essencial', get:r => r.equipe || decuriaName(r.decuria_id) || '—' },
     { id:'cidade', label:'Cidade', group:'contato', get:r => r.cidade },
     { id:'uf', label:'UF', group:'contato', get:r => r.uf },
     { id:'bairro', label:'Bairro', group:'completo', get:r => r.bairro },
@@ -1563,7 +1523,7 @@
   function filterSummaryText(){
     const bits = [];
     if(exportSource === 'camisas'){
-      bits.push('Pedidos de camisa');
+      bits.push(shirtTipo() === 'servos' ? 'Camisas · Servos' : 'Camisas · Cursistas');
       const st = document.getElementById('shirtStatus').value;
       const size = document.getElementById('shirtSize').value;
       if(st) bits.push(STATUS_LABEL[st] || st);
@@ -1611,7 +1571,9 @@
     const title = document.getElementById('exportTitle');
     const sub = document.getElementById('exportSubtitle');
     title.value = exportSource === 'camisas'
-      ? 'XVI C.O.R Jovem — Lista de camisas'
+      ? (shirtTipo() === 'servos'
+        ? 'XVI C.O.R Jovem — Camisas dos servos'
+        : 'XVI C.O.R Jovem — Camisas dos cursistas')
       : 'XVI C.O.R Jovem — Inscrições';
     sub.value = filterSummaryText();
     document.getElementById('exportHint').textContent =
@@ -1774,7 +1736,7 @@
       '.doc{font-family:"Source Sans 3",Segoe UI,sans-serif;color:#2a3238;}' +
       '.banner{border-bottom:3px solid #c45c26;padding:0 0 14px;margin:0 0 14px;}' +
       '.eyebrow{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#c45c26;margin:0 0 6px;}' +
-      'h1{font-family:Oswald,Impact,sans-serif;font-size:26px;margin:0;letter-spacing:.04em;text-transform:uppercase;line-height:1.05;}' +
+      'h1{font-family:Outfit,Impact,sans-serif;font-size:26px;margin:0;letter-spacing:.04em;text-transform:uppercase;line-height:1.05;}' +
       '.sub{margin:8px 0 0;color:#4a5560;font-size:13px;font-weight:600;}' +
       '.meta{margin:6px 0 0;font-size:12px;color:#4a5560;}' +
       '.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;}' +
@@ -1848,7 +1810,9 @@
       title: (document.getElementById('exportTitle').value || 'XVI C.O.R Jovem').trim(),
       subtitle: (document.getElementById('exportSubtitle').value || '').trim(),
       when: new Date().toLocaleString('pt-BR'),
-      filename: (exportSource === 'camisas' ? 'camisas' : 'inscricoes') + '-cor-jovem'
+      filename: (exportSource === 'camisas'
+        ? (shirtTipo() === 'servos' ? 'camisas-servos' : 'camisas-cursistas')
+        : 'inscricoes') + '-cor-jovem'
     };
 
     if(mode === 'excel'){
@@ -1886,7 +1850,7 @@
     openExportModal('camisas');
   });
 
-  ['shirtSearch','shirtStatus','shirtSize','shirtSort'].forEach(id=>{
+  ['shirtTipo','shirtSearch','shirtStatus','shirtSize','shirtSort'].forEach(id=>{
     const el = document.getElementById(id);
     el.addEventListener('input', renderShirts);
     el.addEventListener('change', renderShirts);
@@ -1917,13 +1881,27 @@
       toast('Decúria criada');
     }catch(err){
       console.error(err);
-      toast('Erro ao criar. Rode o supabase-setup.sql atualizado no Supabase.');
+      toast('Erro ao criar. Rode sql/setup.sql no Supabase.');
     }
   });
 
   document.getElementById('saveNotesBtn').addEventListener('click', async ()=>{
-    if(!selectedId || editing) return;
+    if(editing) return;
     const observacoes = document.getElementById('dNotes').value.trim() || null;
+    if(drawerMode === 'servo'){
+      if(!selectedServoId) return;
+      try{
+        await window.COR_API.updateServo(selectedServoId, { observacoes });
+        const r = servoRows.find(x => x.id === selectedServoId);
+        if(r) r.observacoes = observacoes;
+        toast('Observações salvas');
+      }catch(err){
+        console.error(err);
+        toast('Erro ao salvar observações');
+      }
+      return;
+    }
+    if(!selectedId) return;
     try{
       await window.COR_API.update(selectedId, { observacoes });
       const r = rows.find(x => x.id === selectedId);
@@ -1991,6 +1969,26 @@
     document.getElementById(id).addEventListener('input', render);
     document.getElementById(id).addEventListener('change', render);
   });
+
+  /* Servos UI */
+  document.getElementById('servoTbody').addEventListener('click', (e)=>{
+    const tr = e.target.closest('tr[data-servo-id]');
+    if(!tr) return;
+    const r = servoRows.find(x => x.id === tr.dataset.servoId);
+    if(r) openServoDetail(r);
+  });
+  document.getElementById('servoSearch').addEventListener('input', renderServos);
+  document.getElementById('servoFilterEquipe').addEventListener('change', renderServos);
+  document.getElementById('servoFilterSort').addEventListener('change', renderServos);
+  document.querySelectorAll('#servoStats .stat').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      document.querySelectorAll('#servoStats .stat').forEach(s=>s.classList.remove('active'));
+      el.classList.add('active');
+      servoStatusFilter = el.dataset.servoStatus || '';
+      renderServos();
+    });
+  });
+
   document.getElementById('refreshBtn').addEventListener('click', ()=> load());
 
   document.getElementById('exportBtn').addEventListener('click', ()=> openExportModal());

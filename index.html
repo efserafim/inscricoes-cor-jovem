@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="css/site.css">
 
 </head>
 <body>
@@ -115,7 +115,7 @@
               <p class="hint">Calculada pela data</p>
             </div>
           </div>
-          <p class="field-error" data-for="idade" id="idadeError">O retiro é para jovens de 15 a 24 anos.</p>
+          <p class="field-error" data-for="idade">O retiro é para jovens de 15 a 24 anos.</p>
         </div>
 
         <div class="field">
@@ -371,7 +371,10 @@
   </div>
 </main>
 
-<script src="config.js"></script>
+<section id="contatoEquipe"></section>
+
+<script src="js/config.js"></script>
+<script src="js/site-common.js"></script>
 <script>
 (function(){
   const DRAFT_KEY = 'cor-jovem-draft-v1';
@@ -425,12 +428,7 @@
     (scope || form).querySelectorAll('.field-error.show').forEach(el => el.classList.remove('show'));
   }
 
-  function maskPhone(v){
-    const d = v.replace(/\D/g,'').slice(0,11);
-    if(d.length <= 2) return d.length ? '('+d : '';
-    if(d.length <= 7) return '('+d.slice(0,2)+') '+d.slice(2);
-    return '('+d.slice(0,2)+') '+d.slice(2,7)+'-'+d.slice(7);
-  }
+  function maskPhone(v){ return window.COR_SITE.maskPhone(v); }
   function maskCpf(v){
     const d = v.replace(/\D/g,'').slice(0,11);
     if(d.length <= 3) return d;
@@ -501,15 +499,7 @@
     minorBox.classList.toggle('show', minor);
     respConsentBox.classList.toggle('show', minor);
   }
-  function calcAge(dateStr){
-    if(!dateStr) return null;
-    const birth = new Date(dateStr + 'T12:00:00');
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const m = today.getMonth() - birth.getMonth();
-    if(m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
-    return age;
-  }
+  function calcAge(dateStr){ return window.COR_SITE.calcAge(dateStr); }
 
   nascimento.addEventListener('change', ()=>{
     const age = calcAge(nascimento.value);
@@ -798,54 +788,13 @@
   goTo(current);
   checkCapacity();
 
-  /* Santos peeping + frases */
-  (function saintPeeks(){
-    const root = document.getElementById('saintPeeks');
-    if(!root) return;
-
-    const lines = [
-      { who:'Pier Giorgio Frassati', text:'Verso l\'alto! A inscrição é só o primeiro passo da trilha.' },
-      { who:'Sta. Teresinha', text:'Pequenas coisas, grande amor — começa pelo seu nome completo.' },
-      { who:'Carlo Acutis', text:'A Eucaristia é a minha autoestrada para o céu. Dá o próximo passo com fé.' },
-      { who:'João Paulo II', text:'Não tenham medo! O C.O.R Jovem te espera no alto.' }
-    ];
-
-    const peeks = [...root.querySelectorAll('.peek')];
-    let i = 0;
-    let hideT = null;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function speak(){
-      peeks.forEach(p => {
-        p.classList.remove('on');
-        const b = p.querySelector('.peek-bubble');
-        b.classList.remove('show','hide');
-        b.innerHTML = '';
-      });
-
-      const peek = peeks[i % peeks.length];
-      const line = lines[i % lines.length];
-      const bubble = peek.querySelector('.peek-bubble');
-      peek.classList.add('on');
-      bubble.innerHTML = '<span class="who">'+line.who+'</span>'+line.text;
-      void bubble.offsetWidth;
-      bubble.classList.add('show');
-      i++;
-
-      clearTimeout(hideT);
-      hideT = setTimeout(()=>{
-        bubble.classList.remove('show');
-        bubble.classList.add('hide');
-        setTimeout(()=>{
-          peek.classList.remove('on');
-          bubble.classList.remove('hide');
-          setTimeout(speak, reduce ? 400 : 700);
-        }, reduce ? 100 : 320);
-      }, reduce ? 5000 : 4200);
-    }
-
-    setTimeout(speak, reduce ? 400 : 1000);
-  })();
+  window.COR_SITE.renderContato('#contatoEquipe');
+  window.COR_SITE.initSaintPeeks('saintPeeks', [
+    { who:'Pier Giorgio Frassati', text:'Verso l\'alto! A inscrição é só o primeiro passo da trilha.' },
+    { who:'Sta. Teresinha', text:'Pequenas coisas, grande amor — começa pelo seu nome completo.' },
+    { who:'Carlo Acutis', text:'A Eucaristia é a minha autoestrada para o céu. Dá o próximo passo com fé.' },
+    { who:'João Paulo II', text:'Não tenham medo! O C.O.R Jovem te espera no alto.' }
+  ]);
 })();
 </script>
 </body>
