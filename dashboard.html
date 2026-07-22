@@ -89,7 +89,7 @@
   <div class="stats" id="stats">
     <div class="stat active" data-status=""><div class="k">Todas</div><div class="v" id="statTotal">0</div></div>
     <div class="stat" data-status="nova"><div class="k">Novas</div><div class="v" id="statNova">0</div></div>
-    <div class="stat" data-status="confirmada"><div class="k">Confirmadas</div><div class="v" id="statConf">0</div></div>
+    <div class="stat" data-status="confirmada"><div class="k">Confirmado(a)</div><div class="v" id="statConf">0</div></div>
     <div class="stat" data-status="lista_espera"><div class="k">Espera</div><div class="v" id="statEspera">0</div></div>
     <div class="stat" data-filter="menor"><div class="k">Menores</div><div class="v" id="statMenores">0</div></div>
     <div class="stat" data-filter="saude"><div class="k">Alerta saúde</div><div class="v" id="statSaude">0</div></div>
@@ -203,7 +203,7 @@
           <select id="shirtStatus">
             <option value="">Todos</option>
             <option value="nova">Nova</option>
-            <option value="confirmada" selected>Confirmada</option>
+            <option value="confirmada" selected>Confirmado(a)</option>
             <option value="lista_espera">Lista de espera</option>
           </select>
         </div>
@@ -257,7 +257,7 @@
     <div class="stats" id="servoStats">
       <div class="stat active" data-servo-status=""><div class="k">Todos</div><div class="v" id="servoStatTotal">0</div></div>
       <div class="stat" data-servo-status="nova"><div class="k">Novas</div><div class="v" id="servoStatNova">0</div></div>
-      <div class="stat" data-servo-status="confirmada"><div class="k">Confirmadas</div><div class="v" id="servoStatConf">0</div></div>
+      <div class="stat" data-servo-status="confirmada"><div class="k">Confirmado(a)</div><div class="v" id="servoStatConf">0</div></div>
       <div class="stat" data-servo-status="lista_espera"><div class="k">Espera</div><div class="v" id="servoStatEspera">0</div></div>
       <div class="stat" data-servo-status="cancelada"><div class="k">Canceladas</div><div class="v" id="servoStatCanc">0</div></div>
     </div>
@@ -319,7 +319,7 @@
     <div class="tool-row">
       <select id="dStatus" aria-label="Status">
         <option value="nova">Nova</option>
-        <option value="confirmada">Confirmada</option>
+        <option value="confirmada">Confirmado(a)</option>
         <option value="lista_espera">Lista de espera</option>
         <option value="cancelada">Cancelada</option>
       </select>
@@ -420,7 +420,7 @@
 (function(){
   const STATUS_LABEL = {
     nova: 'Nova',
-    confirmada: 'Confirmada',
+    confirmada: 'Confirmado(a)',
     lista_espera: 'Espera',
     cancelada: 'Cancelada'
   };
