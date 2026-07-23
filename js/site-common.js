@@ -1,4 +1,4 @@
-/* Utilitários compartilhados — páginas públicas (cursistas / servos) */
+
 window.COR_SITE = {
   calcAge(dateStr) {
     if (!dateStr) return null;
@@ -89,5 +89,26 @@ window.COR_SITE = {
     }
 
     setTimeout(speak, reduce ? 400 : 1000);
+  },
+
+  mountSpamGuard(form) {
+    if (!form || form.dataset.spamGuard === '1') return;
+    form.dataset.spamGuard = '1';
+    form.dataset.openedAt = String(Date.now());
+    const wrap = document.createElement('div');
+    wrap.className = 'hp-wrap';
+    wrap.setAttribute('aria-hidden', 'true');
+    wrap.innerHTML =
+      '<label>Website<input type="text" name="website" id="hpWebsite" tabindex="-1" autocomplete="off"></label>';
+    form.prepend(wrap);
+  },
+
+  isSpamSubmission(form) {
+    if (!form) return true;
+    const hp = form.querySelector('#hpWebsite, input[name="website"]');
+    if (hp && String(hp.value || '').trim()) return true;
+    const opened = parseInt(form.dataset.openedAt || '0', 10) || 0;
+    if (opened && Date.now() - opened < 2800) return true;
+    return false;
   }
 };

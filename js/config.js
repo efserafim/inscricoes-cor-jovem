@@ -1,4 +1,4 @@
-/* Config compartilhada — XVI C.O.R Jovem */
+
 window.COR_CONFIG = {
   supabaseUrl: 'https://bpsznzsgalubbltvcdrh.supabase.co',
   supabaseKey: 'sb_publishable_VWI7ct07ZZN0J-Y9s9D9dQ_XzXNlxkY',
@@ -7,7 +7,7 @@ window.COR_CONFIG = {
   servosTable: 'servos_cor_jovem',
   servosBucket: 'fotos-servos',
   maxInscricoes: 70,
-  /* Metadados do evento (referência / uso futuro nas páginas) */
+
   event: {
     name: 'XVI C.O.R Jovem',
     parish: 'Paróquia Santo Antônio — Bacaxá · Arquidiocese de Niterói',
@@ -17,7 +17,6 @@ window.COR_CONFIG = {
   }
 };
 
-/* Sessão Supabase Auth (painel) */
 window.COR_AUTH = {
   STORAGE_KEY: 'cor_auth_session_v1',
 
@@ -105,7 +104,7 @@ window.COR_AUTH = {
   async getAccessToken() {
     const s = this.getSession();
     if (!s || !s.access_token) return null;
-    /* renova ~60s antes de expirar */
+
     if (s.expires_at && Date.now() > s.expires_at - 60000) {
       const ok = await this.refresh();
       if (!ok) return null;
@@ -125,7 +124,7 @@ window.COR_AUTH = {
       headers: {
         apikey: c.supabaseKey,
         'Content-Type': 'application/json'
-        /* não enviar Authorization: Bearer com sb_publishable_ (não é JWT) */
+
       },
       body: JSON.stringify({
         email: String(email || '').trim().toLowerCase(),
@@ -194,7 +193,7 @@ window.COR_AUTH = {
             Authorization: 'Bearer ' + token
           }
         });
-      } catch (_) { /* ignore */ }
+      } catch (_) {  }
     }
     this.clearSession();
   },
@@ -216,7 +215,6 @@ window.COR_API = {
     });
   },
 
-  /** @param {object} [extra] @param {{ staff?: boolean }} [opts] staff=true usa JWT do painel */
   async headers(extra, opts) {
     const c = window.COR_CONFIG;
     const staff = opts && opts.staff;
@@ -265,7 +263,6 @@ window.COR_API = {
     return res.json();
   },
 
-  /** Conta inscrições ativas via RPC (público, sem expor fichas). */
   async countActive() {
     const res = await fetch(this.rpcUrl('count_inscricoes_ativas'), {
       method: 'POST',
@@ -282,11 +279,19 @@ window.COR_API = {
     if (!payload.id) payload.id = this.newId();
     const res = await fetch(this.url(), {
       method: 'POST',
-      /* return=representation exige SELECT; com RLS só-insert usamos minimal */
+
       headers: await this.headers({ Prefer: 'return=minimal' }),
       body: JSON.stringify(payload)
     });
-    if (!res.ok) throw new Error(await res.text());
+    if (!res.ok) {
+      const text = await res.text();
+      if (/VAGAS_ESGOTADAS/i.test(text)) {
+        const err = new Error('VAGAS_ESGOTADAS');
+        err.code = 'VAGAS_ESGOTADAS';
+        throw err;
+      }
+      throw new Error(text);
+    }
     return [{ id: payload.id }];
   },
 
@@ -312,14 +317,22 @@ window.COR_API = {
   async findByWhatsapp(whatsapp) {
     const digits = String(whatsapp || '').replace(/\D/g, '');
     if (digits.length < 10) return [];
-    const res = await fetch(this.rpcUrl('buscar_inscricao_whatsapp'), {
+    const res = await fetch(this.rpcUrl('existe_inscricao_whatsapp'), {
       method: 'POST',
       headers: await this.headers(),
       body: JSON.stringify({ p_digits: digits })
     });
-    if (!res.ok) return [];
-    const rows = await res.json();
-    return Array.isArray(rows) ? rows : [];
+    if (!res.ok) {
+      const t = await res.text();
+      if (/RATE_LIMITED/i.test(t)) {
+        const err = new Error('RATE_LIMITED');
+        err.code = 'RATE_LIMITED';
+        throw err;
+      }
+      return [];
+    }
+    const exists = await res.json();
+    return exists === true ? [{ status: 'ativa' }] : [];
   },
 
   async listDecurias() {
@@ -406,19 +419,33 @@ window.COR_API = {
   async findServoByTelefone(telefone) {
     const digits = String(telefone || '').replace(/\D/g, '');
     if (digits.length < 10) return [];
-    const res = await fetch(this.rpcUrl('buscar_servo_telefone'), {
+    const res = await fetch(this.rpcUrl('existe_servo_telefone'), {
       method: 'POST',
       headers: await this.headers(),
       body: JSON.stringify({ p_digits: digits })
     });
-    if (!res.ok) return [];
-    const rows = await res.json();
-    return Array.isArray(rows) ? rows : [];
+    if (!res.ok) {
+      const t = await res.text();
+      if (/RATE_LIMITED/i.test(t)) {
+        const err = new Error('RATE_LIMITED');
+        err.code = 'RATE_LIMITED';
+        throw err;
+      }
+      return [];
+    }
+    const exists = await res.json();
+    return exists === true ? [{ status: 'ativa' }] : [];
   },
 
   async uploadServoFoto(file) {
+    if (!file) throw new Error('Arquivo inválido');
+    const maxBytes = 2.5 * 1024 * 1024;
+    const okType = /^image\/(jpeg|jpg|png|webp|gif)$/i.test(file.type || '');
+    if (!okType) throw new Error('Envie apenas imagem (JPG, PNG ou WEBP).');
+    if (file.size > maxBytes) throw new Error('Imagem muito grande (máx. 2,5 MB).');
     const c = window.COR_CONFIG;
     const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    if (!/^(jpe?g|png|webp|gif)$/.test(ext)) throw new Error('Extensão de imagem inválida.');
     const path = 'servos/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
     const res = await fetch(this.storageUrl(path), {
       method: 'POST',
