@@ -64,11 +64,11 @@ html:not([data-theme]) body{
 
 html{
   scrollbar-width:thin;
-  scrollbar-color:var(--copper) var(--paper2);
+  scrollbar-color:var(--ice) var(--paper2);
 }
 *{
   scrollbar-width:thin;
-  scrollbar-color:var(--copper) var(--mist);
+  scrollbar-color:var(--ice) var(--mist);
 }
 *::-webkit-scrollbar{
   width:10px;
@@ -79,20 +79,20 @@ html{
   border-radius:999px;
 }
 *::-webkit-scrollbar-thumb{
-  background:linear-gradient(180deg, var(--copper), #a34a1f);
+  background:linear-gradient(180deg, #3d8ab0, var(--ice));
   border-radius:999px;
   border:2px solid var(--paper2);
 }
 *::-webkit-scrollbar-thumb:hover{
-  background:linear-gradient(180deg, var(--ice), #245a75);
+  background:linear-gradient(180deg, #4a9bc2, #1e5570);
 }
 *::-webkit-scrollbar-corner{ background:transparent; }
 html[data-theme="dark"] *::-webkit-scrollbar-thumb{
-  background:linear-gradient(180deg, var(--copper), #b85a2e);
+  background:linear-gradient(180deg, #5a9bb8, #2f6f8f);
   border-color:var(--paper2);
 }
 html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{
-  background:linear-gradient(180deg, var(--ice), #3d7a96);
+  background:linear-gradient(180deg, #6aadc8, #3d7a96);
 }
 
 .gate{
