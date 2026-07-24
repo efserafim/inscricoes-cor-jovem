@@ -38,6 +38,7 @@ Para liberar a aba **PIX** no painel (camisas + taxa de contribuição):
    - **Contribuição** liberado → aparece o botão da taxa em `servos.html`.
    - Desmarque e **salve** para o botão sumir.
 6. Para quem pagar em espécie: use **Pagamento em dinheiro** (busca + confirmar) ou o botão **Dinheiro** na fila.
+7. Para apagar qualquer pagamento de teste na fila: botão **Excluir** (rode antes [`remover-pagamento-teste.sql`](remover-pagamento-teste.sql) uma vez).
 
 Não versionar e-mails nem senhas neste repositório.
 

@@ -229,7 +229,7 @@
           (canAct ? '<button type="button" class="btn btn-primary btn-sm" data-act="confirm">Confirmar PIX</button>' : '') +
           (canAct ? '<button type="button" class="btn btn-ghost btn-sm" data-act="cash">Dinheiro</button>' : '') +
           (canAct ? '<button type="button" class="btn btn-danger btn-sm" data-act="reject">Rejeitar</button>' : '') +
-          '<button type="button" class="btn btn-ghost btn-sm" data-act="delete">Excluir</button>' +
+          '<button type="button" class="btn btn-danger btn-sm" data-act="delete" title="Remover este pagamento da fila">Excluir</button>' +
         '</td>' +
       '</tr>';
     }).join('');
@@ -461,17 +461,19 @@
 
   async function actPixRow(id, act){
     if(act === 'delete'){
-      const row = (pixQueue === 'camisas' ? pixCamisasRows : pixContribRows).find(r => r.id === id);
+      const row = (pixQueue === 'camisas' ? pixCamisasRows : pixContribRows).find(r => r.id === id)
+        || filteredFinanceRows(pixQueue).find(r => r.id === id);
       if(!row) return;
-      if(!confirm('Excluir o pagamento de "'+(row.nome||'')+'"?\n\nIsso remove só o registro financeiro (a inscrição continua).')) return;
+      if(!confirm('Excluir o pagamento de "'+(row.nome||'')+'" (protocolo '+(row.protocolo||'—')+')?\n\nRemove só o registro financeiro. A inscrição continua.')) return;
       try{
-        if(pixQueue === 'camisas') await window.COR_API.removePagamentoCamisa(id);
-        else await window.COR_API.removePagamentoContribuicao(id);
+        const origem = row._origem || (pixQueue === 'contribuicao' ? 'contribuicao' : 'camisa');
+        if(origem === 'contribuicao') await window.COR_API.removePagamentoContribuicao(id);
+        else await window.COR_API.removePagamentoCamisa(id);
         toast('Pagamento excluído.');
         await refreshPixQueues();
       }catch(err){
         console.error(err);
-        toast('Não foi possível excluir. Rode sql/remover-pagamento-teste.sql no Supabase.');
+        toast('Falha ao excluir. Rode sql/remover-pagamento-teste.sql no Supabase.');
       }
       return;
     }

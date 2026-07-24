@@ -1,16 +1,6 @@
--- Remover pagamento de teste + permitir exclusão pelo tesoureiro
--- Rodar no SQL Editor do Supabase
+-- Permite o tesoureiro excluir QUALQUER pagamento pela aba PIX
+-- Rodar no SQL Editor do Supabase (idempotente)
 
--- 1) Apaga o registro de teste (ajuste se o protocolo mudar)
-delete from public.pagamentos_contribuicao
-where upper(protocolo) = 'BB09857B'
-   or nome ilike 'Eduardo Ferreira Serafim%';
-
-delete from public.pagamentos_camisas
-where upper(protocolo) = 'BB09857B'
-   or nome ilike 'Eduardo Ferreira Serafim%';
-
--- 2) Permite o tesoureiro excluir pela aba PIX
 drop policy if exists "Pag camisas delete tesoureiro" on public.pagamentos_camisas;
 create policy "Pag camisas delete tesoureiro"
   on public.pagamentos_camisas for delete to authenticated
