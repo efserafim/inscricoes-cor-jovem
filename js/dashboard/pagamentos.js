@@ -113,7 +113,13 @@
     const dateField = document.getElementById('pixFilterDateField')?.value || 'confirmado_em';
 
     let list = financeBaseRows(scope);
-    if(status) list = list.filter(r => r.status === status);
+    if(status === 'pendente_extrato'){
+      list = list.filter(r => r.status === 'confirmado' && r.forma_pagamento !== 'dinheiro' && !r.conferido_extrato);
+    }else if(status === 'extrato_ok'){
+      list = list.filter(r => r.status === 'confirmado' && !!r.conferido_extrato);
+    }else if(status){
+      list = list.filter(r => r.status === status);
+    }
     if(forma === '__none__') list = list.filter(r => !r.forma_pagamento);
     else if(forma) list = list.filter(r => r.forma_pagamento === forma);
     if(pessoa) list = list.filter(r => r.tipo_pessoa === pessoa);
@@ -153,7 +159,8 @@
       arrecadado: 0,
       arrecadadoPix: 0,
       arrecadadoDinheiro: 0,
-      esperadoAberto: 0
+      esperadoAberto: 0,
+      pendenteExtrato: 0
     };
     list.forEach(r => {
       const val = Number(r.valor_informado != null ? r.valor_informado : r.valor_esperado) || 0;
@@ -161,7 +168,11 @@
         t.confirmado++;
         t.arrecadado += val;
         if(r.forma_pagamento === 'dinheiro'){ t.dinheiro++; t.arrecadadoDinheiro += val; }
-        else { t.pix++; t.arrecadadoPix += val; }
+        else {
+          t.pix++;
+          t.arrecadadoPix += val;
+          if(!r.conferido_extrato) t.pendenteExtrato++;
+        }
       }else if(r.status === 'divergente') t.divergente++;
       else if(r.status === 'rejeitado') t.rejeitado++;
       else {
@@ -187,9 +198,9 @@
         '<span class="s">Aberto '+esc(moneyLabel(t.esperadoAberto))+'</span>' +
       '</div>' +
       '<div class="pix-stat">' +
-        '<span class="k">PIX · Dinheiro</span>' +
-        '<span class="v">'+esc(moneyLabel(t.arrecadadoPix))+'</span>' +
-        '<span class="s">Dinheiro '+esc(moneyLabel(t.arrecadadoDinheiro))+'</span>' +
+        '<span class="k">Conferir extrato</span>' +
+        '<span class="v">'+t.pendenteExtrato+'</span>' +
+        '<span class="s">PIX confirmado sem bate-extrato</span>' +
       '</div>' +
       '<div class="pix-stat pix-stat-money">' +
         '<span class="k">Arrecadado</span>' +
@@ -217,8 +228,19 @@
         ? (r.tipo_pessoa === 'servo' ? ' · Servo' : ' · Cursista') + (r.tamanho_camisa ? ' · '+r.tamanho_camisa : '')
         : ' · Contribuição';
       const canAct = r.status !== 'confirmado';
-      return '<tr data-id="'+esc(r.id)+'">' +
-        '<td data-label="Status"><span class="tag tag-pix" data-st="'+esc(r.status)+'">'+esc(PIX_STATUS_LABEL[r.status]||r.status)+'</span></td>' +
+      const needsExtrato = r.status === 'confirmado' && r.forma_pagamento !== 'dinheiro' && !r.conferido_extrato;
+      const extratoOk = r.status === 'confirmado' && !!r.conferido_extrato;
+      const statusCell =
+        '<span class="tag tag-pix" data-st="'+esc(r.status)+'">'+esc(PIX_STATUS_LABEL[r.status]||r.status)+'</span>' +
+        (needsExtrato
+          ? '<div class="pix-extrato-row">' +
+              '<span class="pix-extrato-hint">Conferir no extrato</span>' +
+              '<button type="button" class="pix-extrato-btn" data-act="extrato" title="Marcar como conferido no extrato bancário">Confirmei</button>' +
+            '</div>'
+          : '') +
+        (extratoOk ? '<span class="pix-extrato-ok">Extrato OK</span>' : '');
+      return '<tr data-id="'+esc(r.id)+'"'+(needsExtrato ? ' class="pix-row-extrato"' : '')+'>' +
+        '<td data-label="Status">'+statusCell+'</td>' +
         '<td data-label="Nome">'+esc(r.nome)+'<div class="muted" style="font-size:11px">'+esc(r.telefone||'')+esc(extra)+'</div></td>' +
         '<td data-label="Protocolo">'+esc(r.protocolo)+'</td>' +
         '<td data-label="Forma">'+esc(formaLabel(r.forma_pagamento))+'</td>' +
@@ -231,6 +253,7 @@
               (r.comprovante_url ? '<a href="'+esc(r.comprovante_url)+'" target="_blank" rel="noopener">Ver comprovante</a>' : '') +
               (canAct ? '<button type="button" data-act="confirm">Confirmar PIX</button>' : '') +
               (canAct ? '<button type="button" data-act="cash">Dinheiro</button>' : '') +
+              (needsExtrato ? '<button type="button" data-act="extrato">Conferir no extrato</button>' : '') +
               (canAct ? '<button type="button" data-act="reject" class="is-warn">Rejeitar</button>' : '') +
               '<button type="button" data-act="delete" class="is-danger">Excluir</button>' +
             '</div>' +
@@ -250,7 +273,9 @@
     const search = (document.getElementById('pixFilterSearch')?.value || '').trim();
     const from = document.getElementById('pixFilterFrom')?.value;
     const to = document.getElementById('pixFilterTo')?.value;
-    if(status) bits.push(PIX_STATUS_LABEL[status] || status);
+    if(status === 'pendente_extrato') bits.push('Conferir extrato');
+    else if(status === 'extrato_ok') bits.push('Extrato OK');
+    else if(status) bits.push(PIX_STATUS_LABEL[status] || status);
     if(forma === 'pix') bits.push('Forma PIX');
     if(forma === 'dinheiro') bits.push('Forma dinheiro');
     if(forma === '__none__') bits.push('Sem forma');
@@ -479,6 +504,26 @@
       }catch(err){
         console.error(err);
         toast('Falha ao excluir. Rode sql/remover-pagamento-teste.sql no Supabase.');
+      }
+      return;
+    }
+    if(act === 'extrato'){
+      const row = (pixQueue === 'camisas' ? pixCamisasRows : pixContribRows).find(r => r.id === id)
+        || filteredFinanceRows(pixQueue).find(r => r.id === id);
+      if(!row) return;
+      const patch = {
+        conferido_extrato: true,
+        conferido_extrato_em: new Date().toISOString()
+      };
+      try{
+        const origem = row._origem || (pixQueue === 'contribuicao' ? 'contribuicao' : 'camisa');
+        if(origem === 'contribuicao') await window.COR_API.updatePagamentoContribuicao(id, patch);
+        else await window.COR_API.updatePagamentoCamisa(id, patch);
+        toast('Extrato conferido.');
+        await refreshPixQueues();
+      }catch(err){
+        console.error(err);
+        toast('Falha ao marcar extrato. Rode sql/conferido-extrato.sql no Supabase.');
       }
       return;
     }
