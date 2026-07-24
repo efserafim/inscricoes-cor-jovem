@@ -38,12 +38,7 @@
     return 'Não foi possível consultar. Tente de novo.';
   }
 
-  async function renderQr(payload) {
-    const canvas = document.getElementById('qrCanvas');
-    const wrap = document.querySelector('.pay-qr-wrap');
-    const ok = await window.COR_PIX.drawQr(canvas, payload, 200);
-    if (wrap) wrap.classList.toggle('is-empty', !ok);
-  }
+  async function renderQr(){ /* QR removido das páginas públicas */ }
 
   function fillResult(data) {
     const p = data.pagamento;
@@ -71,13 +66,14 @@
       txid: ('TX' + (p.protocolo || 'COR')).slice(0, 25)
     });
     document.getElementById('pixCopia').value = payload;
-    renderQr(payload);
 
     const confirmed = p.status === 'confirmado';
+    const payTools = document.getElementById('pixPayTools');
     document.getElementById('uploadForm').hidden = confirmed;
+    if (payTools) payTools.hidden = confirmed;
     doneMsg.hidden = !confirmed;
     if (confirmed) {
-      doneMsg.textContent = 'Contribuição confirmada. Obrigado!';
+      doneMsg.innerHTML = '<strong>Contribuição confirmada.</strong> Obrigado por servir — Deus multiplica o que é dado com amor.';
     } else if (p.status === 'divergente') {
       doneMsg.hidden = false;
       doneMsg.textContent = 'Comprovante recebido com valor diferente. A tesouraria vai conferir.';

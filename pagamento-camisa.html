@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css?v=20260724-qr">
+<link rel="stylesheet" href="css/site.css?v=20260724-bless">
 </head>
 <body class="pay-page">
 <header class="pay-top">
@@ -47,13 +47,19 @@
 
     <div class="pay-pix" id="pixBlock">
       <p class="pay-valor">Valor: <strong id="rValor">—</strong></p>
-      <div class="pay-qr-wrap">
-        <canvas id="qrCanvas" width="200" height="200" aria-label="QR Code PIX"></canvas>
+      <figure class="pay-blessing" aria-label="Mensagem">
+        <blockquote>
+          <p>“Quanto mais alto formos, melhor ouvimos a voz de Cristo.”</p>
+          <cite>— Beato Pier Giorgio Frassati</cite>
+        </blockquote>
+        <p class="pay-blessing-motto">Verso l’alto</p>
+      </figure>
+      <div id="pixPayTools">
+        <label class="lbl" for="pixCopia">PIX copia e cola</label>
+        <textarea class="ctrl pay-copia" id="pixCopia" rows="3" readonly></textarea>
+        <button type="button" class="btn btn-ghost" id="copyPixBtn">Copiar código PIX</button>
+        <p class="pay-hint" id="pixMsg"></p>
       </div>
-      <label class="lbl" for="pixCopia">PIX copia e cola</label>
-      <textarea class="ctrl pay-copia" id="pixCopia" rows="3" readonly></textarea>
-      <button type="button" class="btn btn-ghost" id="copyPixBtn">Copiar código PIX</button>
-      <p class="pay-hint" id="pixMsg"></p>
     </div>
 
     <form class="pay-upload" id="uploadForm">
@@ -79,7 +85,6 @@
   <p><span class="footer-mark" aria-hidden="true">©</span> Paróquia Santo Antônio — Bacaxá — Saquarema/RJ · 2026</p>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/pix-brcode.js"></script>
 <script src="js/site-common.js"></script>

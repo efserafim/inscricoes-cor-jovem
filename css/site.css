@@ -981,31 +981,51 @@ select.ctrl{
 .pay-status[data-status="divergente"],
 .pay-status[data-status="rejeitado"]{ background:#fff0e8; color:#8a3f1a; border-color:#f0c9a8; }
 .pay-valor{ margin:0 0 12px; font-size:15px; }
-.pay-qr-wrap{
-  display:flex;
-  justify-content:center;
-  margin:0 0 12px;
-  padding:12px;
-  background:#fff;
-  border-radius:12px;
-  border:1px solid var(--mist);
-  min-height:224px;
-  align-items:center;
-}
-.pay-qr-wrap.is-empty::after{
-  content:'QR indisponível — use o copia e cola';
-  font-size:12.5px;
-  font-weight:600;
-  color:#4d5c68;
+.pay-blessing{
+  margin:0 0 16px;
+  padding:20px 18px 16px;
+  border-radius:14px;
+  border:1px solid rgba(47,111,143,.22);
+  background:
+    linear-gradient(145deg, rgba(47,111,143,.1), rgba(196,92,38,.06)),
+    #fff;
   text-align:center;
 }
-.pay-qr-wrap.is-empty canvas{ display:none; }
-.pay-qr-wrap canvas{
-  display:block;
-  width:200px;
-  height:200px;
-  max-width:100%;
+.pay-blessing blockquote{
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  box-shadow:none;
 }
+.pay-blessing blockquote p{
+  margin:0;
+  font-family:'Outfit',sans-serif;
+  font-size:clamp(15px, 3.6vw, 17px);
+  font-weight:700;
+  line-height:1.45;
+  letter-spacing:-.01em;
+  color:var(--ink);
+}
+.pay-blessing cite{
+  display:block;
+  margin-top:10px;
+  font-size:12px;
+  font-weight:700;
+  font-style:normal;
+  letter-spacing:.04em;
+  color:var(--slate);
+}
+.pay-blessing-motto{
+  margin:14px 0 0;
+  font-family:'Outfit',sans-serif;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--copper);
+}
+#pixPayTools{ margin-top:4px; }
 .pay-copia{ font-size:11px; font-family:ui-monospace, monospace; resize:vertical; }
 .pay-upload{ margin-top:16px; padding-top:14px; border-top:1px solid var(--mist); }
 .pay-upload .field{ margin-bottom:10px; }

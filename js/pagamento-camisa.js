@@ -43,12 +43,7 @@
     return 'Não foi possível consultar. Tente de novo.';
   }
 
-  async function renderQr(payload) {
-    const canvas = document.getElementById('qrCanvas');
-    const wrap = document.querySelector('.pay-qr-wrap');
-    const ok = await window.COR_PIX.drawQr(canvas, payload, 200);
-    if (wrap) wrap.classList.toggle('is-empty', !ok);
-  }
+  async function renderQr(){ /* QR removido das páginas públicas */ }
 
   function fillResult(data) {
     const p = data.pagamento;
@@ -75,14 +70,15 @@
       txid: (p.protocolo || 'COR').slice(0, 25)
     });
     document.getElementById('pixCopia').value = payload;
-    renderQr(payload);
 
     const confirmed = p.status === 'confirmado';
+    const payTools = document.getElementById('pixPayTools');
     document.getElementById('uploadForm').hidden = confirmed;
+    if (payTools) payTools.hidden = confirmed;
     document.getElementById('pixBlock').hidden = false;
     doneMsg.hidden = !confirmed;
     if (confirmed) {
-      doneMsg.textContent = 'Pagamento confirmado. Obrigado!';
+      doneMsg.innerHTML = '<strong>Pagamento confirmado.</strong> Que Deus abençoe sua oferta — Verso l’alto!';
     } else if (p.status === 'divergente') {
       doneMsg.hidden = false;
       doneMsg.textContent = 'Comprovante recebido com valor diferente do esperado. A tesouraria vai conferir.';
@@ -92,7 +88,7 @@
         ? ('Rejeitado: ' + p.nota_tesoureiro)
         : 'Comprovante rejeitado. Envie novamente.';
     } else {
-      if (p.status !== 'confirmado') doneMsg.hidden = true;
+      doneMsg.hidden = true;
     }
 
     if (p.valor_esperado != null) {
