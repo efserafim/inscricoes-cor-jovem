@@ -12,9 +12,9 @@
 <meta property="og:site_name" content="XVI C.O.R Jovem">
 <meta property="og:title" content="XVI C.O.R Jovem — Servir no retiro">
 <meta property="og:description" content="Candidate-se a servir no XVI C.O.R Jovem. Paróquia Santo Antônio — Bacaxá · 12 e 13 de setembro. Verso l'alto.">
-<meta property="og:url" content="https://efserafim.github.io/inscricoes-cor-jovem/servos.html">
-<meta property="og:image" content="https://efserafim.github.io/inscricoes-cor-jovem/image/og/whatsapp.jpg">
-<meta property="og:image:secure_url" content="https://efserafim.github.io/inscricoes-cor-jovem/image/og/whatsapp.jpg">
+<meta property="og:url" content="https://corjovem.geucaristica.com.br/servos.html">
+<meta property="og:image" content="https://corjovem.geucaristica.com.br/image/og/whatsapp.jpg">
+<meta property="og:image:secure_url" content="https://corjovem.geucaristica.com.br/image/og/whatsapp.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -23,7 +23,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="XVI C.O.R Jovem — Servir no retiro">
 <meta name="twitter:description" content="Candidate-se a servir no XVI C.O.R Jovem. Paróquia Santo Antônio — Bacaxá · 12 e 13 de setembro. Verso l'alto.">
-<meta name="twitter:image" content="https://efserafim.github.io/inscricoes-cor-jovem/image/og/whatsapp.jpg">
+<meta name="twitter:image" content="https://corjovem.geucaristica.com.br/image/og/whatsapp.jpg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -443,20 +443,7 @@
     const tel = telefone.value.trim();
     const camisa = form.querySelector('input[name="camisa"]:checked')?.value || null;
 
-    const sacramentos = [...document.querySelectorAll('#sacramentos input:checked')].map(i=>i.value);
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Enviando…';
-
-    try{
-      const dupes = await window.COR_API.findServoByTelefone(tel);
-      if(dupes.length){
-        showError('Já existe uma inscrição de servo ativa com este telefone. Fale com a organização se precisar corrigir.');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Confirmar inscrição';
-        return;
-      }
-
+    try {
       const row = {
         nome,
         idade: parseInt(idade.value, 10),
@@ -488,7 +475,19 @@
       if(tm) tm.style.display = 'none';
       if(qb) qb.style.display = 'none';
       document.getElementById('successPanel').classList.add('show');
-    }catch(err){
+    } catch(err) {
+      console.error(err);
+      if(err && (err.code === 'RATE_LIMITED' || /RATE_LIMITED/i.test(String(err.message||'')))){
+        showError('Muitas tentativas com este número. Aguarde alguns minutos e tente de novo.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Confirmar inscrição';
+        return;
+      }
+      showError('Não deu pra enviar agora. Verifique sua conexão e se a tabela de servos foi criada no Supabase.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Confirmar inscrição';
+    }
+    } catch(err) {
       console.error(err);
       if(err && (err.code === 'RATE_LIMITED' || /RATE_LIMITED/i.test(String(err.message||'')))){
         showError('Muitas tentativas com este número. Aguarde alguns minutos e tente de novo.');
