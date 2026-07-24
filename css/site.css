@@ -1105,14 +1105,17 @@ select.ctrl{
 }
 .pay-cta-bar .pay-cta:hover{ filter:brightness(1.05); text-decoration:none; color:#fff; }
 .pay-cta-bar .pay-cta-ghost{
-  background:rgba(255,255,255,.88);
+  background:rgba(255,255,255,.92);
   color:var(--ice);
-  border:1.5px solid rgba(42,111,145,.35);
+  border:1.5px solid rgba(42,111,145,.4);
   box-shadow:none;
 }
 .pay-cta-bar .pay-cta-ghost:hover{
   background:#fff;
+  color:var(--ice);
   border-color:var(--ice);
+  filter:none;
+  text-decoration:none;
 }
 .board-pay-note{
   margin:14px 0 0;
