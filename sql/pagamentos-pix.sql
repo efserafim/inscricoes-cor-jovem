@@ -210,6 +210,15 @@ $$;
 
 -- ─── Config pública ─────────────────────────────────────────────────────────
 
+-- DROP necessário: versões antigas podem ter defaults nos parâmetros
+-- (CREATE OR REPLACE não remove defaults — erro 42P13).
+drop function if exists public.get_pix_camisa_publico();
+drop function if exists public.get_pix_publico();
+drop function if exists public.consultar_pagamento_camisa(text);
+drop function if exists public.enviar_comprovante_camisa(uuid, text, numeric, text, text);
+drop function if exists public.consultar_pagamento_contribuicao(text);
+drop function if exists public.enviar_comprovante_contribuicao(uuid, text, numeric, text, text);
+
 create or replace function public.get_pix_publico()
 returns jsonb
 language plpgsql
