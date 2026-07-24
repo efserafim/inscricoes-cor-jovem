@@ -207,7 +207,7 @@ html{
   padding:14px 28px;
   border:none;
   border-radius:var(--radius);
-  background:linear-gradient(135deg, #e07838 0%, var(--copper) 50%, var(--copper-deep) 100%);
+  background:linear-gradient(135deg, #3d8ab0 0%, var(--ice) 48%, #1e5570 100%);
   color:#fff;
   font-family:'Outfit',sans-serif;
   font-size:12px;
@@ -217,14 +217,14 @@ html{
   text-decoration:none;
   transition:transform .2s var(--ease), box-shadow .2s, filter .2s;
   box-shadow:
-    0 16px 36px -12px rgba(196,92,38,.7),
-    inset 0 1px 0 rgba(255,255,255,.25);
+    0 16px 36px -12px rgba(42,111,145,.65),
+    inset 0 1px 0 rgba(255,255,255,.28);
   animation:rise 1s .3s var(--ease) both;
 }
 .hero-cta:hover{
   transform:translateY(-2px);
   filter:brightness(1.06);
-  box-shadow:0 18px 36px -12px rgba(196,92,38,.75);
+  box-shadow:0 18px 36px -12px rgba(42,111,145,.7);
 }
 .hero-cta:active{ transform:translateY(0) scale(.98); }
 .motto{
@@ -534,7 +534,7 @@ html{
 }
 .progress span.done{background:var(--ink)}
 .progress span.current{
-  background:linear-gradient(90deg, var(--copper), #e07838);
+  background:linear-gradient(90deg, var(--ice), #3d8ab0);
   transform:scaleY(1.15);
 }
 
@@ -923,11 +923,11 @@ select.ctrl{
   margin:0;
   padding:16px 18px;
   border-radius:14px;
-  border:2px solid rgba(196,92,38,.45);
+  border:2px solid rgba(42,111,145,.4);
   background:
-    linear-gradient(135deg, rgba(196,92,38,.16), rgba(47,111,143,.08)),
+    linear-gradient(135deg, rgba(42,111,145,.14), rgba(185,208,224,.25)),
     #fff;
-  box-shadow:0 12px 28px -18px rgba(196,92,38,.45);
+  box-shadow:0 12px 28px -18px rgba(42,111,145,.4);
   text-align:center;
 }
 .pay-cash-banner strong{
@@ -936,7 +936,7 @@ select.ctrl{
   font-size:clamp(15px, 3.8vw, 17px);
   font-weight:800;
   letter-spacing:-.01em;
-  color:var(--copper);
+  color:var(--ice);
   margin-bottom:6px;
 }
 .pay-cash-banner p{
@@ -1061,7 +1061,7 @@ select.ctrl{
   font-weight:800;
   letter-spacing:.18em;
   text-transform:uppercase;
-  color:var(--copper);
+  color:var(--ice);
 }
 #pixPayTools{ margin-top:4px; }
 .pay-copia{ font-size:11px; font-family:ui-monospace, monospace; resize:vertical; }
@@ -1099,16 +1099,20 @@ select.ctrl{
   font-size:13px;
   font-weight:800;
   text-decoration:none;
-  background:var(--copper);
+  background:linear-gradient(135deg, #3d8ab0, var(--ice));
   color:#fff;
-  box-shadow:0 8px 20px -10px rgba(166,84,42,.55);
+  box-shadow:0 8px 20px -10px rgba(42,111,145,.55);
 }
 .pay-cta-bar .pay-cta:hover{ filter:brightness(1.05); text-decoration:none; color:#fff; }
 .pay-cta-bar .pay-cta-ghost{
-  background:transparent;
-  color:var(--ink);
-  border:1.5px solid var(--mist);
+  background:rgba(255,255,255,.88);
+  color:var(--ice);
+  border:1.5px solid rgba(42,111,145,.35);
   box-shadow:none;
+}
+.pay-cta-bar .pay-cta-ghost:hover{
+  background:#fff;
+  border-color:var(--ice);
 }
 .board-pay-note{
   margin:14px 0 0;
