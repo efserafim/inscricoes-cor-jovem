@@ -1076,6 +1076,29 @@ select.ctrl{
   color:var(--ice);
 }
 #pixPayTools{ margin-top:4px; }
+.pay-qr-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  margin:0 0 16px;
+  padding:16px 14px;
+  border-radius:14px;
+  border:1px solid rgba(212,221,229,.95);
+  background:
+    linear-gradient(180deg, rgba(42,111,145,.06), transparent 55%),
+    #fff;
+}
+.pay-qr-wrap canvas{
+  display:block;
+  width:min(220px, 70vw);
+  height:auto;
+  border-radius:8px;
+}
+.pay-qr-wrap .pay-hint{
+  margin:0;
+  text-align:center;
+}
 .pay-copia{ font-size:11px; font-family:ui-monospace, monospace; resize:vertical; }
 .pay-upload{ margin-top:16px; padding-top:14px; border-top:1px solid var(--mist); }
 .pay-upload .field{ margin-bottom:10px; }

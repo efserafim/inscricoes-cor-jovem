@@ -38,7 +38,11 @@
     return 'Não foi possível consultar. Tente de novo.';
   }
 
-  async function renderQr(){ /* QR removido das páginas públicas */ }
+  async function renderQr(payload){
+    const canvas = document.getElementById('pixQr');
+    if(!canvas || !payload) return;
+    await window.COR_PIX.drawQr(canvas, payload, 220);
+  }
 
   function fillResult(data) {
     const p = data.pagamento;
@@ -66,6 +70,7 @@
       txid: ('TX' + (p.protocolo || 'COR')).slice(0, 25)
     });
     document.getElementById('pixCopia').value = payload;
+    renderQr(payload);
 
     const confirmed = p.status === 'confirmado';
     const payTools = document.getElementById('pixPayTools');
