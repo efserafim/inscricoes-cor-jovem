@@ -1490,7 +1490,7 @@ html[data-theme="dark"] .pix-seg.active{
   gap:8px;
   margin-bottom:12px;
 }
-@media(max-width:720px){
+@media(max-width:900px){
   .pix-totals{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
 }
 .pix-stat{
@@ -1512,27 +1512,30 @@ html[data-theme="dark"] .pix-seg.active{
 }
 .pix-stat .v{
   font-family:'Outfit',sans-serif;
-  font-size:18px;
+  font-size:15px;
   font-weight:800;
   letter-spacing:-.02em;
   line-height:1.15;
   color:var(--ink);
+  word-break:break-word;
 }
 .pix-stat-warn .v{ color:var(--espera); }
 .pix-stat-money{
   background:rgba(42,143,82,.1);
   border-color:rgba(42,143,82,.28);
 }
-.pix-stat-money .v{ color:var(--ok); font-size:15px; }
-.pix-filters{
+.pix-stat-money .v{ color:var(--ok); }
+.pix-finance-filters{
   display:flex;
   flex-wrap:wrap;
   gap:8px;
   margin-bottom:12px;
   align-items:center;
 }
-.pix-filters select{
-  min-width:160px;
+.pix-finance-filters input[type="search"],
+.pix-finance-filters input[type="date"],
+.pix-finance-filters select{
+  min-width:0;
   padding:8px 11px;
   border-radius:10px;
   border:1.5px solid var(--mist);
@@ -1541,6 +1544,19 @@ html[data-theme="dark"] .pix-seg.active{
   font:inherit;
   font-size:13px;
 }
+.pix-finance-filters input[type="search"]{ flex:1 1 180px; }
+.pix-finance-filters select{ flex:0 1 150px; }
+.pix-date-field{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--slate);
+}
+.pix-date-field input{ min-width:132px; }
 .pix-table-wrap{
   border-radius:12px;
   border:1px solid var(--mist);

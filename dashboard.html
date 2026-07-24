@@ -23,7 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" href="image/logos/geracao-eucaristica.png" type="image/png">
 <link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
-<link rel="stylesheet" href="css/dash.css?v=20260724-cash">
+<link rel="stylesheet" href="css/dash.css?v=20260724-fin">
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
 
 </head>
@@ -385,7 +385,8 @@
           </div>
         </header>
         <div class="pix-totals" id="pixTotals"></div>
-        <div class="filters pix-filters">
+        <div class="pix-finance-filters" id="pixFinanceFilters">
+          <input type="search" id="pixFilterSearch" placeholder="Buscar nome, protocolo, telefone…">
           <select id="pixFilterStatus">
             <option value="">Todos os status</option>
             <option value="aguardando_pagamento">Aguardando</option>
@@ -394,7 +395,33 @@
             <option value="rejeitado">Rejeitado</option>
             <option value="valor_confere">Valor confere</option>
           </select>
+          <select id="pixFilterForma">
+            <option value="">Forma: todas</option>
+            <option value="pix">PIX</option>
+            <option value="dinheiro">Dinheiro</option>
+            <option value="__none__">Sem forma</option>
+          </select>
+          <select id="pixFilterPessoa">
+            <option value="">Pessoa: todas</option>
+            <option value="cursista">Cursista</option>
+            <option value="servo">Servo</option>
+          </select>
+          <label class="pix-date-field">
+            <span>De</span>
+            <input type="date" id="pixFilterFrom">
+          </label>
+          <label class="pix-date-field">
+            <span>Até</span>
+            <input type="date" id="pixFilterTo">
+          </label>
+          <select id="pixFilterDateField">
+            <option value="confirmado_em">Data confirmação</option>
+            <option value="enviado_em">Data envio</option>
+            <option value="created_at">Data cadastro</option>
+          </select>
           <button type="button" class="btn btn-ghost btn-sm" id="pixRefreshBtn">Atualizar</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="pixClearFiltersBtn">Limpar filtros</button>
+          <button type="button" class="btn btn-primary btn-sm" id="pixPdfBtn">Baixar PDF financeiro</button>
         </div>
         <div class="table-wrap pix-table-wrap">
           <table>
@@ -403,6 +430,7 @@
                 <th>Status</th>
                 <th>Nome</th>
                 <th>Protocolo</th>
+                <th>Forma</th>
                 <th>Esperado</th>
                 <th>Informado</th>
                 <th>Ações</th>
@@ -413,7 +441,7 @@
         </div>
         <div class="empty pix-empty" id="pixEmpty" hidden>
           <span class="pix-empty-mark" aria-hidden="true">PIX</span>
-          Nenhum pagamento nesta fila.
+          Nenhum pagamento neste filtro.
         </div>
       </div>
     </div>
