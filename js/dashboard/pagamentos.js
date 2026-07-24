@@ -224,12 +224,17 @@
         '<td data-label="Forma">'+esc(formaLabel(r.forma_pagamento))+'</td>' +
         '<td data-label="Esperado">'+esc(moneyLabel(r.valor_esperado))+'</td>' +
         '<td data-label="Informado">'+esc(r.valor_informado != null ? moneyLabel(r.valor_informado) : '—')+'</td>' +
-        '<td data-label="Ações" class="pix-actions">' +
-          (r.comprovante_url ? '<a class="btn btn-ghost btn-sm" href="'+esc(r.comprovante_url)+'" target="_blank" rel="noopener">Comp.</a>' : '') +
-          (canAct ? '<button type="button" class="btn btn-primary btn-sm" data-act="confirm">Confirmar</button>' : '') +
-          (canAct ? '<button type="button" class="btn btn-ghost btn-sm" data-act="cash">Dinheiro</button>' : '') +
-          (canAct ? '<button type="button" class="btn btn-danger btn-sm" data-act="reject">Rejeitar</button>' : '') +
-          '<button type="button" class="btn btn-danger btn-sm" data-act="delete" title="Remover este pagamento da fila">Excluir</button>' +
+        '<td data-label="Ações">' +
+          '<details class="pix-menu">' +
+            '<summary>Ações</summary>' +
+            '<div class="pix-menu-panel">' +
+              (r.comprovante_url ? '<a href="'+esc(r.comprovante_url)+'" target="_blank" rel="noopener">Ver comprovante</a>' : '') +
+              (canAct ? '<button type="button" data-act="confirm">Confirmar PIX</button>' : '') +
+              (canAct ? '<button type="button" data-act="cash">Pagamento em dinheiro</button>' : '') +
+              (canAct ? '<button type="button" data-act="reject" class="is-warn">Rejeitar</button>' : '') +
+              '<button type="button" data-act="delete" class="is-danger">Excluir</button>' +
+            '</div>' +
+          '</details>' +
         '</td>' +
       '</tr>';
     }).join('');
@@ -593,10 +598,19 @@
       });
     });
     document.getElementById('pixTbody').addEventListener('click', (e)=>{
+      const summary = e.target.closest('.pix-menu > summary');
+      if(summary){
+        document.querySelectorAll('#pixTbody .pix-menu[open]').forEach(d=>{
+          if(d !== summary.parentElement) d.removeAttribute('open');
+        });
+        return;
+      }
       const btn = e.target.closest('[data-act]');
       if(!btn) return;
       const tr = btn.closest('tr');
       if(!tr) return;
+      const menu = btn.closest('.pix-menu');
+      if(menu) menu.removeAttribute('open');
       actPixRow(tr.getAttribute('data-id'), btn.getAttribute('data-act'));
     });
   }
