@@ -97,10 +97,10 @@
     const list = pixQueue === 'camisas' ? pixCamisasRows : pixContribRows;
     const t = summarize(list);
     document.getElementById('pixTotals').innerHTML =
-      '<span class="chip">Confirmados: <b>'+t.confirmado+'</b></span>' +
-      '<span class="chip">Pendentes: <b>'+t.pendente+'</b></span>' +
-      '<span class="chip">Divergentes: <b>'+t.divergente+'</b></span>' +
-      '<span class="chip">Arrecadado: <b>'+esc(moneyLabel(t.arrecadado))+'</b></span>';
+      '<div class="pix-stat"><span class="k">Confirmados</span><span class="v">'+t.confirmado+'</span></div>' +
+      '<div class="pix-stat"><span class="k">Pendentes</span><span class="v">'+t.pendente+'</span></div>' +
+      '<div class="pix-stat pix-stat-warn"><span class="k">Divergentes</span><span class="v">'+t.divergente+'</span></div>' +
+      '<div class="pix-stat pix-stat-money"><span class="k">Arrecadado</span><span class="v">'+esc(moneyLabel(t.arrecadado))+'</span></div>';
   }
 
   function renderPixTable(){

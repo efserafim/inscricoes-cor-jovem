@@ -23,7 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" href="image/logos/geracao-eucaristica.png" type="image/png">
 <link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
-<link rel="stylesheet" href="css/dash.css?v=20260724-pix">
+<link rel="stylesheet" href="css/dash.css?v=20260724-pix-ui">
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 
 </head>
@@ -268,72 +268,106 @@
   <div class="view" id="viewPix">
     <div class="pix-layout">
       <div class="panel pix-config-panel">
-        <h3>Configuração PIX</h3>
-        <p class="muted pix-help">Chave compartilhada. Libere camisa e contribuição separadamente.</p>
+        <header class="pix-panel-head">
+          <div>
+            <p class="pix-eyebrow">Tesouraria</p>
+            <h3>Configuração PIX</h3>
+            <p class="muted pix-help">Uma chave para tudo. Libere camisa e contribuição quando quiser.</p>
+          </div>
+        </header>
         <form id="pixConfigForm" class="pix-config-form">
-          <div class="row2">
+          <section class="pix-section">
+            <h4 class="pix-section-title">Recebedor</h4>
+            <div class="row2">
+              <div class="field-mini">
+                <label for="pixTipoChave">Tipo da chave</label>
+                <select id="pixTipoChave" required>
+                  <option value="aleatoria">Aleatória (EVP)</option>
+                  <option value="cpf">CPF</option>
+                  <option value="cnpj">CNPJ</option>
+                  <option value="email">E-mail</option>
+                  <option value="telefone">Telefone</option>
+                </select>
+              </div>
+              <div class="field-mini field-grow">
+                <label for="pixChave">Chave PIX</label>
+                <input type="text" id="pixChave" required placeholder="Chave PIX">
+              </div>
+            </div>
+            <div class="row2">
+              <div class="field-mini">
+                <label for="pixNome">Nome do recebedor</label>
+                <input type="text" id="pixNome" required maxlength="25" placeholder="Até 25 caracteres">
+              </div>
+              <div class="field-mini">
+                <label for="pixCidade">Cidade</label>
+                <input type="text" id="pixCidade" required maxlength="15" placeholder="Até 15 caracteres">
+              </div>
+            </div>
+          </section>
+
+          <section class="pix-section">
+            <h4 class="pix-section-title">Valores</h4>
+            <div class="row2">
+              <div class="field-mini">
+                <label for="pixValorCamisa">Valor camisa (R$)</label>
+                <input type="text" id="pixValorCamisa" inputmode="decimal" placeholder="0,00">
+              </div>
+              <div class="field-mini">
+                <label for="pixValorContrib">Contribuição servo (R$)</label>
+                <input type="text" id="pixValorContrib" inputmode="decimal" placeholder="0,00">
+              </div>
+            </div>
             <div class="field-mini">
-              <label for="pixTipoChave">Tipo da chave</label>
-              <select id="pixTipoChave" required>
-                <option value="aleatoria">Aleatória (EVP)</option>
-                <option value="cpf">CPF</option>
-                <option value="cnpj">CNPJ</option>
-                <option value="email">E-mail</option>
-                <option value="telefone">Telefone</option>
-              </select>
+              <label for="pixMensagem">Mensagem pública (opcional)</label>
+              <input type="text" id="pixMensagem" maxlength="160" placeholder="Ex.: Envie o comprovante após o PIX">
             </div>
-            <div class="field-mini" style="flex:2">
-              <label for="pixChave">Chave PIX</label>
-              <input type="text" id="pixChave" required placeholder="Chave PIX">
+          </section>
+
+          <section class="pix-section pix-section-toggles">
+            <h4 class="pix-section-title">Liberação</h4>
+            <div class="pix-toggles">
+              <label class="chk-line" for="pixLibCamisa">
+                <input type="checkbox" id="pixLibCamisa">
+                <span>
+                  <strong>Camisas</strong>
+                  <em>Liberar página pública de pagamento</em>
+                </span>
+              </label>
+              <label class="chk-line" for="pixLibContrib">
+                <input type="checkbox" id="pixLibContrib">
+                <span>
+                  <strong>Contribuição</strong>
+                  <em>Liberar taxa dos servos</em>
+                </span>
+              </label>
             </div>
-          </div>
-          <div class="row2">
-            <div class="field-mini">
-              <label for="pixNome">Nome do recebedor</label>
-              <input type="text" id="pixNome" required maxlength="25" placeholder="Até 25 caracteres">
-            </div>
-            <div class="field-mini">
-              <label for="pixCidade">Cidade</label>
-              <input type="text" id="pixCidade" required maxlength="15" placeholder="Até 15 caracteres">
-            </div>
-          </div>
-          <div class="row2">
-            <div class="field-mini">
-              <label for="pixValorCamisa">Valor camisa (R$)</label>
-              <input type="text" id="pixValorCamisa" inputmode="decimal" placeholder="0,00">
-            </div>
-            <div class="field-mini">
-              <label for="pixValorContrib">Valor contribuição servo (R$)</label>
-              <input type="text" id="pixValorContrib" inputmode="decimal" placeholder="0,00">
-            </div>
-          </div>
-          <div class="field-mini">
-            <label for="pixMensagem">Mensagem pública (opcional)</label>
-            <input type="text" id="pixMensagem" maxlength="160" placeholder="Ex.: Envie o comprovante após o PIX">
-          </div>
-          <div class="pix-toggles">
-            <label class="chk-line"><input type="checkbox" id="pixLibCamisa"> Liberar pagamentos de camisa</label>
-            <label class="chk-line"><input type="checkbox" id="pixLibContrib"> Liberar taxa de contribuição</label>
-          </div>
+          </section>
+
           <div class="pix-config-actions">
             <button type="submit" class="btn btn-primary" id="pixSaveBtn">Salvar configuração</button>
             <span class="muted" id="pixConfigStatus"></span>
           </div>
         </form>
         <div class="pix-preview" id="pixPreview" hidden>
-          <p class="muted">Prévia QR (camisa)</p>
-          <canvas id="pixPreviewCanvas" width="160" height="160"></canvas>
+          <p class="pix-preview-label">Prévia do QR · camisa</p>
+          <div class="pix-preview-frame">
+            <canvas id="pixPreviewCanvas" width="160" height="160"></canvas>
+          </div>
         </div>
       </div>
 
       <div class="panel pix-queue-panel">
-        <div class="pix-queue-head">
-          <h3>Fila de pagamentos</h3>
-          <div class="pix-queue-tabs" role="tablist">
-            <button type="button" class="btn btn-ghost btn-sm active" data-pix-queue="camisas" id="pixQCamisas">Camisas</button>
-            <button type="button" class="btn btn-ghost btn-sm" data-pix-queue="contribuicao" id="pixQContrib">Contribuição</button>
+        <header class="pix-panel-head pix-queue-head">
+          <div>
+            <p class="pix-eyebrow">Fila</p>
+            <h3>Pagamentos</h3>
           </div>
-        </div>
+          <div class="pix-queue-tabs" role="tablist">
+            <button type="button" class="pix-seg active" data-pix-queue="camisas" id="pixQCamisas">Camisas</button>
+            <button type="button" class="pix-seg" data-pix-queue="contribuicao" id="pixQContrib">Contribuição</button>
+          </div>
+        </header>
         <div class="pix-totals" id="pixTotals"></div>
         <div class="filters pix-filters">
           <select id="pixFilterStatus">
@@ -346,7 +380,7 @@
           </select>
           <button type="button" class="btn btn-ghost btn-sm" id="pixRefreshBtn">Atualizar</button>
         </div>
-        <div class="table-wrap">
+        <div class="table-wrap pix-table-wrap">
           <table>
             <thead>
               <tr>
@@ -361,7 +395,10 @@
             <tbody id="pixTbody"></tbody>
           </table>
         </div>
-        <div class="empty" id="pixEmpty" hidden>Nenhum pagamento nesta fila.</div>
+        <div class="empty pix-empty" id="pixEmpty" hidden>
+          <span class="pix-empty-mark" aria-hidden="true">PIX</span>
+          Nenhum pagamento nesta fila.
+        </div>
       </div>
     </div>
   </div>
