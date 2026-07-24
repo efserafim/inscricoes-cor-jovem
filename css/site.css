@@ -919,6 +919,43 @@ select.ctrl{
   flex-direction:column;
   gap:14px;
 }
+.pay-cash-banner{
+  margin:0;
+  padding:16px 18px;
+  border-radius:14px;
+  border:2px solid rgba(196,92,38,.45);
+  background:
+    linear-gradient(135deg, rgba(196,92,38,.16), rgba(47,111,143,.08)),
+    #fff;
+  box-shadow:0 12px 28px -18px rgba(196,92,38,.45);
+  text-align:center;
+}
+.pay-cash-banner strong{
+  display:block;
+  font-family:'Outfit',sans-serif;
+  font-size:clamp(15px, 3.8vw, 17px);
+  font-weight:800;
+  letter-spacing:-.01em;
+  color:var(--copper);
+  margin-bottom:6px;
+}
+.pay-cash-banner p{
+  margin:0 0 10px;
+  font-size:14px;
+  font-weight:600;
+  line-height:1.45;
+  color:var(--ink);
+}
+.pay-cash-banner a{
+  display:inline-flex;
+  font-size:12.5px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--ice);
+  text-decoration:none;
+}
+.pay-cash-banner a:hover{ text-decoration:underline; }
 .pay-card{
   background:rgba(255,255,255,.92);
   border:1px solid rgba(212,221,229,.9);
