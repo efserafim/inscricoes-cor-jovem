@@ -130,7 +130,7 @@ html{
 }
 .hero-logo:hover{ transform: translateY(-2px) scale(1.03); }
 .hero-logo-pascom{
-  width: clamp(52px, 10vw, 68px);
+  width: clamp(64px, 12vw, 84px);
 }
 .hero-logo-geracao{
   width: clamp(58px, 11vw, 76px);

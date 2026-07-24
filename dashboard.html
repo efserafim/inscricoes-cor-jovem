@@ -23,7 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" href="image/logos/geracao-eucaristica.png" type="image/png">
 <link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
-<link rel="stylesheet" href="css/dash.css?v=20260723-lindo">
+<link rel="stylesheet" href="css/dash.css?v=20260723-drawer">
 
 </head>
 <body>
@@ -322,15 +322,17 @@
 <div class="overlay" id="overlay"></div>
 <aside class="drawer" id="drawer" aria-hidden="true">
   <div class="drawer-head">
-    <div>
+    <div class="drawer-head-main">
       <h2 id="dNome">—</h2>
       <div class="meta" id="dMeta"></div>
-      <a class="wa" id="dWa" href="#" target="_blank" rel="noopener" hidden>Abrir WhatsApp</a>
     </div>
-    <button class="icon-btn" type="button" id="closeDrawer" aria-label="Fechar">×</button>
+    <div class="drawer-head-actions">
+      <a class="wa" id="dWa" href="#" target="_blank" rel="noopener" hidden>WhatsApp</a>
+      <button class="icon-btn" type="button" id="closeDrawer" aria-label="Fechar">×</button>
+    </div>
   </div>
   <div class="drawer-tools">
-    <div class="tool-row">
+    <div class="tool-row tool-row-selects">
       <select id="dStatus" aria-label="Status">
         <option value="nova">Nova</option>
         <option value="confirmada">Confirmado(a)</option>
@@ -338,17 +340,19 @@
         <option value="cancelada">Cancelada</option>
       </select>
       <select id="dDecuria" aria-label="Decúria">
-        <option value="">Sem Decúria</option>
+        <option value="">Sem Décúria</option>
       </select>
       <select id="dEquipe" aria-label="Equipe do servo" hidden>
         <option value="">Sem equipe</option>
       </select>
+    </div>
+    <div class="tool-row tool-row-actions">
       <button class="btn btn-ghost btn-sm" type="button" id="editBtn">Editar</button>
       <button class="btn btn-ghost btn-sm" type="button" id="printBtn">Imprimir</button>
       <button class="btn btn-danger btn-sm" type="button" id="deleteBtn">Excluir</button>
       <button class="btn btn-primary btn-sm" type="button" id="saveNotesBtn">Salvar notas</button>
     </div>
-    <textarea id="dNotes" placeholder="Observações da equipe (visível só aqui)…"></textarea>
+    <textarea id="dNotes" class="drawer-notes" rows="2" placeholder="Observações da equipe…"></textarea>
   </div>
   <div class="drawer-body" id="drawerBody"></div>
 </aside>
