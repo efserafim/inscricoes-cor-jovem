@@ -45,12 +45,9 @@
 
   async function renderQr(payload) {
     const canvas = document.getElementById('qrCanvas');
-    if (!canvas || typeof QRCode === 'undefined') return;
-    await QRCode.toCanvas(canvas, payload, {
-      width: 200,
-      margin: 2,
-      color: { dark: '#152029', light: '#ffffff' }
-    });
+    const wrap = document.querySelector('.pay-qr-wrap');
+    const ok = await window.COR_PIX.drawQr(canvas, payload, 200);
+    if (wrap) wrap.classList.toggle('is-empty', !ok);
   }
 
   function fillResult(data) {

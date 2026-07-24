@@ -54,7 +54,7 @@
   async function refreshPixPreview(){
     const preview = document.getElementById('pixPreview');
     const canvas = document.getElementById('pixPreviewCanvas');
-    if(!window.COR_PIX || typeof QRCode === 'undefined') return;
+    if(!window.COR_PIX) return;
     const chave = document.getElementById('pixChave').value.trim();
     const nome = document.getElementById('pixNome').value.trim();
     const cidade = document.getElementById('pixCidade').value.trim();
@@ -73,7 +73,7 @@
       txid: 'PREVIEW'
     });
     preview.hidden = false;
-    await QRCode.toCanvas(canvas, payload, { width: 160, margin: 1 });
+    await window.COR_PIX.drawQr(canvas, payload, 160);
   }
 
   function moneyLabel(n){

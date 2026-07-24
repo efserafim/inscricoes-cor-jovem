@@ -72,6 +72,31 @@ window.COR_PIX = {
     return payload;
   },
 
+  /**
+   * Desenha QR no canvas. Retorna true se ok.
+   */
+  async drawQr(canvas, text, size) {
+    if (!canvas || !text) return false;
+    const w = size || 200;
+    const api = typeof QRCode !== 'undefined' ? QRCode : (typeof qrcode !== 'undefined' ? qrcode : null);
+    if (!api || typeof api.toCanvas !== 'function') {
+      console.warn('QRCode library missing');
+      return false;
+    }
+    try {
+      await api.toCanvas(canvas, String(text), {
+        width: w,
+        margin: 2,
+        errorCorrectionLevel: 'M',
+        color: { dark: '#152029', light: '#ffffff' }
+      });
+      return true;
+    } catch (err) {
+      console.error('QR render failed', err);
+      return false;
+    }
+  },
+
   formatBRL(n) {
     const v = Number(n);
     if (!isFinite(v)) return '—';
