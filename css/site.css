@@ -1001,11 +1001,12 @@ select.ctrl{
 .pay-blessing blockquote p{
   margin:0;
   font-family:'Outfit',sans-serif;
-  font-size:clamp(15px, 3.6vw, 17px);
-  font-weight:700;
-  line-height:1.45;
+  font-size:clamp(14px, 3.4vw, 16px);
+  font-weight:650;
+  line-height:1.5;
   letter-spacing:-.01em;
   color:var(--ink);
+  text-wrap:pretty;
 }
 .pay-blessing cite{
   display:block;
