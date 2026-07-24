@@ -636,7 +636,7 @@ window.COR_API = {
     return res.json();
   },
 
-  async function updatePagamentoContribuicao(id, patch) {
+  async updatePagamentoContribuicao(id, patch) {
     const c = window.COR_CONFIG;
     const res = await fetch(
       c.supabaseUrl + '/rest/v1/pagamentos_contribuicao?id=eq.' + encodeURIComponent(id),
