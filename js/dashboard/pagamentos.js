@@ -225,8 +225,8 @@
         '<td data-label="Esperado">'+esc(moneyLabel(r.valor_esperado))+'</td>' +
         '<td data-label="Informado">'+esc(r.valor_informado != null ? moneyLabel(r.valor_informado) : '—')+'</td>' +
         '<td data-label="Ações" class="pix-actions">' +
-          (r.comprovante_url ? '<a class="btn btn-ghost btn-sm" href="'+esc(r.comprovante_url)+'" target="_blank" rel="noopener">Comprovante</a>' : '') +
-          (canAct ? '<button type="button" class="btn btn-primary btn-sm" data-act="confirm">Confirmar PIX</button>' : '') +
+          (r.comprovante_url ? '<a class="btn btn-ghost btn-sm" href="'+esc(r.comprovante_url)+'" target="_blank" rel="noopener">Comp.</a>' : '') +
+          (canAct ? '<button type="button" class="btn btn-primary btn-sm" data-act="confirm">Confirmar</button>' : '') +
           (canAct ? '<button type="button" class="btn btn-ghost btn-sm" data-act="cash">Dinheiro</button>' : '') +
           (canAct ? '<button type="button" class="btn btn-danger btn-sm" data-act="reject">Rejeitar</button>' : '') +
           '<button type="button" class="btn btn-danger btn-sm" data-act="delete" title="Remover este pagamento da fila">Excluir</button>' +
