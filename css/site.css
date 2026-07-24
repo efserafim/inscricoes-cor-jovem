@@ -1048,6 +1048,9 @@ select.ctrl{
   max-width:560px;
   padding:0 16px;
 }
+.pay-cta-bar[hidden]{
+  display:none !important;
+}
 .pay-cta-bar a.hero-cta,
 .pay-cta-bar .pay-cta{
   display:inline-flex;

@@ -30,7 +30,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" href="image/logos/geracao-eucaristica.png" type="image/png">
 <link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
-<link rel="stylesheet" href="css/site.css?v=20260724-pix">
+<link rel="stylesheet" href="css/site.css?v=20260724-cta-hide">
 </head>
 <body>
 
@@ -72,10 +72,7 @@
       <h1 class="brand">XVI C.O.R<em>Jovem</em></h1>
       <p class="hero-lead">Candidate-se a servir no retiro · 12 e 13 de setembro</p>
       <a class="hero-cta" href="#inscricao">Inscrição de servos</a>
-      <div class="pay-cta-bar" id="pixCtaBar" hidden>
-        <a class="pay-cta" href="pagamento-camisa.html">Pagar camisa (PIX)</a>
-        <a class="pay-cta pay-cta-ghost" href="pagamento-contribuicao.html">Taxa de contribuição</a>
-      </div>
+      <div class="pay-cta-bar" id="pixCtaBar" hidden></div>
     </div>
   <span class="motto" aria-hidden="true">Verso l'alto</span>
 </header>
@@ -505,14 +502,17 @@
 
   async function mountPixCta(){
     const bar = document.getElementById('pixCtaBar');
-    if(!bar || !window.COR_API) return;
+    if(!bar) return;
+    bar.hidden = true;
+    bar.innerHTML = '';
+    if(!window.COR_API) return;
     try{
       const pub = await window.COR_API.getPixPublico();
       const links = [];
-      if(pub && pub.liberado){
+      if(pub && pub.liberado === true){
         links.push('<a class="pay-cta" href="pagamento-camisa.html">Pagar camisa (PIX)</a>');
       }
-      if(pub && pub.contribuicoes_liberadas){
+      if(pub && pub.contribuicoes_liberadas === true){
         links.push('<a class="pay-cta pay-cta-ghost" href="pagamento-contribuicao.html">Taxa de contribuição</a>');
       }
       bar.innerHTML = links.join('');
