@@ -111,7 +111,7 @@
       <p>Três passos para se candidatar a servir no XVI C.O.R Jovem. Esta ficha é só para a equipe de serviço — cursistas usam a inscrição própria.</p>
       <aside class="form-notice form-notice--sigilo" role="alert">
         <strong>Sigilo do retiro</strong>
-        <p>Não envie este link (<span class="form-notice-link">corjovem.geucaristica.com.br</span>) para ninguém. O retiro é extremamente sigiloso — a equipe de serviço deve ter a máxima discrição em relação aos cursistas.</p>
+        <p>Não envie este link (<span class="form-notice-link">corjovem.geucaristica.com.br/servos.html</span>) para ninguém. O retiro é extremamente sigiloso a equipe de serviço deve ter a máxima discrição em relação aos cursistas.</p>
       </aside>
     </div>
 
@@ -357,7 +357,7 @@
     try{ localStorage.removeItem(DRAFT_KEY); }catch(_){}
   }
 
-  function goTo(n){
+  function goTo(n, opts){
     if(n < 0 || n >= STEPS.length) return;
     current = n;
     steps.forEach((s,i)=> s.classList.toggle('active', i === current));
@@ -369,6 +369,7 @@
     showError('');
     clearFieldErrors();
     saveDraft();
+    if(opts && opts.scroll === false) return;
     window.scrollTo({ top: document.getElementById('inscricao').offsetTop - 20, behavior: 'smooth' });
   }
 
@@ -502,7 +503,7 @@
   });
 
   restoreDraft();
-  goTo(current);
+  goTo(current, { scroll: false });
 
   async function mountPixCta(){
     const bar = document.getElementById('pixCtaBar');
