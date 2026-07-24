@@ -23,7 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" href="image/logos/geracao-eucaristica.png" type="image/png">
 <link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
-<link rel="stylesheet" href="css/dash.css?v=20260724-pix-simple">
+<link rel="stylesheet" href="css/dash.css?v=20260724-pix-space">
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
 
 </head>
@@ -426,20 +426,22 @@
         </div>
 
         <div class="table-wrap pix-table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Status</th>
-                <th>Nome</th>
-                <th>Protocolo</th>
-                <th>Forma</th>
-                <th>Esperado</th>
-                <th>Informado</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="pixTbody"></tbody>
-          </table>
+          <div class="pix-table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Nome</th>
+                  <th>Protocolo</th>
+                  <th>Forma</th>
+                  <th>Esperado</th>
+                  <th>Informado</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="pixTbody"></tbody>
+            </table>
+          </div>
         </div>
         <div class="empty pix-empty" id="pixEmpty" hidden>
           <span class="pix-empty-mark" aria-hidden="true">PIX</span>

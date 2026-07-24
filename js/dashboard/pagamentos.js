@@ -230,7 +230,7 @@
             '<div class="pix-menu-panel">' +
               (r.comprovante_url ? '<a href="'+esc(r.comprovante_url)+'" target="_blank" rel="noopener">Ver comprovante</a>' : '') +
               (canAct ? '<button type="button" data-act="confirm">Confirmar PIX</button>' : '') +
-              (canAct ? '<button type="button" data-act="cash">Pagamento em dinheiro</button>' : '') +
+              (canAct ? '<button type="button" data-act="cash">Dinheiro</button>' : '') +
               (canAct ? '<button type="button" data-act="reject" class="is-warn">Rejeitar</button>' : '') +
               '<button type="button" data-act="delete" class="is-danger">Excluir</button>' +
             '</div>' +
