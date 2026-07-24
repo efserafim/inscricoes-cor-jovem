@@ -176,14 +176,26 @@
     const list = filteredFinanceRows(pixQueue);
     const t = summarizeFinance(list);
     document.getElementById('pixTotals').innerHTML =
-      '<div class="pix-stat"><span class="k">No filtro</span><span class="v">'+t.total+'</span></div>' +
-      '<div class="pix-stat"><span class="k">Confirmados</span><span class="v">'+t.confirmado+'</span></div>' +
-      '<div class="pix-stat"><span class="k">Pendentes</span><span class="v">'+t.pendente+'</span></div>' +
-      '<div class="pix-stat pix-stat-warn"><span class="k">Divergentes</span><span class="v">'+t.divergente+'</span></div>' +
-      '<div class="pix-stat"><span class="k">PIX</span><span class="v">'+esc(moneyLabel(t.arrecadadoPix))+'</span></div>' +
-      '<div class="pix-stat"><span class="k">Dinheiro</span><span class="v">'+esc(moneyLabel(t.arrecadadoDinheiro))+'</span></div>' +
-      '<div class="pix-stat pix-stat-money"><span class="k">Arrecadado</span><span class="v">'+esc(moneyLabel(t.arrecadado))+'</span></div>' +
-      '<div class="pix-stat"><span class="k">Aberto (esperado)</span><span class="v">'+esc(moneyLabel(t.esperadoAberto))+'</span></div>';
+      '<div class="pix-stat">' +
+        '<span class="k">Confirmados</span>' +
+        '<span class="v">'+t.confirmado+'</span>' +
+        '<span class="s">'+t.total+' no filtro · '+t.divergente+' diverg.</span>' +
+      '</div>' +
+      '<div class="pix-stat">' +
+        '<span class="k">Pendentes</span>' +
+        '<span class="v">'+t.pendente+'</span>' +
+        '<span class="s">Aberto '+esc(moneyLabel(t.esperadoAberto))+'</span>' +
+      '</div>' +
+      '<div class="pix-stat">' +
+        '<span class="k">PIX · Dinheiro</span>' +
+        '<span class="v">'+esc(moneyLabel(t.arrecadadoPix))+'</span>' +
+        '<span class="s">Dinheiro '+esc(moneyLabel(t.arrecadadoDinheiro))+'</span>' +
+      '</div>' +
+      '<div class="pix-stat pix-stat-money">' +
+        '<span class="k">Arrecadado</span>' +
+        '<span class="v">'+esc(moneyLabel(t.arrecadado))+'</span>' +
+        '<span class="s">Confirmados neste filtro</span>' +
+      '</div>';
   }
 
   function renderPixTable(){
@@ -359,7 +371,7 @@
     }finally{
       wrap.remove();
       btn.disabled = false;
-      btn.textContent = 'Baixar PDF financeiro';
+      btn.textContent = 'PDF';
     }
   }
 
