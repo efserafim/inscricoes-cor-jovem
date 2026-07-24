@@ -406,6 +406,15 @@
     }
   }
 
+  function clearPixValores(){
+    document.getElementById('pixValorCamisa').value = '';
+    document.getElementById('pixValorContrib').value = '';
+    document.getElementById('pixMensagem').value = '';
+    document.getElementById('pixConfigStatus').textContent = 'Valores apagados — salve para aplicar.';
+    refreshPixPreview().catch(()=>{});
+    toast('Valores apagados. Clique em Salvar para aplicar.');
+  }
+
   function clearFinanceFilters(){
     document.getElementById('pixFilterSearch').value = '';
     document.getElementById('pixFilterStatus').value = '';
@@ -619,6 +628,7 @@
     });
     document.getElementById('pixRefreshBtn').addEventListener('click', ()=> refreshPixQueues());
     document.getElementById('pixClearFiltersBtn').addEventListener('click', clearFinanceFilters);
+    document.getElementById('pixClearValoresBtn').addEventListener('click', clearPixValores);
     document.getElementById('pixPdfBtn').addEventListener('click', ()=> downloadFinancePdf());
     ['pixFilterSearch','pixFilterStatus','pixFilterForma','pixFilterPessoa','pixFilterFrom','pixFilterTo','pixFilterDateField']
       .forEach(id=>{

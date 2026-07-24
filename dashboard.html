@@ -23,7 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" href="image/logos/geracao-eucaristica.png" type="image/png">
 <link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
-<link rel="stylesheet" href="css/dash.css?v=20260724-extrato">
+<link rel="stylesheet" href="css/dash.css?v=20260724-clear-valores">
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
 
 </head>
@@ -307,7 +307,10 @@
           </section>
 
           <section class="pix-section">
-            <h4 class="pix-section-title">Valores</h4>
+            <div class="pix-section-head">
+              <h4 class="pix-section-title">Valores</h4>
+              <button type="button" class="btn btn-ghost btn-xs" id="pixClearValoresBtn" title="Apagar valores e mensagem">Limpar</button>
+            </div>
             <div class="row2">
               <div class="field-mini">
                 <label for="pixValorCamisa">Valor camisa (R$)</label>
