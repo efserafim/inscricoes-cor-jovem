@@ -406,6 +406,16 @@
     }
   }
 
+  function clearPixRecebedor(){
+    document.getElementById('pixTipoChave').value = 'aleatoria';
+    document.getElementById('pixChave').value = '';
+    document.getElementById('pixNome').value = '';
+    document.getElementById('pixCidade').value = '';
+    document.getElementById('pixConfigStatus').textContent = 'Recebedor apagado — salve para aplicar.';
+    refreshPixPreview().catch(()=>{});
+    toast('Recebedor apagado. Clique em Salvar para aplicar.');
+  }
+
   function clearPixValores(){
     document.getElementById('pixValorCamisa').value = '';
     document.getElementById('pixValorContrib').value = '';
@@ -629,6 +639,7 @@
     document.getElementById('pixRefreshBtn').addEventListener('click', ()=> refreshPixQueues());
     document.getElementById('pixClearFiltersBtn').addEventListener('click', clearFinanceFilters);
     document.getElementById('pixClearValoresBtn').addEventListener('click', clearPixValores);
+    document.getElementById('pixClearRecebedorBtn').addEventListener('click', clearPixRecebedor);
     document.getElementById('pixPdfBtn').addEventListener('click', ()=> downloadFinancePdf());
     ['pixFilterSearch','pixFilterStatus','pixFilterForma','pixFilterPessoa','pixFilterFrom','pixFilterTo','pixFilterDateField']
       .forEach(id=>{
