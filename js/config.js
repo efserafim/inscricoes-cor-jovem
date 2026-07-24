@@ -636,7 +636,7 @@ window.COR_API = {
     return res.json();
   },
 
-  async updatePagamentoContribuicao(id, patch) {
+  async function updatePagamentoContribuicao(id, patch) {
     const c = window.COR_CONFIG;
     const res = await fetch(
       c.supabaseUrl + '/rest/v1/pagamentos_contribuicao?id=eq.' + encodeURIComponent(id),
@@ -646,6 +646,19 @@ window.COR_API = {
         body: JSON.stringify(patch)
       }
     );
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async registrarPagamentoDinheiro(busca, tipo) {
+    const res = await fetch(this.rpcUrl('registrar_pagamento_dinheiro'), {
+      method: 'POST',
+      headers: await this.headers(null, { staff: true }),
+      body: JSON.stringify({
+        p_busca: String(busca || '').trim(),
+        p_tipo: tipo === 'contribuicao' ? 'contribuicao' : 'camisa'
+      })
+    });
     if (!res.ok) throw new Error(await res.text());
     return res.json();
   }

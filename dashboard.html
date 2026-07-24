@@ -23,7 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" href="image/logos/geracao-eucaristica.png" type="image/png">
 <link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
-<link rel="stylesheet" href="css/dash.css?v=20260724-pix-ui">
+<link rel="stylesheet" href="css/dash.css?v=20260724-cash">
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
 
 </head>
@@ -326,19 +326,20 @@
 
           <section class="pix-section pix-section-toggles">
             <h4 class="pix-section-title">Liberação</h4>
+            <p class="muted pix-help" style="margin:0 0 10px">O botão “Pagar camisa” no site só aparece depois de marcar Camisas e salvar. O mesmo vale para a taxa dos servos.</p>
             <div class="pix-toggles">
               <label class="chk-line" for="pixLibCamisa">
                 <input type="checkbox" id="pixLibCamisa">
                 <span>
                   <strong>Camisas</strong>
-                  <em>Liberar página pública de pagamento</em>
+                  <em>Mostrar botão “Pagar camisa (PIX)” no site</em>
                 </span>
               </label>
               <label class="chk-line" for="pixLibContrib">
                 <input type="checkbox" id="pixLibContrib">
                 <span>
                   <strong>Contribuição</strong>
-                  <em>Liberar taxa dos servos</em>
+                  <em>Mostrar botão da taxa na página de servos</em>
                 </span>
               </label>
             </div>
@@ -349,6 +350,21 @@
             <span class="muted" id="pixConfigStatus"></span>
           </div>
         </form>
+
+        <section class="pix-section pix-cash-box">
+          <h4 class="pix-section-title">Pagamento em dinheiro</h4>
+          <p class="muted pix-help" style="margin:0 0 10px">Se a pessoa pagar em espécie, busque pelo telefone ou protocolo e confirme.</p>
+          <div class="pix-cash-row">
+            <input type="text" id="pixCashBusca" placeholder="Telefone ou protocolo" autocomplete="off">
+            <select id="pixCashTipo">
+              <option value="camisa">Camisa</option>
+              <option value="contribuicao">Contribuição</option>
+            </select>
+            <button type="button" class="btn btn-primary" id="pixCashBtn">Confirmar dinheiro</button>
+          </div>
+          <p class="muted" id="pixCashStatus" style="margin:8px 0 0;font-size:12.5px"></p>
+        </section>
+
         <div class="pix-preview" id="pixPreview" hidden>
           <p class="pix-preview-label">Prévia do QR · camisa</p>
           <div class="pix-preview-frame">

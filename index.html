@@ -843,17 +843,23 @@
     if(!bar || !window.COR_API) return;
     try{
       const pub = await window.COR_API.getPixPublico();
-      if(pub && pub.liberado){
-        bar.hidden = false;
-        const closed = document.getElementById('closedPanel');
-        if(closed && !closed.querySelector('.board-pay-note')){
-          const note = document.createElement('p');
-          note.className = 'board-pay-note';
-          note.innerHTML = 'Pediu camisa? <a href="pagamento-camisa.html">Consulte seu protocolo e pague via PIX</a>.';
-          closed.appendChild(note);
+      const show = !!(pub && pub.liberado);
+      bar.hidden = !show;
+      const closed = document.getElementById('closedPanel');
+      const note = closed && closed.querySelector('.board-pay-note');
+      if(show){
+        if(closed && !note){
+          const el = document.createElement('p');
+          el.className = 'board-pay-note';
+          el.innerHTML = 'Pediu camisa? <a href="pagamento-camisa.html">Consulte seu protocolo e pague via PIX</a>.';
+          closed.appendChild(el);
         }
+      }else if(note){
+        note.remove();
       }
-    }catch(_){}
+    }catch(_){
+      bar.hidden = true;
+    }
   }
   mountPixCta();
 

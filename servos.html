@@ -515,11 +515,12 @@
       if(pub && pub.contribuicoes_liberadas){
         links.push('<a class="pay-cta pay-cta-ghost" href="pagamento-contribuicao.html">Taxa de contribuição</a>');
       }
-      if(links.length){
-        bar.innerHTML = links.join('');
-        bar.hidden = false;
-      }
-    }catch(_){}
+      bar.innerHTML = links.join('');
+      bar.hidden = links.length === 0;
+    }catch(_){
+      bar.hidden = true;
+      bar.innerHTML = '';
+    }
   }
   mountPixCta();
 

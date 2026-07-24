@@ -1586,18 +1586,24 @@ html[data-theme="dark"] .pix-seg.active{
   border-radius:12px;
   margin-top:4px;
 }
-.pix-empty-mark{
-  display:block;
-  margin:0 auto 8px;
-  width:42px;
-  height:42px;
-  line-height:42px;
-  border-radius:12px;
-  background:var(--soft2);
-  border:1px solid var(--mist);
-  font-family:'Outfit',sans-serif;
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.08em;
-  color:var(--slate);
+.pix-cash-box{ margin-top:14px; }
+.pix-cash-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
 }
+.pix-cash-row input,
+.pix-cash-row select{
+  flex:1 1 120px;
+  min-width:0;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1.5px solid var(--mist);
+  font:inherit;
+  font-size:13.5px;
+  background:var(--input-bg);
+  color:var(--ink);
+  box-sizing:border-box;
+}
+.pix-cash-row .btn{ flex:0 0 auto; }

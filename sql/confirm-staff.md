@@ -32,7 +32,12 @@ Para liberar a aba **PIX** no painel (camisas + taxa de contribuição):
 ```
 
 3. No **SQL Editor**, rode o arquivo [`pagamentos-pix.sql`](pagamentos-pix.sql) uma vez.
-4. Entre no painel, abra a aba **PIX**, preencha chave/valores e marque as liberações.
+4. Depois rode também [`pagamentos-dinheiro.sql`](pagamentos-dinheiro.sql) (confirmação em dinheiro).
+5. Entre no painel, abra a aba **PIX**, preencha chave/valores e marque as liberações.
+   - **Camisas** liberado → aparece o botão “Pagar camisa (PIX)” no site.
+   - **Contribuição** liberado → aparece o botão da taxa em `servos.html`.
+   - Desmarque e **salve** para o botão sumir.
+6. Para quem pagar em espécie: use **Pagamento em dinheiro** (busca + confirmar) ou o botão **Dinheiro** na fila.
 
 Não versionar e-mails nem senhas neste repositório.
 

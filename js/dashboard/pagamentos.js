@@ -120,16 +120,18 @@
       const extra = pixQueue === 'camisas'
         ? (r.tipo_pessoa === 'servo' ? ' · Servo' : ' · Cursista') + (r.tamanho_camisa ? ' · '+r.tamanho_camisa : '')
         : '';
+      const forma = r.forma_pagamento === 'dinheiro' ? ' · Dinheiro' : (r.forma_pagamento === 'pix' ? ' · PIX' : '');
       const canAct = r.status !== 'confirmado';
       return '<tr data-id="'+esc(r.id)+'">' +
-        '<td data-label="Status"><span class="tag tag-pix" data-st="'+esc(r.status)+'">'+esc(PIX_STATUS_LABEL[r.status]||r.status)+'</span></td>' +
+        '<td data-label="Status"><span class="tag tag-pix" data-st="'+esc(r.status)+'">'+esc(PIX_STATUS_LABEL[r.status]||r.status)+esc(forma)+'</span></td>' +
         '<td data-label="Nome">'+esc(r.nome)+'<div class="muted" style="font-size:11px">'+esc(r.telefone||'')+esc(extra)+'</div></td>' +
         '<td data-label="Protocolo">'+esc(r.protocolo)+'</td>' +
         '<td data-label="Esperado">'+esc(moneyLabel(r.valor_esperado))+'</td>' +
         '<td data-label="Informado">'+esc(r.valor_informado != null ? moneyLabel(r.valor_informado) : '—')+'</td>' +
         '<td data-label="Ações" class="pix-actions">' +
           (r.comprovante_url ? '<a class="btn btn-ghost btn-sm" href="'+esc(r.comprovante_url)+'" target="_blank" rel="noopener">Comprovante</a>' : '') +
-          (canAct ? '<button type="button" class="btn btn-primary btn-sm" data-act="confirm">Confirmar</button>' : '') +
+          (canAct ? '<button type="button" class="btn btn-primary btn-sm" data-act="confirm">Confirmar PIX</button>' : '') +
+          (canAct ? '<button type="button" class="btn btn-ghost btn-sm" data-act="cash">Dinheiro</button>' : '') +
           (canAct ? '<button type="button" class="btn btn-danger btn-sm" data-act="reject">Rejeitar</button>' : '') +
         '</td>' +
       '</tr>';
@@ -210,11 +212,35 @@
   }
 
   async function actPixRow(id, act){
+    if(act === 'cash'){
+      const row = (pixQueue === 'camisas' ? pixCamisasRows : pixContribRows).find(r => r.id === id);
+      if(!row) return;
+      if(!confirm('Confirmar pagamento em DINHEIRO de "'+(row.nome||'')+'"?')) return;
+      const valor = row.valor_esperado != null ? Number(row.valor_esperado) : null;
+      const patch = {
+        status: 'confirmado',
+        forma_pagamento: 'dinheiro',
+        valor_informado: valor,
+        confirmado_em: new Date().toISOString(),
+        nota_tesoureiro: 'Confirmado em dinheiro pela tesouraria'
+      };
+      try{
+        if(pixQueue === 'camisas') await window.COR_API.updatePagamentoCamisa(id, patch);
+        else await window.COR_API.updatePagamentoContribuicao(id, patch);
+        toast('Pagamento em dinheiro confirmado.');
+        await refreshPixQueues();
+      }catch(err){
+        console.error(err);
+        toast('Não foi possível confirmar em dinheiro. Rode o SQL pagamentos-dinheiro.sql.');
+      }
+      return;
+    }
     const nota = act === 'reject'
       ? (prompt('Motivo da rejeição (opcional):') || 'Rejeitado pela tesouraria')
       : (prompt('Nota (opcional):') || null);
     const patch = {
       status: act === 'confirm' ? 'confirmado' : 'rejeitado',
+      forma_pagamento: act === 'confirm' ? 'pix' : null,
       confirmado_em: new Date().toISOString(),
       nota_tesoureiro: nota
     };
@@ -226,6 +252,40 @@
     }catch(err){
       console.error(err);
       toast('Não foi possível atualizar o pagamento.');
+    }
+  }
+
+  async function submitCashRegister(){
+    const busca = document.getElementById('pixCashBusca').value.trim();
+    const tipo = document.getElementById('pixCashTipo').value;
+    const st = document.getElementById('pixCashStatus');
+    const btn = document.getElementById('pixCashBtn');
+    if(busca.length < 4){
+      st.textContent = 'Informe telefone ou protocolo.';
+      return;
+    }
+    if(!confirm('Confirmar pagamento em DINHEIRO para esta busca ('+(tipo === 'contribuicao' ? 'contribuição' : 'camisa')+')?')) return;
+    btn.disabled = true;
+    st.textContent = 'Registrando…';
+    try{
+      const data = await window.COR_API.registrarPagamentoDinheiro(busca, tipo);
+      if(!data || !data.ok){
+        const e = data && data.erro;
+        st.textContent = e === 'NAO_ENCONTRADO' ? 'Não encontrado (camisa exige pedido de camisa).'
+          : e === 'SEM_VALOR' ? 'Defina o valor na configuração e salve.'
+          : e === 'NAO_AUTORIZADO' ? 'Só o tesoureiro pode confirmar dinheiro.'
+          : 'Não foi possível registrar.';
+        return;
+      }
+      st.textContent = 'OK: '+(data.nome||'')+' · '+(window.COR_PIX.formatBRL(data.valor));
+      document.getElementById('pixCashBusca').value = '';
+      toast('Dinheiro confirmado.');
+      await refreshPixQueues();
+    }catch(err){
+      console.error(err);
+      st.textContent = 'Erro. Rode o SQL sql/pagamentos-dinheiro.sql no Supabase.';
+    }finally{
+      btn.disabled = false;
     }
   }
 
@@ -244,6 +304,10 @@
     });
     document.getElementById('pixRefreshBtn').addEventListener('click', ()=> refreshPixQueues());
     document.getElementById('pixFilterStatus').addEventListener('change', renderPixTable);
+    document.getElementById('pixCashBtn').addEventListener('click', submitCashRegister);
+    document.getElementById('pixCashBusca').addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){ e.preventDefault(); submitCashRegister(); }
+    });
     document.querySelectorAll('[data-pix-queue]').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         document.querySelectorAll('[data-pix-queue]').forEach(b=> b.classList.remove('active'));
