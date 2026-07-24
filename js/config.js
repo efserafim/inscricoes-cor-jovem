@@ -650,6 +650,32 @@ window.COR_API = {
     return res.json();
   },
 
+  async removePagamentoCamisa(id) {
+    const c = window.COR_CONFIG;
+    const res = await fetch(
+      c.supabaseUrl + '/rest/v1/pagamentos_camisas?id=eq.' + encodeURIComponent(id),
+      {
+        method: 'DELETE',
+        headers: await this.headers({ Prefer: 'return=minimal' }, { staff: true })
+      }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    return true;
+  },
+
+  async removePagamentoContribuicao(id) {
+    const c = window.COR_CONFIG;
+    const res = await fetch(
+      c.supabaseUrl + '/rest/v1/pagamentos_contribuicao?id=eq.' + encodeURIComponent(id),
+      {
+        method: 'DELETE',
+        headers: await this.headers({ Prefer: 'return=minimal' }, { staff: true })
+      }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    return true;
+  },
+
   async registrarPagamentoDinheiro(busca, tipo) {
     const res = await fetch(this.rpcUrl('registrar_pagamento_dinheiro'), {
       method: 'POST',
