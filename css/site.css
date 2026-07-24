@@ -525,6 +525,18 @@ html{
   color:var(--ink);
   font-weight:600;
 }
+.form-notice--sigilo{
+  border-color:rgba(42,111,145,.4);
+  background:rgba(42,111,145,.1);
+  max-width:52ch;
+}
+.form-notice--sigilo strong{
+  color:var(--ice);
+}
+.form-notice-link{
+  font-weight:800;
+  word-break:break-all;
+}
 
 .progress{display:flex;gap:6px;padding:22px 28px 0}
 .progress span{
