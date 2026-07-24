@@ -7,6 +7,8 @@ Site estático (HTML/CSS/JS) + Supabase. Sem bundler e sem Node no deploy (GitHu
 ```
 ├── index.html                 # Inscrição de cursistas
 ├── servos.html                # Inscrição de servos
+├── pagamento-camisa.html      # PIX da camisa (público)
+├── pagamento-contribuicao.html # Taxa dos servos (público)
 ├── dashboard.html             # Painel da equipe (só HTML + <script src>)
 ├── inscricao-cor-jovem.html   # Redirect legado → index.html (manter na raiz)
 ├── README.md
@@ -16,6 +18,9 @@ Site estático (HTML/CSS/JS) + Supabase. Sem bundler e sem Node no deploy (GitHu
 │   └── dash.css               # Painel
 ├── js/
 │   ├── config.js              # Supabase, COR_API, COR_AUTH
+│   ├── pix-brcode.js          # Payload PIX (BR Code)
+│   ├── pagamento-camisa.js
+│   ├── pagamento-contribuicao.js
 │   ├── site-common.js         # Utilitários dos formulários públicos
 │   └── dashboard/             # Módulos do painel (scripts clássicos, em ordem)
 │       ├── state.js
@@ -27,6 +32,7 @@ Site estático (HTML/CSS/JS) + Supabase. Sem bundler e sem Node no deploy (GitHu
 │       ├── servos.js
 │       ├── decurias.js
 │       ├── camisas.js
+│       ├── pagamentos.js      # Aba PIX (tesoureiro)
 │       ├── ficha-print.js
 │       ├── export.js
 │       └── app.js             # listeners + boot (sempre por último)
@@ -37,7 +43,9 @@ Site estático (HTML/CSS/JS) + Supabase. Sem bundler e sem Node no deploy (GitHu
 │   └── og/                    # Open Graph / WhatsApp preview
 └── sql/
     ├── setup.sql              # Setup completo (idempotente)
+    ├── pagamentos-pix.sql     # PIX camisa + contribuição (idempotente)
     ├── auth-rls.sql           # Só políticas/RPCs se tabelas já existem
+    ├── confirm-staff.md       # Como criar usuários / tesoureiro
     ├── security-hardening.sql # Endurecimento adicional
     └── confirm-staff.md       # Como criar usuários da equipe
 ```

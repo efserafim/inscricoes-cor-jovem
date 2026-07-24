@@ -6,6 +6,7 @@ window.COR_CONFIG = {
   decuriasTable: 'decurias_cor_jovem',
   servosTable: 'servos_cor_jovem',
   servosBucket: 'fotos-servos',
+  comprovantesBucket: 'comprovantes-camisas',
   maxInscricoes: 70,
 
   event: {
@@ -69,6 +70,12 @@ window.COR_AUTH = {
     const s = this.getSession();
     const meta = (s && s.user && s.user.user_metadata) || {};
     return meta.must_change_password === true || meta.must_change_password === 'true';
+  },
+
+  isTesoureiro() {
+    const s = this.getSession();
+    const meta = (s && s.user && s.user.user_metadata) || {};
+    return String(meta.role || '').toLowerCase() === 'tesoureiro';
   },
 
   async updatePassword(newPassword, extraMeta) {
@@ -459,5 +466,187 @@ window.COR_API = {
     });
     if (!res.ok) throw new Error(await res.text());
     return c.supabaseUrl + '/storage/v1/object/public/' + c.servosBucket + '/' + path;
+  },
+
+  comprovantesStorageUrl(path) {
+    const c = window.COR_CONFIG;
+    return c.supabaseUrl + '/storage/v1/object/' + c.comprovantesBucket + '/' + path;
+  },
+
+  async getPixPublico() {
+    const res = await fetch(this.rpcUrl('get_pix_publico'), {
+      method: 'POST',
+      headers: await this.headers(),
+      body: '{}'
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async consultarPagamentoCamisa(busca) {
+    const res = await fetch(this.rpcUrl('consultar_pagamento_camisa'), {
+      method: 'POST',
+      headers: await this.headers(),
+      body: JSON.stringify({ p_busca: String(busca || '').trim() })
+    });
+    if (!res.ok) {
+      const t = await res.text();
+      if (/RATE_LIMITED/i.test(t)) {
+        const err = new Error('RATE_LIMITED');
+        err.code = 'RATE_LIMITED';
+        throw err;
+      }
+      throw new Error(t);
+    }
+    return res.json();
+  },
+
+  async enviarComprovanteCamisa(payload) {
+    const res = await fetch(this.rpcUrl('enviar_comprovante_camisa'), {
+      method: 'POST',
+      headers: await this.headers(),
+      body: JSON.stringify({
+        p_pagamento_id: payload.pagamentoId,
+        p_busca: payload.busca,
+        p_valor_informado: payload.valorInformado,
+        p_comprovante_url: payload.comprovanteUrl,
+        p_comprovante_path: payload.comprovantePath
+      })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async consultarPagamentoContribuicao(busca) {
+    const res = await fetch(this.rpcUrl('consultar_pagamento_contribuicao'), {
+      method: 'POST',
+      headers: await this.headers(),
+      body: JSON.stringify({ p_busca: String(busca || '').trim() })
+    });
+    if (!res.ok) {
+      const t = await res.text();
+      if (/RATE_LIMITED/i.test(t)) {
+        const err = new Error('RATE_LIMITED');
+        err.code = 'RATE_LIMITED';
+        throw err;
+      }
+      throw new Error(t);
+    }
+    return res.json();
+  },
+
+  async enviarComprovanteContribuicao(payload) {
+    const res = await fetch(this.rpcUrl('enviar_comprovante_contribuicao'), {
+      method: 'POST',
+      headers: await this.headers(),
+      body: JSON.stringify({
+        p_pagamento_id: payload.pagamentoId,
+        p_busca: payload.busca,
+        p_valor_informado: payload.valorInformado,
+        p_comprovante_url: payload.comprovanteUrl,
+        p_comprovante_path: payload.comprovantePath
+      })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async uploadComprovante(file, folder) {
+    if (!file) throw new Error('Arquivo inválido');
+    const maxBytes = 4 * 1024 * 1024;
+    const okType = /^(image\/(jpeg|jpg|png|webp|gif)|application\/pdf)$/i.test(file.type || '');
+    if (!okType) throw new Error('Envie imagem (JPG, PNG, WEBP) ou PDF.');
+    if (file.size > maxBytes) throw new Error('Arquivo muito grande (máx. 4 MB).');
+    const c = window.COR_CONFIG;
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    if (!/^(jpe?g|png|webp|gif|pdf)$/.test(ext)) throw new Error('Extensão inválida.');
+    const path = (folder || 'camisas') + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+    const res = await fetch(this.comprovantesStorageUrl(path), {
+      method: 'POST',
+      headers: {
+        apikey: c.supabaseKey,
+        Authorization: 'Bearer ' + c.supabaseKey,
+        'Content-Type': file.type || 'application/octet-stream',
+        'x-upsert': 'false'
+      },
+      body: file
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const url = c.supabaseUrl + '/storage/v1/object/public/' + c.comprovantesBucket + '/' + path;
+    return { url: url, path: path };
+  },
+
+  async getPixConfigStaff() {
+    const c = window.COR_CONFIG;
+    const res = await fetch(
+      c.supabaseUrl + '/rest/v1/config_camisa_pix?select=*&order=created_at.asc&limit=1',
+      { headers: await this.headers(null, { staff: true }) }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    const rows = await res.json();
+    return rows && rows[0] ? rows[0] : null;
+  },
+
+  async savePixConfigStaff(id, patch) {
+    const c = window.COR_CONFIG;
+    const body = Object.assign({}, patch, { updated_at: new Date().toISOString() });
+    const res = await fetch(
+      c.supabaseUrl + '/rest/v1/config_camisa_pix?id=eq.' + encodeURIComponent(id),
+      {
+        method: 'PATCH',
+        headers: await this.headers({ Prefer: 'return=representation' }, { staff: true }),
+        body: JSON.stringify(body)
+      }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async listPagamentosCamisas() {
+    const c = window.COR_CONFIG;
+    const res = await fetch(
+      c.supabaseUrl + '/rest/v1/pagamentos_camisas?select=*&order=enviado_em.desc.nullslast,created_at.desc',
+      { headers: await this.headers(null, { staff: true }) }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async listPagamentosContribuicao() {
+    const c = window.COR_CONFIG;
+    const res = await fetch(
+      c.supabaseUrl + '/rest/v1/pagamentos_contribuicao?select=*&order=enviado_em.desc.nullslast,created_at.desc',
+      { headers: await this.headers(null, { staff: true }) }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async updatePagamentoCamisa(id, patch) {
+    const c = window.COR_CONFIG;
+    const res = await fetch(
+      c.supabaseUrl + '/rest/v1/pagamentos_camisas?id=eq.' + encodeURIComponent(id),
+      {
+        method: 'PATCH',
+        headers: await this.headers({ Prefer: 'return=representation' }, { staff: true }),
+        body: JSON.stringify(patch)
+      }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async updatePagamentoContribuicao(id, patch) {
+    const c = window.COR_CONFIG;
+    const res = await fetch(
+      c.supabaseUrl + '/rest/v1/pagamentos_contribuicao?id=eq.' + encodeURIComponent(id),
+      {
+        method: 'PATCH',
+        headers: await this.headers({ Prefer: 'return=representation' }, { staff: true }),
+        body: JSON.stringify(patch)
+      }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
   }
 };

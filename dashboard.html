@@ -23,7 +23,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" href="image/logos/geracao-eucaristica.png" type="image/png">
 <link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
-<link rel="stylesheet" href="css/dash.css?v=20260723-drawer">
+<link rel="stylesheet" href="css/dash.css?v=20260724-pix">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 
 </head>
 <body>
@@ -89,6 +90,7 @@
     <button type="button" class="tab" data-view="servos" role="tab" aria-selected="false">Servos</button>
     <button type="button" class="tab" data-view="decurias" role="tab" aria-selected="false">Decúrias</button>
     <button type="button" class="tab" data-view="camisas" role="tab" aria-selected="false">Camisas</button>
+    <button type="button" class="tab tab-tesoureiro" data-view="pix" role="tab" aria-selected="false" hidden>PIX</button>
   </nav>
 
   <div class="view active" id="viewInscricoes">
@@ -259,6 +261,107 @@
       <div class="empty" id="shirtEmpty" hidden>Nenhum pedido de camisa neste filtro.<br><span class="muted">Altere Lista (cursistas/servos) ou o status.</span></div>
       <div class="status-bar">
         <span id="shirtStatusText">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="viewPix">
+    <div class="pix-layout">
+      <div class="panel pix-config-panel">
+        <h3>Configuração PIX</h3>
+        <p class="muted pix-help">Chave compartilhada. Libere camisa e contribuição separadamente.</p>
+        <form id="pixConfigForm" class="pix-config-form">
+          <div class="row2">
+            <div class="field-mini">
+              <label for="pixTipoChave">Tipo da chave</label>
+              <select id="pixTipoChave" required>
+                <option value="aleatoria">Aleatória (EVP)</option>
+                <option value="cpf">CPF</option>
+                <option value="cnpj">CNPJ</option>
+                <option value="email">E-mail</option>
+                <option value="telefone">Telefone</option>
+              </select>
+            </div>
+            <div class="field-mini" style="flex:2">
+              <label for="pixChave">Chave PIX</label>
+              <input type="text" id="pixChave" required placeholder="Chave PIX">
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field-mini">
+              <label for="pixNome">Nome do recebedor</label>
+              <input type="text" id="pixNome" required maxlength="25" placeholder="Até 25 caracteres">
+            </div>
+            <div class="field-mini">
+              <label for="pixCidade">Cidade</label>
+              <input type="text" id="pixCidade" required maxlength="15" placeholder="Até 15 caracteres">
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field-mini">
+              <label for="pixValorCamisa">Valor camisa (R$)</label>
+              <input type="text" id="pixValorCamisa" inputmode="decimal" placeholder="0,00">
+            </div>
+            <div class="field-mini">
+              <label for="pixValorContrib">Valor contribuição servo (R$)</label>
+              <input type="text" id="pixValorContrib" inputmode="decimal" placeholder="0,00">
+            </div>
+          </div>
+          <div class="field-mini">
+            <label for="pixMensagem">Mensagem pública (opcional)</label>
+            <input type="text" id="pixMensagem" maxlength="160" placeholder="Ex.: Envie o comprovante após o PIX">
+          </div>
+          <div class="pix-toggles">
+            <label class="chk-line"><input type="checkbox" id="pixLibCamisa"> Liberar pagamentos de camisa</label>
+            <label class="chk-line"><input type="checkbox" id="pixLibContrib"> Liberar taxa de contribuição</label>
+          </div>
+          <div class="pix-config-actions">
+            <button type="submit" class="btn btn-primary" id="pixSaveBtn">Salvar configuração</button>
+            <span class="muted" id="pixConfigStatus"></span>
+          </div>
+        </form>
+        <div class="pix-preview" id="pixPreview" hidden>
+          <p class="muted">Prévia QR (camisa)</p>
+          <canvas id="pixPreviewCanvas" width="160" height="160"></canvas>
+        </div>
+      </div>
+
+      <div class="panel pix-queue-panel">
+        <div class="pix-queue-head">
+          <h3>Fila de pagamentos</h3>
+          <div class="pix-queue-tabs" role="tablist">
+            <button type="button" class="btn btn-ghost btn-sm active" data-pix-queue="camisas" id="pixQCamisas">Camisas</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-pix-queue="contribuicao" id="pixQContrib">Contribuição</button>
+          </div>
+        </div>
+        <div class="pix-totals" id="pixTotals"></div>
+        <div class="filters pix-filters">
+          <select id="pixFilterStatus">
+            <option value="">Todos os status</option>
+            <option value="aguardando_pagamento">Aguardando</option>
+            <option value="divergente">Divergente</option>
+            <option value="confirmado">Confirmado</option>
+            <option value="rejeitado">Rejeitado</option>
+            <option value="valor_confere">Valor confere</option>
+          </select>
+          <button type="button" class="btn btn-ghost btn-sm" id="pixRefreshBtn">Atualizar</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Nome</th>
+                <th>Protocolo</th>
+                <th>Esperado</th>
+                <th>Informado</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="pixTbody"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="pixEmpty" hidden>Nenhum pagamento nesta fila.</div>
       </div>
     </div>
   </div>
@@ -435,6 +538,7 @@
 
 
 <script src="js/config.js"></script>
+<script src="js/pix-brcode.js"></script>
 <script src="js/dashboard/state.js"></script>
 <script src="js/dashboard/utils.js"></script>
 <script src="js/dashboard/theme.js"></script>
@@ -444,6 +548,7 @@
 <script src="js/dashboard/servos.js"></script>
 <script src="js/dashboard/decurias.js"></script>
 <script src="js/dashboard/camisas.js"></script>
+<script src="js/dashboard/pagamentos.js"></script>
 <script src="js/dashboard/ficha-print.js"></script>
 <script src="js/dashboard/export.js"></script>
 <script src="js/dashboard/app.js"></script>

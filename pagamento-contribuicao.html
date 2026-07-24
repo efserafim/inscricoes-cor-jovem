@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taxa de contribuição — XVI C.O.R Jovem</title>
+<meta name="description" content="Consulte seu telefone ou protocolo e pague a taxa de contribuição dos servos via PIX.">
+<meta name="theme-color" content="#2f6f8f">
+<link rel="icon" href="image/logos/geracao-eucaristica.png" type="image/png">
+<link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css?v=20260724-pix">
+</head>
+<body class="pay-page">
+<header class="pay-top">
+  <a class="pay-back" href="servos.html">← Voltar</a>
+  <p class="pay-kicker">XVI C.O.R Jovem · Servos</p>
+  <h1>Taxa de contribuição</h1>
+  <p class="pay-lead">Informe o telefone da inscrição de servo ou o protocolo para gerar o PIX da taxa.</p>
+</header>
+
+<main class="pay-main">
+  <div class="pay-card" id="closedCard" hidden>
+    <h2>Contribuições ainda não liberadas</h2>
+    <p>Quando a tesouraria liberar, você poderá consultar e pagar a taxa por aqui.</p>
+    <a class="btn btn-ghost" href="servos.html">Voltar</a>
+  </div>
+
+  <div class="pay-card" id="searchCard">
+    <label class="lbl" for="busca">Telefone ou protocolo</label>
+    <div class="pay-search-row">
+      <input class="ctrl" type="text" id="busca" placeholder="(21) 90000-0000 ou A1B2C3D4" autocomplete="tel">
+      <button type="button" class="btn btn-primary" id="buscarBtn">Consultar</button>
+    </div>
+    <p class="pay-hint">Exclusivo para quem se inscreveu como servo.</p>
+    <p class="pay-err" id="searchErr" hidden></p>
+  </div>
+
+  <div class="pay-card" id="resultCard" hidden>
+    <div class="pay-person">
+      <h2 id="rNome">—</h2>
+      <p class="pay-meta" id="rMeta"></p>
+      <span class="pay-status" id="rStatus"></span>
+    </div>
+
+    <div class="pay-pix" id="pixBlock">
+      <p class="pay-valor">Valor: <strong id="rValor">—</strong></p>
+      <div class="pay-qr-wrap">
+        <canvas id="qrCanvas" width="200" height="200" aria-label="QR Code PIX"></canvas>
+      </div>
+      <label class="lbl" for="pixCopia">PIX copia e cola</label>
+      <textarea class="ctrl pay-copia" id="pixCopia" rows="3" readonly></textarea>
+      <button type="button" class="btn btn-ghost" id="copyPixBtn">Copiar código PIX</button>
+      <p class="pay-hint" id="pixMsg"></p>
+    </div>
+
+    <form class="pay-upload" id="uploadForm">
+      <h3>Enviar comprovante</h3>
+      <div class="field">
+        <label class="lbl" for="valorPago">Valor que você pagou (R$)</label>
+        <input class="ctrl" type="text" id="valorPago" inputmode="decimal" placeholder="0,00">
+      </div>
+      <div class="field">
+        <label class="lbl" for="comprovante">Comprovante (imagem ou PDF)</label>
+        <input class="ctrl" type="file" id="comprovante" accept="image/*,.pdf,application/pdf">
+      </div>
+      <p class="pay-err" id="uploadErr" hidden></p>
+      <button type="submit" class="btn btn-primary" id="enviarBtn">Enviar comprovante</button>
+    </form>
+
+    <p class="pay-done" id="doneMsg" hidden></p>
+  </div>
+</main>
+
+<section id="contatoEquipe"></section>
+<footer class="site-footer">
+  <p><span class="footer-mark" aria-hidden="true">©</span> Paróquia Santo Antônio — Bacaxá — Saquarema/RJ · 2026</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/pix-brcode.js"></script>
+<script src="js/site-common.js"></script>
+<script src="js/pagamento-contribuicao.js"></script>
+</body>
+</html>

@@ -24,7 +24,12 @@
       if(avatar) avatar.textContent = (display.trim().charAt(0) || '?').toUpperCase();
       welcome.hidden = false;
     }
+    setupTesoureiroUi();
+    wirePixPanel();
     load();
+    if(window.COR_AUTH && window.COR_AUTH.isTesoureiro()){
+      loadPixPanel();
+    }
     if(auth && auth.mustChangePassword()){
       openPasswordModal(true);
     }

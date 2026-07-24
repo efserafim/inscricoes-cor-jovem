@@ -13,12 +13,14 @@
         inscricoes:'viewInscricoes',
         servos:'viewServos',
         decurias:'viewDecurias',
-        camisas:'viewCamisas'
+        camisas:'viewCamisas',
+        pix:'viewPix'
       };
       const view = document.getElementById(map[tab.dataset.view] || 'viewInscricoes');
       if(view) view.classList.add('active');
       if(tab.dataset.view === 'camisas') renderShirts();
       if(tab.dataset.view === 'servos') renderServos();
+      if(tab.dataset.view === 'pix') loadPixPanel();
     });
   });
 

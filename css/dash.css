@@ -1277,3 +1277,70 @@ body.export-lock{
 }
 
 
+
+/* —— PIX tesoureiro —— */
+.pix-layout{
+  display:grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.3fr);
+  gap:14px;
+  align-items:start;
+}
+@media(max-width:960px){
+  .pix-layout{ grid-template-columns:1fr; }
+}
+.pix-config-panel h3,
+.pix-queue-panel h3{
+  font-family:'Outfit',sans-serif;
+  font-size:15px;
+  margin:0 0 6px;
+}
+.pix-help{ margin:0 0 12px; font-size:12.5px; }
+.pix-config-form .row2{
+  display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px;
+}
+.pix-config-form .field-mini{ flex:1 1 140px; min-width:0; }
+.pix-config-form .field-mini label,
+.pix-config-form label[for]{
+  display:block; font-size:10px; font-weight:800; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--copper); margin-bottom:5px;
+}
+.pix-config-form input,
+.pix-config-form select{
+  width:100%; padding:9px 11px; border-radius:8px; border:1.5px solid var(--mist);
+  font:inherit; font-size:13px; background:var(--input-bg); color:var(--ink);
+  box-sizing:border-box;
+}
+.pix-toggles{
+  display:flex; flex-direction:column; gap:8px; margin:12px 0;
+}
+.chk-line{
+  display:flex; align-items:center; gap:8px;
+  font-size:13px; font-weight:600; cursor:pointer;
+}
+.pix-config-actions{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px;
+}
+.pix-preview{
+  margin-top:14px; padding-top:12px; border-top:1px solid var(--mist);
+  text-align:center;
+}
+.pix-queue-head{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px;
+  margin-bottom:10px;
+}
+.pix-queue-tabs{ display:flex; gap:6px; }
+.pix-totals{
+  display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;
+}
+.chip{
+  display:inline-flex; align-items:center; gap:4px;
+  padding:5px 10px; border-radius:999px;
+  background:var(--soft2); border:1px solid var(--mist);
+  font-size:12px; font-weight:600;
+}
+.pix-filters{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+.pix-actions{ display:flex; flex-wrap:wrap; gap:6px; }
+.tag-pix[data-st="confirmado"]{ background:#e5f6ec; color:#1a6b3c; }
+.tag-pix[data-st="divergente"],
+.tag-pix[data-st="rejeitado"]{ background:#fff0e8; color:#8a3f1a; }
+.tag-pix[data-st="aguardando_pagamento"]{ background:var(--soft2); color:var(--slate); }

@@ -867,3 +867,180 @@ select.ctrl{
   font-weight:800;
   margin-right:4px;
 }
+
+/* —— Pagamentos PIX (público) —— */
+.pay-page{
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(47,111,143,.18), transparent 55%),
+    linear-gradient(180deg, #e8f0f6 0%, #f7fafc 40%, #eef4f8 100%);
+}
+.pay-top{
+  max-width:560px;
+  margin:0 auto;
+  padding:28px 20px 8px;
+  text-align:center;
+}
+.pay-back{
+  display:inline-block;
+  margin-bottom:14px;
+  font-size:13px;
+  font-weight:700;
+  color:var(--slate);
+  text-decoration:none;
+}
+.pay-back:hover{ color:var(--ink); text-decoration:underline; }
+.pay-kicker{
+  margin:0 0 6px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--copper);
+}
+.pay-top h1{
+  font-family:'Outfit',sans-serif;
+  font-size:clamp(22px, 5vw, 28px);
+  margin:0 0 8px;
+  letter-spacing:-.02em;
+}
+.pay-lead{
+  margin:0 auto;
+  max-width:42ch;
+  font-size:14px;
+  color:var(--slate);
+  line-height:1.45;
+}
+.pay-main{
+  max-width:560px;
+  margin:0 auto;
+  padding:12px 16px 40px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.pay-card{
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(212,221,229,.9);
+  border-radius:14px;
+  padding:18px 18px 16px;
+  box-shadow:0 10px 28px -18px rgba(21,32,41,.35);
+}
+.pay-card h2{
+  font-family:'Outfit',sans-serif;
+  font-size:18px;
+  margin:0 0 8px;
+}
+.pay-card h3{
+  font-family:'Outfit',sans-serif;
+  font-size:14px;
+  margin:0 0 10px;
+}
+.pay-search-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:6px;
+}
+.pay-search-row .ctrl{ flex:1 1 180px; }
+.pay-hint{
+  margin:8px 0 0;
+  font-size:12.5px;
+  color:var(--slate);
+  line-height:1.4;
+}
+.pay-err{
+  margin:10px 0 0;
+  padding:8px 10px;
+  border-radius:8px;
+  background:#ffe8e4;
+  color:#8a2f22;
+  font-size:13px;
+  font-weight:600;
+}
+.pay-person{ margin-bottom:14px; }
+.pay-meta{
+  margin:4px 0 8px;
+  font-size:13px;
+  color:var(--slate);
+  font-weight:600;
+}
+.pay-status{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  background:var(--soft2);
+  color:var(--ink);
+  border:1px solid var(--mist);
+}
+.pay-status[data-status="confirmado"]{ background:#e5f6ec; color:#1a6b3c; border-color:#b7e0c6; }
+.pay-status[data-status="divergente"],
+.pay-status[data-status="rejeitado"]{ background:#fff0e8; color:#8a3f1a; border-color:#f0c9a8; }
+.pay-valor{ margin:0 0 12px; font-size:15px; }
+.pay-qr-wrap{
+  display:flex;
+  justify-content:center;
+  margin:0 0 12px;
+  padding:12px;
+  background:#fff;
+  border-radius:12px;
+  border:1px solid var(--mist);
+}
+.pay-copia{ font-size:11px; font-family:ui-monospace, monospace; resize:vertical; }
+.pay-upload{ margin-top:16px; padding-top:14px; border-top:1px solid var(--mist); }
+.pay-upload .field{ margin-bottom:10px; }
+.pay-done{
+  margin:12px 0 0;
+  padding:10px 12px;
+  border-radius:8px;
+  background:#e5f6ec;
+  color:#1a6b3c;
+  font-size:13.5px;
+  font-weight:600;
+}
+.pay-cta-bar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  margin:14px auto 0;
+  max-width:560px;
+  padding:0 16px;
+}
+.pay-cta-bar a.hero-cta,
+.pay-cta-bar .pay-cta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:11px 18px;
+  border-radius:999px;
+  font-family:'Outfit',sans-serif;
+  font-size:13px;
+  font-weight:800;
+  text-decoration:none;
+  background:var(--copper);
+  color:#fff;
+  box-shadow:0 8px 20px -10px rgba(166,84,42,.55);
+}
+.pay-cta-bar .pay-cta:hover{ filter:brightness(1.05); text-decoration:none; color:#fff; }
+.pay-cta-bar .pay-cta-ghost{
+  background:transparent;
+  color:var(--ink);
+  border:1.5px solid var(--mist);
+  box-shadow:none;
+}
+.board-pay-note{
+  margin:14px 0 0;
+  padding:12px 14px;
+  border-radius:10px;
+  background:rgba(47,111,143,.08);
+  border:1px solid rgba(47,111,143,.18);
+  font-size:13.5px;
+  line-height:1.45;
+}
+.board-pay-note a{ font-weight:800; color:var(--ice); }
+
