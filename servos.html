@@ -487,31 +487,13 @@
       submitBtn.disabled = false;
       submitBtn.textContent = 'Confirmar inscrição';
     }
-    } catch(err) {
-      console.error(err);
-      if(err && (err.code === 'RATE_LIMITED' || /RATE_LIMITED/i.test(String(err.message||'')))){
-        showError('Muitas tentativas com este número. Aguarde alguns minutos e tente de novo.');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Confirmar inscrição';
-        return;
-      }
-      showError('Não deu pra enviar agora. Verifique sua conexão e se a tabela de servos foi criada no Supabase.');
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Confirmar inscrição';
-    }
   });
 
   restoreDraft();
   goTo(current, { scroll: false });
 
   async function mountPixCta(){
-    const bar = document.getElementById('pixCtaBar');
-    if(!bar) return;
-    bar.hidden = true;
-    bar.innerHTML = '';
-    if(!window.COR_API) return;
-    try{
-      const pub = await window.COR_API.getPixPublico();
+    await window.COR_SITE.loadPixCta('#pixCtaBar', function(pub){
       const links = [];
       if(pub && pub.liberado === true){
         links.push('<a class="pay-cta" href="pagamento-camisa.html">Pagar camisa (PIX)</a>');
@@ -519,12 +501,8 @@
       if(pub && pub.contribuicoes_liberadas === true){
         links.push('<a class="pay-cta pay-cta-ghost" href="pagamento-contribuicao.html">Taxa de contribuição</a>');
       }
-      bar.innerHTML = links.join('');
-      bar.hidden = links.length === 0;
-    }catch(_){
-      bar.hidden = true;
-      bar.innerHTML = '';
-    }
+      return links;
+    });
   }
   mountPixCta();
 

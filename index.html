@@ -462,13 +462,7 @@
   }
 
   function maskPhone(v){ return window.COR_SITE.maskPhone(v); }
-  function maskCpf(v){
-    const d = v.replace(/\D/g,'').slice(0,11);
-    if(d.length <= 3) return d;
-    if(d.length <= 6) return d.slice(0,3)+'.'+d.slice(3);
-    if(d.length <= 9) return d.slice(0,3)+'.'+d.slice(3,6)+'.'+d.slice(6);
-    return d.slice(0,3)+'.'+d.slice(3,6)+'.'+d.slice(6,9)+'-'+d.slice(9);
-  }
+  function maskCpf(v){ return window.COR_SITE.maskCpf(v); }
   function phoneOk(v){
     const d = v.replace(/\D/g,'');
     return d.length >= 10 && d.length <= 11;
@@ -837,32 +831,28 @@
   checkCapacity();
 
   async function mountPixCta(){
-    const bar = document.getElementById('pixCtaBar');
-    if(!bar) return;
-    bar.hidden = true;
-    bar.innerHTML = '';
-    if(!window.COR_API) return;
+    await window.COR_SITE.loadPixCta('#pixCtaBar', function(pub){
+      const links = [];
+      if(pub && pub.liberado === true){
+        links.push('<a class="pay-cta" href="pagamento-camisa.html">Pagar camisa (PIX)</a>');
+      }
+      return links;
+    });
     try{
       const pub = await window.COR_API.getPixPublico();
-      const show = !!(pub && pub.liberado === true);
       const closed = document.getElementById('closedPanel');
       const note = closed && closed.querySelector('.board-pay-note');
-      if(show){
-        bar.innerHTML = '<a class="pay-cta" href="pagamento-camisa.html">Pagar camisa (PIX)</a>';
-        bar.hidden = false;
+      if(pub && pub.liberado === true){
         if(closed && !note){
           const el = document.createElement('p');
           el.className = 'board-pay-note';
           el.innerHTML = 'Pediu camisa? <a href="pagamento-camisa.html">Consulte seu protocolo e pague via PIX</a>.';
           closed.appendChild(el);
         }
-      }else if(note){
+      } else if(note){
         note.remove();
       }
-    }catch(_){
-      bar.hidden = true;
-      bar.innerHTML = '';
-    }
+    }catch(_){ }
   }
   mountPixCta();
 

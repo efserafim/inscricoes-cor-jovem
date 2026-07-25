@@ -1749,25 +1749,37 @@ html[data-theme="dark"] .pix-seg.active{
   border:1px solid rgba(42,143,82,.4);
   background:rgba(42,143,82,.12);
   color:var(--ok);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  appearance:none;
+  border:1px solid rgba(42,143,82,.45);
+  background:rgba(42,143,82,.14);
+  color:var(--ok);
   font:inherit;
-  font-size:11px;
+  font-size:12px;
   font-weight:800;
-  padding:4px 9px;
+  padding:6px 12px;
   border-radius:999px;
   cursor:pointer;
   line-height:1.2;
+  white-space:nowrap;
+  transition:background .13s ease, border-color .13s ease, transform .13s ease;
 }
 .pix-extrato-btn:hover{
-  background:rgba(42,143,82,.2);
+  background:rgba(42,143,82,.22);
 }
 .pix-extrato-ok{
   display:inline-flex;
+  align-items:center;
   margin-top:6px;
-  font-size:10.5px;
+  margin-left:8px;
+  font-size:10px;
   font-weight:800;
   letter-spacing:.04em;
   text-transform:uppercase;
   color:var(--ok);
+  white-space:nowrap;
 }
 .pix-row-extrato td{
   background:rgba(196,92,38,.05);

@@ -19,6 +19,54 @@ window.COR_SITE = {
     return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
   },
 
+  maskCpf(v) {
+    const d = String(v || '').replace(/\D/g, '').slice(0, 11);
+    if (d.length <= 3) return d;
+    if (d.length <= 6) return d.slice(0, 3) + '.' + d.slice(3);
+    if (d.length <= 9) return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6);
+    return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6, 9) + '-' + d.slice(9);
+  },
+
+  showError(el, msg) {
+    const container = typeof el === 'string' ? document.querySelector(el) : el;
+    if (!container) return;
+    container.textContent = msg || '';
+    container.classList.toggle('show', !!msg);
+  },
+
+  setFieldError(form, id, on) {
+    const root = typeof form === 'string' ? document.querySelector(form) : form;
+    if (!root) return;
+    const field = root.querySelector('#' + id) || root.querySelector('[name="' + id + '"]');
+    const err = root.querySelector('.field-error[data-for="' + id + '"]');
+    if (field) field.classList.toggle('is-invalid', !!on);
+    if (err) err.classList.toggle('show', !!on);
+  },
+
+  clearFieldErrors(scope) {
+    const root = scope || document;
+    root.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    root.querySelectorAll('.field-error.show').forEach(el => el.classList.remove('show'));
+  },
+
+  async loadPixCta(selector, buildLinks) {
+    const bar = document.querySelector(selector);
+    if (!bar) return;
+    bar.hidden = true;
+    bar.innerHTML = '';
+    if (!window.COR_API || typeof buildLinks !== 'function') return;
+    try {
+      const pub = await window.COR_API.getPixPublico();
+      const links = buildLinks(pub) || [];
+      const html = Array.isArray(links) ? links.join('') : String(links || '');
+      bar.innerHTML = html;
+      bar.hidden = !html;
+    } catch (_) {
+      bar.hidden = true;
+      bar.innerHTML = '';
+    }
+  },
+
   CONTATOS: [
     { nome: 'Mayara', tel: '(22) 99882-9819', wa: '5522998829819' },
     { nome: 'Aylla', tel: '(22) 99781-2588', wa: '5522997812588' },

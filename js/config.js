@@ -5,7 +5,6 @@ window.COR_CONFIG = {
   table: 'inscricoes_cor_jovem',
   decuriasTable: 'decurias_cor_jovem',
   servosTable: 'servos_cor_jovem',
-  servosBucket: 'fotos-servos',
   comprovantesBucket: 'comprovantes-camisas',
   maxInscricoes: 70,
 
@@ -257,11 +256,6 @@ window.COR_API = {
     return window.COR_CONFIG.supabaseUrl + '/rest/v1/rpc/' + fn;
   },
 
-  storageUrl(path) {
-    const c = window.COR_CONFIG;
-    return c.supabaseUrl + '/storage/v1/object/' + c.servosBucket + '/' + path;
-  },
-
   async list() {
     const res = await fetch(this.url('?select=*&order=created_at.desc'), {
       headers: await this.headers(null, { staff: true })
@@ -421,51 +415,6 @@ window.COR_API = {
     });
     if (!res.ok) throw new Error(await res.text());
     return true;
-  },
-
-  async findServoByTelefone(telefone) {
-    const digits = String(telefone || '').replace(/\D/g, '');
-    if (digits.length < 10) return [];
-    const res = await fetch(this.rpcUrl('existe_servo_telefone'), {
-      method: 'POST',
-      headers: await this.headers(),
-      body: JSON.stringify({ p_digits: digits })
-    });
-    if (!res.ok) {
-      const t = await res.text();
-      if (/RATE_LIMITED/i.test(t)) {
-        const err = new Error('RATE_LIMITED');
-        err.code = 'RATE_LIMITED';
-        throw err;
-      }
-      return [];
-    }
-    const exists = await res.json();
-    return exists === true ? [{ status: 'ativa' }] : [];
-  },
-
-  async uploadServoFoto(file) {
-    if (!file) throw new Error('Arquivo inválido');
-    const maxBytes = 2.5 * 1024 * 1024;
-    const okType = /^image\/(jpeg|jpg|png|webp|gif)$/i.test(file.type || '');
-    if (!okType) throw new Error('Envie apenas imagem (JPG, PNG ou WEBP).');
-    if (file.size > maxBytes) throw new Error('Imagem muito grande (máx. 2,5 MB).');
-    const c = window.COR_CONFIG;
-    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
-    if (!/^(jpe?g|png|webp|gif)$/.test(ext)) throw new Error('Extensão de imagem inválida.');
-    const path = 'servos/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
-    const res = await fetch(this.storageUrl(path), {
-      method: 'POST',
-      headers: {
-        apikey: c.supabaseKey,
-        Authorization: 'Bearer ' + c.supabaseKey,
-        'Content-Type': file.type || 'application/octet-stream',
-        'x-upsert': 'false'
-      },
-      body: file
-    });
-    if (!res.ok) throw new Error(await res.text());
-    return c.supabaseUrl + '/storage/v1/object/public/' + c.servosBucket + '/' + path;
   },
 
   comprovantesStorageUrl(path) {
