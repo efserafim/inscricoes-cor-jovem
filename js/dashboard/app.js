@@ -365,8 +365,26 @@
   });
 
   ['search','filterCamisa','filterDecuria','filterSort'].forEach(id=>{
-    document.getElementById(id).addEventListener('input', render);
-    document.getElementById(id).addEventListener('change', render);
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('input', ()=>{ render(); saveInscFilters(); });
+    el.addEventListener('change', ()=>{ render(); saveInscFilters(); });
+  });
+
+  document.querySelectorAll('#stats .stat').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const st = el.getAttribute('data-status');
+      const fl = el.getAttribute('data-filter');
+      if(fl){
+        statusFilter = '';
+        quickFilter = quickFilter === fl ? '' : fl;
+      }else{
+        quickFilter = '';
+        statusFilter = statusFilter === st ? '' : (st || '');
+      }
+      render();
+      saveInscFilters();
+    });
   });
 
   document.getElementById('servoTbody').addEventListener('click', (e)=>{

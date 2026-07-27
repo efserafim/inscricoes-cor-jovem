@@ -32,6 +32,67 @@
     return list;
   }
 
+  function renderSummaryCards(){
+    const total = rows.length;
+    const confirmed = rows.filter(r => r.status === 'confirmada').length;
+    const pending = rows.filter(r => r.status === 'lista_espera').length;
+    const shirts = rows.filter(r => r.camisa === 'sim').length;
+    const missingSize = rows.filter(r => r.camisa === 'sim' && !r.tamanho_camisa).length;
+    const healthAlerts = rows.filter(hasHealth).length;
+    document.getElementById('summaryCards').innerHTML =
+      '<div class="summary-card"><span class="title">Inscrições totais</span><strong class="value">'+total+'</strong><span class="meta">Contagem geral</span></div>' +
+      '<div class="summary-card"><span class="title">Confirmados</span><strong class="value">'+confirmed+'</strong><span class="meta">Inscrições confirmadas</span></div>' +
+      '<div class="summary-card"><span class="title">Aguardando</span><strong class="value">'+pending+'</strong><span class="meta">Em lista de espera</span></div>' +
+      '<div class="summary-card"><span class="title">Camisas</span><strong class="value">'+shirts+'</strong><span class="meta">Pedidos de camisa</span></div>' +
+      '<div class="summary-card"><span class="title">Sem tamanho</span><strong class="value">'+missingSize+'</strong><span class="meta">Falta definir tamanho</span></div>' +
+      '<div class="summary-card"><span class="title">Alerta saúde</span><strong class="value">'+healthAlerts+'</strong><span class="meta">Saúde / comorbidades</span></div>';
+  }
+
+  function renderSummaryCards(){
+    const total = rows.length;
+    const confirmed = rows.filter(r => r.status === 'confirmada').length;
+    const pending = rows.filter(r => r.status === 'lista_espera').length;
+    const shirts = rows.filter(r => r.camisa === 'sim').length;
+    const missingSize = rows.filter(r => r.camisa === 'sim' && !r.tamanho_camisa).length;
+    const healthAlerts = rows.filter(hasHealth).length;
+    const cards = document.getElementById('summaryCards');
+    if(!cards) return;
+    cards.innerHTML =
+      '<div class="summary-card"><span class="title">Inscrições totais</span><strong class="value">'+total+'</strong><span class="meta">Contagem geral</span></div>' +
+      '<div class="summary-card"><span class="title">Confirmados</span><strong class="value">'+confirmed+'</strong><span class="meta">Inscrições confirmadas</span></div>' +
+      '<div class="summary-card"><span class="title">Aguardando</span><strong class="value">'+pending+'</strong><span class="meta">Lista de espera</span></div>' +
+      '<div class="summary-card"><span class="title">Camisas</span><strong class="value">'+shirts+'</strong><span class="meta">Pedidos de camisa</span></div>' +
+      '<div class="summary-card"><span class="title">Sem tamanho</span><strong class="value">'+missingSize+'</strong><span class="meta">Falta o tamanho da camisa</span></div>' +
+      '<div class="summary-card"><span class="title">Alerta saúde</span><strong class="value">'+healthAlerts+'</strong><span class="meta">Comorbidades</span></div>';
+  }
+
+  function saveInscFilters(){
+    try{
+      localStorage.setItem('cor_dash_insc_filters', JSON.stringify({
+        search: document.getElementById('search').value,
+        filterCamisa: document.getElementById('filterCamisa').value,
+        filterDecuria: document.getElementById('filterDecuria').value,
+        filterSort: document.getElementById('filterSort').value,
+        statusFilter,
+        quickFilter
+      }));
+    }catch(_){ }
+  }
+
+  function restoreInscFilters(){
+    try{
+      const stored = localStorage.getItem('cor_dash_insc_filters');
+      if(!stored) return;
+      const data = JSON.parse(stored);
+      if(data.search != null) document.getElementById('search').value = data.search;
+      if(data.filterCamisa != null) document.getElementById('filterCamisa').value = data.filterCamisa;
+      if(data.filterDecuria != null) document.getElementById('filterDecuria').value = data.filterDecuria;
+      if(data.filterSort != null) document.getElementById('filterSort').value = data.filterSort;
+      if(data.statusFilter != null) statusFilter = data.statusFilter;
+      if(data.quickFilter != null) quickFilter = data.quickFilter;
+    }catch(_){ }
+  }
+
   function renderStats(){
     const health = rows.filter(hasHealth).length;
     document.getElementById('statTotal').textContent = rows.length;
@@ -66,11 +127,12 @@
       }
     });
     const max = Math.max(1, ...Object.values(counts));
+    const missingSize = rows.filter(r => r.camisa === 'sim' && !r.tamanho_camisa).length;
     document.getElementById('shirtBars').innerHTML = sizes.map(s=>{
       const n = counts[s];
       const pct = Math.round((n / max) * 100);
       return '<div class="bar-row"><span class="lab">'+s+'</span><div class="track"><div class="fill" style="width:'+pct+'%"></div></div><span class="num">'+n+'</span></div>';
-    }).join('') + '<p class="muted" style="margin:8px 0 0">'+totalShirts+' camisa(s) de cursistas</p>';
+    }).join('') + '<p class="muted" style="margin:8px 0 0">'+totalShirts+' camisa(s) de cursistas' + (missingSize ? ' · <strong>'+missingSize+' sem tamanho</strong>' : '') + '</p>';
 
     const allAlerts = rows.filter(hasHealth);
     const alerts = allAlerts.slice(0, 8);
@@ -114,6 +176,7 @@
   }
 
   function render(){
+    renderSummaryCards();
     renderStats();
     renderSide();
     const list = filtered();
@@ -143,8 +206,13 @@
         '<td data-label="Camisa">'+(r.camisa==='sim'
           ? '<span class="tag tag-shirt">'+esc(r.tamanho_camisa||'Sim')+'</span>'
           : '<span class="muted">—</span>')+'</td>' +
+        '<td data-label="Ações"><button class="btn btn-ghost btn-sm btn-table-action" type="button" data-action="open">Ver</button></td>' +
         '<td data-label="Quando" class="muted">'+esc(fmtDate(r.created_at))+'</td>';
       tr.addEventListener('click', ()=> openDetail(r));
+      tr.querySelector('[data-action="open"]').addEventListener('click', (e)=>{
+        e.stopPropagation();
+        openDetail(r);
+      });
       tbody.appendChild(tr);
     });
 

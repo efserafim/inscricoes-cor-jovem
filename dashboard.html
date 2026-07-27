@@ -37,7 +37,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1f4f8a">
 <link rel="icon" href="image/logos/geracao-eucaristica.png" type="image/png">
+<link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
 <link rel="stylesheet" href="css/dash.css?v=20260724-clear-valores">
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
@@ -110,6 +115,7 @@
   </nav>
 
   <div class="view active" id="viewInscricoes">
+  <div class="summary-cards" id="summaryCards" aria-label="Resumo rápido do painel"></div>
   <div class="stats" id="stats">
     <div class="stat active" data-status=""><div class="k">Todas</div><div class="v" id="statTotal">0</div></div>
     <div class="stat" data-status="nova"><div class="k">Novas</div><div class="v" id="statNova">0</div></div>
@@ -154,6 +160,7 @@
                 <th>WhatsApp</th>
                 <th>Cidade</th>
                 <th>Camisa</th>
+                <th>Ações</th>
                 <th>Quando</th>
               </tr>
             </thead>
@@ -371,6 +378,8 @@
             <button type="submit" class="btn btn-primary" id="pixSaveBtn">Salvar configuração</button>
             <span class="muted" id="pixConfigStatus"></span>
           </div>
+          <div class="pix-config-summary" id="pixConfigSummary" aria-live="polite"></div>
+          <p class="muted pix-help" style="margin:10px 0 0;font-size:12px">Dica: marque as liberações, ajuste os valores e salve. Depois verifique a prévia do QR e confirme se os dados estão corretos antes de publicar.</p>
         </form>
 
         <section class="pix-section pix-cash-box">
@@ -389,6 +398,7 @@
 
         <div class="pix-preview" id="pixPreview" hidden>
           <p class="pix-preview-label">Prévia do QR · camisa</p>
+          <p class="pix-preview-note" id="pixPreviewNote"></p>
           <div class="pix-preview-frame">
             <canvas id="pixPreviewCanvas" width="160" height="160"></canvas>
           </div>
@@ -476,6 +486,7 @@
   </div>
 
   <div class="view" id="viewServos">
+    <div class="summary-cards" id="servoSummaryCards" aria-label="Resumo rápido dos servos"></div>
     <div class="stats" id="servoStats">
       <div class="stat active" data-servo-status=""><div class="k">Todos</div><div class="v" id="servoStatTotal">0</div></div>
       <div class="stat" data-servo-status="nova"><div class="k">Novas</div><div class="v" id="servoStatNova">0</div></div>
@@ -512,6 +523,7 @@
               <th>Equipe</th>
               <th>Telefone</th>
               <th>Camisa</th>
+              <th>Ações</th>
               <th>Ano COR</th>
               <th>Quando</th>
             </tr>

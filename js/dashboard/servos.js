@@ -50,6 +50,24 @@
     return list;
   }
 
+  function renderServoSummaryCards(){
+    const total = servoRows.length;
+    const confirmed = servoRows.filter(r => r.status === 'confirmada').length;
+    const waiting = servoRows.filter(r => r.status === 'lista_espera').length;
+    const shirts = servoRows.filter(r => r.camisa === 'sim').length;
+    const missingSize = servoRows.filter(r => r.camisa === 'sim' && !r.tamanho_camisa).length;
+    const teams = [...new Set(servoRows.map(r => r.equipe).filter(Boolean))].length;
+    const cards = document.getElementById('servoSummaryCards');
+    if(!cards) return;
+    cards.innerHTML =
+      '<div class="summary-card"><span class="title">Servos totais</span><strong class="value">'+total+'</strong><span class="meta">Todos os registros</span></div>' +
+      '<div class="summary-card"><span class="title">Confirmados</span><strong class="value">'+confirmed+'</strong><span class="meta">Servos confirmados</span></div>' +
+      '<div class="summary-card"><span class="title">Aguardando</span><strong class="value">'+waiting+'</strong><span class="meta">Lista de espera</span></div>' +
+      '<div class="summary-card"><span class="title">Camisas</span><strong class="value">'+shirts+'</strong><span class="meta">Pedem camisa</span></div>' +
+      '<div class="summary-card"><span class="title">Sem tamanho</span><strong class="value">'+missingSize+'</strong><span class="meta">Falta tamanho</span></div>' +
+      '<div class="summary-card"><span class="title">Equipes</span><strong class="value">'+teams+'</strong><span class="meta">Equipas diferentes</span></div>';
+  }
+
   function renderServos(){
     const tbody = document.getElementById('servoTbody');
     const empty = document.getElementById('servoEmpty');
@@ -62,6 +80,8 @@
     document.getElementById('servoStatConf').textContent = by('confirmada');
     document.getElementById('servoStatEspera').textContent = by('lista_espera');
     document.getElementById('servoStatCanc').textContent = by('cancelada');
+
+    renderServoSummaryCards();
 
     const list = filteredServos();
     tbody.innerHTML = list.map(r => {
@@ -78,10 +98,20 @@
         '<td data-label="Equipe">'+esc(r.equipe || 'A definir')+'</td>' +
         '<td data-label="Telefone">'+telCell+'</td>' +
         '<td data-label="Camisa">'+esc(camisa)+'</td>' +
+        '<td data-label="Ações"><button class="btn btn-ghost btn-sm btn-table-action" type="button" data-action="open">Ver</button></td>' +
         '<td data-label="Ano C.O.R">'+esc(r.ano_cor_jovem||'—')+'</td>' +
         '<td data-label="Quando">'+esc(fmtDate(r.created_at))+'</td>' +
       '</tr>';
     }).join('');
+    tbody.querySelectorAll('[data-action="open"]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const tr = btn.closest('tr');
+        const id = tr && tr.getAttribute('data-servo-id');
+        const servo = servoRows.find(x => x.id === id);
+        if(servo) openServoDetail(servo);
+      });
+    });
 
     empty.hidden = list.length > 0;
     const quer = list.filter(r => r.camisa === 'sim').length;

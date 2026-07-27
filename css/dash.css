@@ -283,7 +283,8 @@ html[data-theme="dark"] .theme-icon-sun{ display:block; }
   text-decoration:none; display:inline-flex; align-items:center; gap:6px;
 }
 .btn:active{transform:scale(.98)}
-.btn:disabled{opacity:.5;cursor:default;transform:none}
+..btn:disabled{opacity:.5;cursor:default;transform:none}
+.btn-table-action{padding:6px 10px;font-size:12px;border-radius:10px;min-width:0;}
 .btn-primary{
   background:linear-gradient(135deg, #1a2c38 0%, #152029 100%);
   color:#fff;
@@ -326,6 +327,17 @@ html[data-theme="dark"] .tab.active{
   from{ opacity:0; transform:translateY(6px); }
   to{ opacity:1; transform:none; }
 }
+
+.summary-cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:18px}
+@media(max-width:1000px){.summary-cards{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:520px){.summary-cards{grid-template-columns:repeat(2,1fr)}}
+.summary-card{
+  background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:14px 16px;
+  box-shadow:0 10px 24px -16px rgba(21,32,41,.22);
+}
+.summary-card .title{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
+.summary-card .value{display:block;font-family:'Outfit',sans-serif;font-size:26px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.summary-card .meta{display:block;font-size:12px;color:var(--slate)}
 
 .stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:18px}
 @media(max-width:1000px){.stats{grid-template-columns:repeat(3,1fr)}}
@@ -1470,6 +1482,20 @@ html[data-theme="dark"] .pix-config-form select:focus{
   gap:10px;
   margin-top:4px;
 }
+.pix-config-summary{
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  background:var(--soft);
+  border:1px solid var(--card-border);
+  font-size:13px;
+  color:var(--ink);
+  line-height:1.4;
+}
+.pix-config-summary-note{
+  margin:0;
+  font-weight:600;
+}
 .pix-preview{
   margin-top:14px;
   padding-top:14px;
@@ -1482,6 +1508,11 @@ html[data-theme="dark"] .pix-config-form select:focus{
   font-weight:800;
   letter-spacing:.08em;
   text-transform:uppercase;
+  color:var(--slate);
+}
+.pix-preview-note{
+  margin:0 0 10px;
+  font-size:12px;
   color:var(--slate);
 }
 .pix-preview-frame{

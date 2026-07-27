@@ -29,7 +29,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" href="image/logos/geracao-eucaristica.png" type="image/png">
-<link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
 <link rel="stylesheet" href="css/site.css?v=20260724-ghostfix">
 
 </head>
@@ -114,6 +113,7 @@
         <strong>Atenção</strong>
         <p>Preencha com cuidado e com informações verdadeiras. Esses dados são essenciais para a organização e o bom andamento do retiro.</p>
       </aside>
+      <p class="form-help">Campos com <span class="req">*</span> são obrigatórios. Use os botões abaixo para revisar os dados antes de enviar.</p>
     </div>
 
     <form id="regForm" novalidate>
@@ -210,21 +210,25 @@
         <p class="section-lead">Conte um pouco sobre sua caminhada de fé.</p>
 
         <div class="field">
-          <span class="lbl">Pais católicos?</span>
-          <div class="choice-group" data-group="paisCatolicos">
-            <label class="choice"><input type="radio" name="paisCatolicos" value="sim">Sim</label>
-            <label class="choice"><input type="radio" name="paisCatolicos" value="nao">Não</label>
-          </div>
+          <fieldset>
+            <legend class="lbl">Pais católicos?</legend>
+            <div class="choice-group" data-group="paisCatolicos">
+              <label class="choice"><input type="radio" name="paisCatolicos" value="sim">Sim</label>
+              <label class="choice"><input type="radio" name="paisCatolicos" value="nao">Não</label>
+            </div>
+          </fieldset>
         </div>
         <div class="field">
-          <span class="lbl">Você é católico?</span>
-          <div class="choice-group" data-group="ehCatolico">
-            <label class="choice"><input type="radio" name="ehCatolico" value="sim">Sim</label>
-            <label class="choice"><input type="radio" name="ehCatolico" value="nao">Não</label>
-          </div>
+          <fieldset>
+            <legend class="lbl">Você é católico?</legend>
+            <div class="choice-group" data-group="ehCatolico">
+              <label class="choice"><input type="radio" name="ehCatolico" value="sim">Sim</label>
+              <label class="choice"><input type="radio" name="ehCatolico" value="nao">Não</label>
+            </div>
+          </fieldset>
         </div>
-        <div class="field">
-          <span class="lbl">Sacramentos já recebidos</span>
+        <fieldset class="field">
+          <legend class="lbl">Sacramentos já recebidos</legend>
           <div class="check-grid" id="sacramentos">
             <label class="chk"><input type="checkbox" value="Batismo">Batismo</label>
             <label class="chk"><input type="checkbox" value="Primeira Comunhão">1ª Comunhão</label>
@@ -233,19 +237,21 @@
             <label class="chk"><input type="checkbox" value="Matrimônio">Matrimônio</label>
             <label class="chk"><input type="checkbox" value="Ainda não sou católico">Ainda não sou católico</label>
           </div>
-        </div>
+        </fieldset>
         <div class="field">
           <label class="lbl" for="movimento">Movimento ou pastoral <span class="opt">(opcional)</span></label>
-          <input class="ctrl" type="text" id="movimento" placeholder="Qual e onde? Deixe em branco se não participa">
+          <input class="ctrl" type="text" id="movimento" name="movimento" placeholder="Qual e onde? Deixe em branco se não participa">
         </div>
         <div class="field">
-          <span class="lbl">Participa das missas dominicais?</span>
-          <div class="choice-group" data-group="missas">
-            <label class="choice"><input type="radio" name="missas" value="sim">Sim</label>
-            <label class="choice"><input type="radio" name="missas" value="nao">Não</label>
-          </div>
+          <fieldset>
+            <legend class="lbl">Participa das missas dominicais?</legend>
+            <div class="choice-group" data-group="missas">
+              <label class="choice"><input type="radio" name="missas" value="sim">Sim</label>
+              <label class="choice"><input type="radio" name="missas" value="nao">Não</label>
+            </div>
+          </fieldset>
           <div class="conditional" id="missasOndeBox">
-            <input class="ctrl" type="text" id="missasOnde" placeholder="Em qual igreja ou paróquia?">
+            <input class="ctrl" type="text" id="missasOnde" name="missasOnde" placeholder="Em qual igreja ou paróquia?">
           </div>
         </div>
       </section>
@@ -255,44 +261,50 @@
         <p class="section-lead">Essas informações ajudam a equipe a cuidar de você com segurança.</p>
 
         <div class="field">
-          <span class="lbl">Possui comorbidade ou problema de saúde?</span>
-          <div class="choice-group" data-group="comorbidade">
-            <label class="choice"><input type="radio" name="comorbidade" value="sim">Sim</label>
-            <label class="choice"><input type="radio" name="comorbidade" value="nao">Não</label>
-          </div>
+          <fieldset>
+            <legend class="lbl">Possui comorbidade ou problema de saúde?</legend>
+            <div class="choice-group" data-group="comorbidade">
+              <label class="choice"><input type="radio" name="comorbidade" value="sim">Sim</label>
+              <label class="choice"><input type="radio" name="comorbidade" value="nao">Não</label>
+            </div>
+          </fieldset>
           <div class="conditional" id="comorbidadeQualBox">
-            <input class="ctrl" type="text" id="comorbidadeQual" placeholder="Qual?">
+            <input class="ctrl" type="text" id="comorbidadeQual" name="comorbidadeQual" placeholder="Qual?">
           </div>
         </div>
         <div class="field">
-          <span class="lbl">Usa medicamento com frequência?</span>
-          <div class="choice-group" data-group="medicamento">
-            <label class="choice"><input type="radio" name="medicamento" value="sim">Sim</label>
-            <label class="choice"><input type="radio" name="medicamento" value="nao">Não</label>
-          </div>
+          <fieldset>
+            <legend class="lbl">Usa medicamento com frequência?</legend>
+            <div class="choice-group" data-group="medicamento">
+              <label class="choice"><input type="radio" name="medicamento" value="sim">Sim</label>
+              <label class="choice"><input type="radio" name="medicamento" value="nao">Não</label>
+            </div>
+          </fieldset>
           <div class="conditional" id="medicamentoQualBox">
-            <input class="ctrl" type="text" id="medicamentoQual" placeholder="Qual medicamento?">
+            <input class="ctrl" type="text" id="medicamentoQual" name="medicamentoQual" placeholder="Qual medicamento?">
           </div>
         </div>
         <div class="field">
-          <span class="lbl">Alergia a medicamento ou alimentação?</span>
-          <div class="choice-group" data-group="alergia">
-            <label class="choice"><input type="radio" name="alergia" value="sim">Sim</label>
-            <label class="choice"><input type="radio" name="alergia" value="nao">Não</label>
-          </div>
+          <fieldset>
+            <legend class="lbl">Alergia a medicamento ou alimentação?</legend>
+            <div class="choice-group" data-group="alergia">
+              <label class="choice"><input type="radio" name="alergia" value="sim">Sim</label>
+              <label class="choice"><input type="radio" name="alergia" value="nao">Não</label>
+            </div>
+          </fieldset>
           <div class="conditional" id="alergiaQualBox">
-            <input class="ctrl" type="text" id="alergiaQual" placeholder="Qual alergia?">
+            <input class="ctrl" type="text" id="alergiaQual" name="alergiaQual" placeholder="Qual alergia?">
           </div>
         </div>
         <div class="field">
           <label class="lbl">Em caso de urgência <span class="req">*</span></label>
           <div class="row2">
             <div>
-              <input class="ctrl" type="text" id="urgenciaNome" required placeholder="Nome do contato">
+              <input class="ctrl" type="text" id="urgenciaNome" name="urgenciaNome" required placeholder="Nome do contato">
               <p class="field-error" data-for="urgenciaNome">Informe o nome.</p>
             </div>
             <div>
-              <select class="ctrl" id="urgenciaParentesco" required>
+              <select class="ctrl" id="urgenciaParentesco" name="urgenciaParentesco" required>
                 <option value="">Parentesco</option>
                 <option value="Pai">Pai</option>
                 <option value="Mãe">Mãe</option>
@@ -307,7 +319,7 @@
             </div>
           </div>
           <div style="margin-top:10px;">
-            <input class="ctrl" type="tel" id="urgenciaTel" inputmode="numeric" required placeholder="(21) 90000-0000">
+            <input class="ctrl" type="tel" id="urgenciaTel" name="urgenciaTel" inputmode="numeric" required placeholder="(21) 90000-0000">
             <p class="field-error" data-for="urgenciaTel">Informe o telefone.</p>
           </div>
         </div>
@@ -319,27 +331,34 @@
 
         <div class="field">
           <label class="lbl" for="comoSoube">Como soube do XVI C.O.R Jovem? <span class="opt">(opcional)</span></label>
-          <input class="ctrl" type="text" id="comoSoube" placeholder="Indicação, redes, paróquia…">
+          <input class="ctrl" type="text" id="comoSoube" name="comoSoube" placeholder="Indicação, redes, paróquia…">
         </div>
         <div class="field">
           <label class="lbl" for="expectativa">Sua expectativa para o retiro <span class="opt">(opcional)</span></label>
-          <textarea class="ctrl" id="expectativa" placeholder="O que você espera viver nesses dias?"></textarea>
+          <textarea class="ctrl" id="expectativa" name="expectativa" placeholder="O que você espera viver nesses dias?"></textarea>
         </div>
         <div class="field">
-          <span class="lbl">Quer adquirir a camisa do retiro?</span>
-          <p class="hint" style="margin-bottom:8px;">O valor será informado em breve pela equipe.</p>
-          <div class="choice-group" data-group="camisa">
-            <label class="choice"><input type="radio" name="camisa" value="sim">Sim</label>
-            <label class="choice"><input type="radio" name="camisa" value="nao">Não</label>
-          </div>
+          <fieldset>
+            <legend class="lbl">Quer adquirir a camisa do retiro?</legend>
+            <p class="hint" style="margin-bottom:8px;">O valor será informado em breve pela equipe.</p>
+            <div class="choice-group" data-group="camisa">
+              <label class="choice"><input type="radio" name="camisa" value="sim">Sim</label>
+              <label class="choice"><input type="radio" name="camisa" value="nao">Não</label>
+            </div>
+          </fieldset>
           <div class="conditional" id="camisaTamanhoBox">
             <label class="lbl" for="tamanho">Tamanho</label>
-            <select class="ctrl" id="tamanho">
+            <select class="ctrl" id="tamanho" name="tamanho">
               <option value="">Selecione</option>
               <option>PP</option><option>P</option><option>M</option>
               <option>G</option><option>GG</option><option>XG</option><option>XXG</option>
             </select>
+            <p class="field-error" data-for="tamanho">Informe o tamanho da camisa.</p>
           </div>
+        </div>
+        <div class="review-panel" id="reviewPanel" aria-live="polite">
+          <h3 class="review-title">Revisão rápida</h3>
+          <div class="review-list" id="reviewList"></div>
         </div>
         <div class="field">
           <div class="consent">
@@ -355,16 +374,16 @@
           <p class="callout-title">Autorização do responsável</p>
           <div class="field tight">
             <label class="lbl" for="respNome">Nome do responsável <span class="req">*</span></label>
-            <input class="ctrl" type="text" id="respNome" placeholder="Nome completo do responsável" autocomplete="name">
+            <input class="ctrl" type="text" id="respNome" name="respNome" placeholder="Nome completo do responsável" autocomplete="name">
             <p class="field-error" data-for="respNome">Informe o nome do responsável.</p>
           </div>
           <div class="field tight">
             <label class="lbl" for="respCpf">CPF do responsável <span class="req">*</span></label>
-            <input class="ctrl" type="text" id="respCpf" inputmode="numeric" placeholder="000.000.000-00" maxlength="14">
+            <input class="ctrl" type="text" id="respCpf" name="respCpf" inputmode="numeric" placeholder="000.000.000-00" maxlength="14" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" title="Digite no formato 000.000.000-00">
             <p class="field-error" data-for="respCpf">Informe o CPF do responsável.</p>
           </div>
           <label class="consent-check" style="margin:12px 0 10px;">
-            <input type="checkbox" id="respConsentCheck">
+            <input type="checkbox" id="respConsentCheck" name="respConsentCheck">
             <span>Na condição de responsável, declaro que li todas as informações desta ficha, que são verídicas, e autorizo o(a) jovem acima descrito a participar do XVI C.O.R Jovem, nos dias 12 e 13 de setembro.</span>
           </label>
           <p class="field-error" data-for="respConsentCheck">O responsável precisa autorizar a participação.</p>
@@ -377,7 +396,7 @@
         <button type="submit" class="btn btn-primary" id="submitBtn" hidden>Confirmar inscrição</button>
       </div>
       <p class="privacy">Suas informações serão usadas apenas pela organização do retiro</p>
-      <p class="banner-err" id="errorMsg" role="alert"></p>
+      <p class="banner-err" id="errorMsg" role="alert" aria-live="assertive" aria-atomic="true"></p>
     </form>
 
     <div class="success" id="successPanel">
@@ -426,6 +445,8 @@
   const nextBtn = document.getElementById('nextBtn');
   const submitBtn = document.getElementById('submitBtn');
   const errorMsg = document.getElementById('errorMsg');
+  const reviewPanel = document.getElementById('reviewPanel');
+  const reviewList = document.getElementById('reviewList');
   const idade = document.getElementById('idade');
   const nascimento = document.getElementById('nascimento');
   const minorBox = document.getElementById('minorBox');
@@ -466,6 +487,73 @@
   function phoneOk(v){
     const d = v.replace(/\D/g,'');
     return d.length >= 10 && d.length <= 11;
+  }
+
+  function escapeHtml(value){
+    return String(value || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function getReviewValue(value, fallback){
+    return value ? value : fallback || 'Não informado';
+  }
+
+  function getCheckedValue(name){
+    const radio = form.querySelector('input[name="'+name+'"]:checked');
+    return radio ? (radio.value === 'sim' ? 'Sim' : 'Não') : 'Não informado';
+  }
+
+  function renderReview(){
+    if(!reviewPanel || !reviewList) return;
+    const values = {
+      Nome: document.getElementById('nome').value.trim(),
+      WhatsApp: document.getElementById('whatsapp').value.trim(),
+      Cidade: document.getElementById('cidade').value.trim(),
+      UF: document.getElementById('uf').value,
+      'Menor de idade': isMinor() ? 'Sim' : 'Não',
+      'Telefone do responsável': document.getElementById('respTel').value.trim(),
+      'Pais católicos': getCheckedValue('paisCatolicos'),
+      'É católico': getCheckedValue('ehCatolico'),
+      'Missas dominicais': getCheckedValue('missas'),
+      'Comorbidade': getCheckedValue('comorbidade'),
+      'Medicamento': getCheckedValue('medicamento'),
+      'Alergia': getCheckedValue('alergia'),
+      'Contato de urgência': document.getElementById('urgenciaNome').value.trim(),
+      'Parentesco': document.getElementById('urgenciaParentesco').value,
+      'Tamanho da camisa': document.getElementById('tamanho').value,
+      'Quer camisa': getCheckedValue('camisa')
+    };
+    const sacramentos = [...document.querySelectorAll('#sacramentos input:checked')].map(el => el.value).join(', ');
+    const list = [];
+    list.push({label:'Nome', value: getReviewValue(values.Nome)});
+    list.push({label:'WhatsApp', value: getReviewValue(values.WhatsApp)});
+    list.push({label:'Cidade / UF', value: getReviewValue(values.Cidade ? values.Cidade + ' / ' + values.UF : '')});
+    if(isMinor()){
+      list.push({label:'Telefone do responsável', value: getReviewValue(values['Telefone do responsável'])});
+    }
+    list.push({label:'Pais católicos', value: values['Pais católicos']});
+    list.push({label:'É católico', value: values['É católico']});
+    list.push({label:'Missas dominicais', value: values['Missas dominicais']});
+    list.push({label:'Comorbidade', value: values['Comorbidade']});
+    list.push({label:'Medicamento', value: values['Medicamento']});
+    list.push({label:'Alergia', value: values['Alergia']});
+    list.push({label:'Contato de urgência', value: getReviewValue(values['Contato de urgência'])});
+    list.push({label:'Parentesco', value: getReviewValue(values['Parentesco'])});
+    list.push({label:'Quer camisa', value: values['Quer camisa']});
+    if(values['Quer camisa'] === 'Sim'){
+      list.push({label:'Tamanho da camisa', value: getReviewValue(values['Tamanho da camisa'])});
+    }
+    list.push({label:'Como soube', value: getReviewValue(document.getElementById('comoSoube').value.trim())});
+    reviewList.innerHTML = list.map(item =>
+      '<div class="review-item"><strong>'+escapeHtml(item.label)+'</strong><span>'+escapeHtml(item.value)+'</span></div>'
+    ).join('');
+  }
+
+  function focusFirstInvalid(scope){
+    const root = scope || form;
+    const invalid = root.querySelector('.is-invalid, .field-error.show');
+    if(!invalid) return;
+    const target = invalid.closest('.field')?.querySelector('input,select,textarea') || invalid.querySelector('input,select,textarea');
+    if(target) target.focus();
   }
 
   ['whatsapp','respTel','urgenciaTel'].forEach(id=>{
@@ -556,6 +644,7 @@
       draft.consent = document.getElementById('consentCheck').checked;
       draft.respConsent = document.getElementById('respConsentCheck').checked;
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      renderReview();
     }catch(_){}
   }
 
@@ -586,8 +675,7 @@
         if(age != null){ idade.value = age; updateMinorState(); }
       }
       toggleConditionals();
-      if(typeof draft.step === 'number') current = draft.step;
-    }catch(_){}
+      if(typeof draft.step === 'number') current = draft.step;      renderReview();    }catch(_){}
   }
 
   function clearDraft(){
@@ -605,6 +693,7 @@
     prevBtn.hidden = current === 0;
     nextBtn.hidden = current === STEPS.length - 1;
     submitBtn.hidden = current !== STEPS.length - 1;
+    renderReview();
     clearBanner();
     saveDraft();
   }
@@ -672,8 +761,11 @@
       }
     }
 
-    if(!ok && !errorMsg.classList.contains('show')){
-      showError('Confira os campos destacados neste passo.');
+    if(!ok){
+      focusFirstInvalid(steps[n]);
+      if(!errorMsg.classList.contains('show')){
+        showError('Confira os campos destacados neste passo.');
+      }
     }
     return ok;
   }

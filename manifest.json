@@ -1,0 +1,23 @@
+{
+  "name": "Painel da equipe — XVI C.O.R Jovem",
+  "short_name": "Dashboard C.O.R",
+  "description": "Acesse o dashboard do C.O.R Jovem para gestão de inscrições, servos, pagamentos e configurações PIX.",
+  "start_url": "./dashboard.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#1f4f8a",
+  "icons": [
+    {
+      "src": "image/logos/geracao-eucaristica.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "image/logos/geracao-eucaristica.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

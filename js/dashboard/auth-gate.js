@@ -26,6 +26,7 @@
     }
     setupTesoureiroUi();
     wirePixPanel();
+    if(typeof restoreInscFilters === 'function') restoreInscFilters();
     load();
     if(window.COR_AUTH && window.COR_AUTH.isTesoureiro()){
       loadPixPanel();

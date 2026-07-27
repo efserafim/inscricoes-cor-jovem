@@ -11,6 +11,15 @@
   let pixQueue = 'camisas';
   let pixCamisasRows = [];
   let pixContribRows = [];
+  let pixConfigDirty = false;
+
+  function setPixConfigDirty(dirty){
+    pixConfigDirty = !!dirty;
+    const btn = document.getElementById('pixSaveBtn');
+    const st = document.getElementById('pixConfigStatus');
+    if(btn) btn.disabled = !pixConfigDirty;
+    if(st) st.textContent = pixConfigDirty ? 'Alterações não salvas.' : 'Configuração atualizada.';
+  }
 
   function setupTesoureiroUi(){
     const isT = !!(window.COR_AUTH && window.COR_AUTH.isTesoureiro());
@@ -43,6 +52,8 @@
         document.getElementById('pixLibCamisa').checked = !!cfg.pagamentos_liberados;
         document.getElementById('pixLibContrib').checked = !!cfg.contribuicoes_liberadas;
         await refreshPixPreview();
+        updatePixConfigSummary();
+        setPixConfigDirty(false);
       }
       await refreshPixQueues();
     }catch(err){
@@ -54,14 +65,20 @@
   async function refreshPixPreview(){
     const preview = document.getElementById('pixPreview');
     const canvas = document.getElementById('pixPreviewCanvas');
-    if(!window.COR_PIX) return;
+    const note = document.getElementById('pixPreviewNote');
+    if(!window.COR_PIX){
+      if(note) note.textContent = 'Aguardando a biblioteca PIX.';
+      return;
+    }
     const chave = document.getElementById('pixChave').value.trim();
     const nome = document.getElementById('pixNome').value.trim();
     const cidade = document.getElementById('pixCidade').value.trim();
     const tipo = document.getElementById('pixTipoChave').value;
     const valor = window.COR_PIX.parseMoney(document.getElementById('pixValorCamisa').value);
     if(!chave || !nome || !cidade || valor == null){
-      preview.hidden = true;
+      if(note) note.textContent = 'Complete chave, nome, cidade e valor da camisa para ver a prévia do QR.';
+      if(preview) preview.hidden = true;
+      updatePixConfigSummary();
       return;
     }
     const payload = window.COR_PIX.buildPayload({
@@ -74,6 +91,44 @@
     });
     preview.hidden = false;
     await window.COR_PIX.drawQr(canvas, payload, 160);
+    if(note) note.textContent = 'Prévia pronta para valor ' + moneyLabel(valor) + ' e chave ' + pixKeyLabel(tipo, chave) + '.';
+    updatePixConfigSummary();
+  }
+
+  function pixKeyLabel(tipo, chave){
+    if(!chave) return '—';
+    switch(tipo){
+      case 'cpf': return 'CPF · ' + chave;
+      case 'cnpj': return 'CNPJ · ' + chave;
+      case 'email': return 'E-mail · ' + chave;
+      case 'telefone': return 'Telefone · ' + chave;
+      default: return 'EVP · ' + chave;
+    }
+  }
+
+  function updatePixConfigSummary(){
+    const summary = document.getElementById('pixConfigSummary');
+    if(!summary) return;
+    const chave = document.getElementById('pixChave').value.trim();
+    const nome = document.getElementById('pixNome').value.trim();
+    const cidade = document.getElementById('pixCidade').value.trim();
+    const tipo = document.getElementById('pixTipoChave').value;
+    const valorCamisa = window.COR_PIX.parseMoney(document.getElementById('pixValorCamisa').value);
+    const valorContrib = window.COR_PIX.parseMoney(document.getElementById('pixValorContrib').value);
+    const libCamisa = document.getElementById('pixLibCamisa').checked;
+    const libContrib = document.getElementById('pixLibContrib').checked;
+    const parts = [];
+    if(!chave || !nome || !cidade){
+      parts.push('Preencha chave, nome e cidade para ativar o PIX e gerar prévia.');
+    } else {
+      parts.push('Chave: ' + pixKeyLabel(tipo, chave));
+      parts.push('Recebedor: ' + nome + ' · ' + cidade);
+      if(valorCamisa != null) parts.push('Valor camisa: ' + moneyLabel(valorCamisa));
+      if(valorContrib != null) parts.push('Valor contribuição: ' + moneyLabel(valorContrib));
+      parts.push('Camisa: ' + (libCamisa ? 'ativada' : 'desativada'));
+      parts.push('Contribuição: ' + (libContrib ? 'ativada' : 'desativada'));
+    }
+    summary.innerHTML = '<p class="pix-config-summary-note">' + parts.join(' · ') + '</p>';
   }
 
   function moneyLabel(n){
@@ -413,7 +468,9 @@
     document.getElementById('pixCidade').value = '';
     document.getElementById('pixConfigStatus').textContent = 'Recebedor apagado — salve para aplicar.';
     refreshPixPreview().catch(()=>{});
+    updatePixConfigSummary();
     toast('Recebedor apagado. Clique em Salvar para aplicar.');
+    setPixConfigDirty(true);
   }
 
   function clearPixValores(){
@@ -423,6 +480,7 @@
     document.getElementById('pixConfigStatus').textContent = 'Valores apagados — salve para aplicar.';
     refreshPixPreview().catch(()=>{});
     toast('Valores apagados. Clique em Salvar para aplicar.');
+    setPixConfigDirty(true);
   }
 
   function clearFinanceFilters(){
@@ -480,6 +538,8 @@
       st.textContent = 'Salvo.';
       toast('Configuração PIX salva.');
       await refreshPixPreview();
+      updatePixConfigSummary();
+      setPixConfigDirty(false);
       await refreshPixQueues();
     }catch(err){
       console.error(err);
@@ -628,12 +688,27 @@
     if(!form || form.dataset.wired) return;
     form.dataset.wired = '1';
     form.addEventListener('submit', savePixConfig);
-    ['pixChave','pixNome','pixCidade','pixValorCamisa','pixTipoChave'].forEach(id=>{
+    const markPixConfigDirty = ()=> setPixConfigDirty(true);
+    ['pixChave','pixNome','pixCidade','pixValorCamisa','pixValorContrib','pixMensagem','pixTipoChave'].forEach(id=>{
       const el = document.getElementById(id);
-      el.addEventListener('change', ()=> refreshPixPreview().catch(()=>{}));
+      if(!el) return;
+      el.addEventListener('change', ()=> {
+        refreshPixPreview().catch(()=>{});
+        markPixConfigDirty();
+      });
       el.addEventListener('input', ()=> {
         clearTimeout(wirePixPanel._t);
         wirePixPanel._t = setTimeout(()=> refreshPixPreview().catch(()=>{}), 400);
+        markPixConfigDirty();
+      });
+    });
+    ['pixLibCamisa','pixLibContrib'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.addEventListener('change', ()=> {
+        refreshPixPreview().catch(()=>{});
+        updatePixConfigSummary();
+        markPixConfigDirty();
       });
     });
     document.getElementById('pixRefreshBtn').addEventListener('click', ()=> refreshPixQueues());
