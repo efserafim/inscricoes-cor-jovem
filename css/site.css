@@ -383,6 +383,12 @@ html{
   .trail-card > div{padding:16px 14px}
 }
 
+@media(max-width:520px){
+  .site-footer p{
+    font-size:12px;
+    line-height:1.5;
+  }
+}
 
 .saint-peeks{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
 .peek{position:absolute;width:148px;opacity:0;transition:opacity .4s var(--ease)}
@@ -869,23 +875,28 @@ select.ctrl{
 }
 
 .site-footer{
-  margin:8px auto 0;
-  padding:36px 20px max(40px, env(safe-area-inset-bottom));
+  margin:32px auto 0;
+  padding:24px 16px max(24px, env(safe-area-inset-bottom));
+  width:100%;
+  max-width:1180px;
+  box-sizing:border-box;
   text-align:center;
   border-top:1px solid rgba(212,221,229,.55);
-  background:linear-gradient(180deg, transparent, rgba(232,240,246,.75));
+  background:rgba(255,255,255,0.96);
 }
 .site-footer p{
   margin:0;
   font-family:'Outfit',sans-serif;
-  font-size:12px;
+  font-size:13px;
   font-weight:600;
   letter-spacing:.04em;
-  color:var(--slate);
-  line-height:1.5;
+  color:#4b5563;
+  line-height:1.6;
+  white-space: normal;
+  word-break: break-word;
 }
 .site-footer .footer-mark{
-  color:var(--copper);
+  color:#1f4f8a;
   font-weight:800;
   margin-right:4px;
 }

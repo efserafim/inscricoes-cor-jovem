@@ -138,7 +138,9 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{
 .gate-hint{font-size:12px;color:var(--slate);margin:14px 0 0;line-height:1.5;opacity:.85}
 
 .app{display:none;max-width:1280px;margin:0 auto;padding:16px 14px 64px; width:100%;}
-.app.open{display:block; overflow-x:clip;}
+.app.open{display:flex; flex-direction:column; min-height:100vh; overflow-x:clip;}
+.app.open .site-footer,
+.app.open .dash-footer{margin-top:auto;}
 
 .shell{
   position:sticky; top:0; z-index:30;
@@ -1284,20 +1286,26 @@ body.export-lock{
 
 .site-footer,
 .dash-footer{
-  margin:28px 0 0;
-  padding:20px 8px max(28px, env(safe-area-inset-bottom));
+  margin:28px auto 0;
+  padding:20px 12px max(24px, env(safe-area-inset-bottom));
+  width:100%;
+  max-width:1180px;
+  box-sizing:border-box;
   text-align:center;
   border-top:1px solid var(--mist);
+  background:rgba(255,255,255,0.95);
 }
 .site-footer p,
 .dash-footer p{
   margin:0;
   font-family:'Outfit',sans-serif;
-  font-size:12px;
+  font-size:13px;
   font-weight:600;
   letter-spacing:.04em;
   color:var(--slate);
-  line-height:1.5;
+  line-height:1.6;
+  white-space: normal;
+  word-break: break-word;
 }
 .site-footer .footer-mark,
 .dash-footer .footer-mark{
@@ -1318,6 +1326,13 @@ body.export-lock{
 }
 @media(max-width:960px){
   .pix-layout{ grid-template-columns:1fr; }
+}
+@media(max-width:520px){
+  .site-footer p,
+  .dash-footer p{
+    font-size:12px;
+    line-height:1.5;
+  }
 }
 .pix-config-panel,
 .pix-queue-panel{
