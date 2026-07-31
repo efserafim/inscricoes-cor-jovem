@@ -461,26 +461,69 @@
     }
   }
 
-  function clearPixRecebedor(){
+  async function persistPixConfig(patch, okMsg){
+    if(!pixConfigId){
+      toast('Configuração PIX não encontrada. Rode o SQL pagamentos-pix.sql.');
+      return false;
+    }
+    const st = document.getElementById('pixConfigStatus');
+    if(st) st.textContent = 'Salvando…';
+    try{
+      await window.COR_API.savePixConfigStaff(pixConfigId, patch);
+      if(patch.valor_camisa != null || patch.valor_contribuicao_servo != null){
+        await syncOpenExpected(patch);
+      }
+      if(st) st.textContent = okMsg || 'Salvo.';
+      setPixConfigDirty(false);
+      await refreshPixPreview().catch(()=>{});
+      updatePixConfigSummary();
+      return true;
+    }catch(err){
+      console.error(err);
+      if(st) st.textContent = '';
+      toast('Falha ao salvar configuração PIX.');
+      return false;
+    }
+  }
+
+  async function clearPixRecebedor(){
+    if(!pixConfigId){
+      toast('Configuração PIX não encontrada.');
+      return;
+    }
+    if(!confirm('Apagar chave, nome e cidade salvos?\n\nOs pagamentos PIX no site serão desativados até configurar de novo.')) return;
     document.getElementById('pixTipoChave').value = 'aleatoria';
     document.getElementById('pixChave').value = '';
     document.getElementById('pixNome').value = '';
     document.getElementById('pixCidade').value = '';
-    document.getElementById('pixConfigStatus').textContent = 'Recebedor apagado — salve para aplicar.';
-    refreshPixPreview().catch(()=>{});
-    updatePixConfigSummary();
-    toast('Recebedor apagado. Clique em Salvar para aplicar.');
-    setPixConfigDirty(true);
+    document.getElementById('pixLibCamisa').checked = false;
+    document.getElementById('pixLibContrib').checked = false;
+    const ok = await persistPixConfig({
+      tipo_chave: 'aleatoria',
+      chave_pix: null,
+      nome_recebedor: null,
+      cidade: null,
+      pagamentos_liberados: false,
+      contribuicoes_liberadas: false
+    }, 'Recebedor apagado.');
+    if(ok) toast('Recebedor apagado. Campos em branco.');
   }
 
-  function clearPixValores(){
+  async function clearPixValores(){
+    if(!pixConfigId){
+      toast('Configuração PIX não encontrada.');
+      return;
+    }
+    if(!confirm('Apagar valores e mensagem salvos?')) return;
     document.getElementById('pixValorCamisa').value = '';
     document.getElementById('pixValorContrib').value = '';
     document.getElementById('pixMensagem').value = '';
-    document.getElementById('pixConfigStatus').textContent = 'Valores apagados — salve para aplicar.';
-    refreshPixPreview().catch(()=>{});
-    toast('Valores apagados. Clique em Salvar para aplicar.');
-    setPixConfigDirty(true);
+    const ok = await persistPixConfig({
+      valor_camisa: null,
+      valor_contribuicao_servo: null,
+      mensagem: null
+    }, 'Valores apagados.');
+    if(ok) toast('Valores apagados. Campos em branco.');
   }
 
   function clearFinanceFilters(){
