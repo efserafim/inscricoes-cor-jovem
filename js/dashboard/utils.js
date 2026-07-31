@@ -129,6 +129,21 @@
     if(d.length <= 11) d = '55' + d;
     return 'https://wa.me/' + d;
   }
+  function instagramUser(ig){
+    let v = String(ig || '').trim();
+    if(!v) return '';
+    v = v.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '');
+    v = v.replace(/^@+/, '').replace(/\/+$/, '').split(/[/?#]/)[0];
+    return v;
+  }
+  function formatInstagram(ig){
+    const user = instagramUser(ig);
+    return user ? '@' + user : '';
+  }
+  function instagramLink(ig){
+    const user = instagramUser(ig);
+    return user ? 'https://instagram.com/' + encodeURIComponent(user) : null;
+  }
   function esc(s){
     return String(s == null ? '' : s)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');

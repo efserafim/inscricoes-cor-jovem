@@ -7,7 +7,7 @@ security definer
 set search_path = public
 as $$
 declare
-  lim constant int := 70;
+  lim constant int := 50;
   n bigint;
 begin
 

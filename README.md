@@ -42,7 +42,7 @@ Detalhes e regras de manutenção: **[ESTRUTURA.md](ESTRUTURA.md)**.
 
 | Camada | O que faz |
 |--------|-----------|
-| Trigger `enforce_inscricoes_limit` | Limite de 70 vagas no banco (atômico) |
+| Trigger `enforce_inscricoes_limit` | Limite de 50 vagas no banco (atômico) |
 | Honeypot + tempo mínimo | Reduz spam nos formulários públicos |
 | RPCs `existe_*` + `rpc_throttle` | Duplicidade só com número completo; máx. 5 tentativas/10 min por número |
 | `buscar_*` | Revogadas para `anon` (só boolean público) |

@@ -19,6 +19,11 @@
     'Outro'
   ];
 
+  function formatFuncoesPreferidas(r){
+    const list = Array.isArray(r.funcoes_preferidas) ? r.funcoes_preferidas.filter(Boolean) : [];
+    return list.length ? list.join(', ') : null;
+  }
+
   function fillServoEquipeFilter(){
     const sel = document.getElementById('servoFilterEquipe');
     if(!sel) return;
@@ -40,7 +45,7 @@
     if(camisa) list = list.filter(r => r.camisa === camisa);
     if(q){
       list = list.filter(r => {
-        const blob = [r.nome, r.telefone, r.equipe, r.ano_cor_jovem, r.endereco].join(' ').toLowerCase();
+        const blob = [r.nome, r.telefone, r.instagram, r.equipe, formatFuncoesPreferidas(r), r.ano_cor_jovem, r.endereco].join(' ').toLowerCase();
         return blob.includes(q);
       });
     }
@@ -153,10 +158,12 @@
         item('Nascimento', fmtDay(r.nascimento)) +
         item('Idade', r.idade) +
         item('Telefone', r.telefone) +
+        itemInstagram('Instagram', r.instagram) +
         item('Endereço', r.endereco, true) +
       '</div></div>' +
       '<div class="sec"><h3>Serviço</h3><div class="grid">' +
-        item('Equipe', r.equipe || 'A definir pela organização') +
+        item('Funções de interesse', formatFuncoesPreferidas(r), true) +
+        item('Equipe definida', r.equipe || 'A definir pela organização') +
         item('Ano COR Jovem', r.ano_cor_jovem) +
         item('Quer camisa', simNao(r.camisa)) +
         item('Tamanho', r.tamanho_camisa) +
@@ -181,6 +188,7 @@
         field('nascimento','Nascimento', nasc, { type:'date' }) +
         field('idade','Idade', r.idade, { type:'number', min:12, max:99 }) +
         field('telefone','Telefone', r.telefone) +
+        field('instagram','Instagram', r.instagram) +
         field('endereco','Endereço', r.endereco, { type:'textarea', full:true }) +
       '</div></div>' +
       '<div class="sec"><h3>Serviço</h3><div class="grid">' +
@@ -231,6 +239,7 @@
 
     const nome = g('nome');
     const telefone = g('telefone');
+    const instagramRaw = g('instagram');
     const endereco = g('endereco');
     const equipe = g('equipe');
     const ano_cor_jovem = g('ano_cor_jovem');
@@ -253,6 +262,7 @@
       nascimento: nasc,
       idade: idade || null,
       telefone,
+      instagram: formatInstagram(instagramRaw) || null,
       endereco,
       equipe: equipe || '',
       ano_cor_jovem,

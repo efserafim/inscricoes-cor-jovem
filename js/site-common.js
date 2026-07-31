@@ -67,6 +67,25 @@ window.COR_SITE = {
     }
   },
 
+  /** Funções que o candidato pode escolher na ficha pública (equipe final é definida pela organização). */
+  SERVO_FUNCOES: [
+    'Base',
+    'Capela',
+    'Cozinha',
+    'Limpeza',
+    'Secretaria',
+    'Tesouraria',
+    'Decúria',
+    'Música',
+    'Equipe de sala',
+    'Bem-estar',
+    'Ligação',
+    'Sineteiro',
+    'Cronometrista',
+    'Externa',
+    'Outro'
+  ],
+
   CONTATOS: [
     { nome: 'Mayara', tel: '(22) 99882-9819', wa: '5522998829819' },
     { nome: 'Aylla', tel: '(22) 99781-2588', wa: '5522997812588' },

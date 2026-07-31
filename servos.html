@@ -153,6 +153,12 @@
         </div>
 
         <div class="field">
+          <label class="lbl" for="instagram">Instagram</label>
+          <input class="ctrl" type="text" id="instagram" name="instagram" autocomplete="username" maxlength="80" placeholder="@usuario ou instagram.com/usuario">
+          <p class="hint">Opcional — para a equipe te encontrar nas redes.</p>
+        </div>
+
+        <div class="field">
           <label class="lbl" for="endereco">Endereço <span class="req">*</span></label>
           <textarea class="ctrl" id="endereco" name="endereco" rows="3" required placeholder="Rua, número, bairro, cidade…"></textarea>
           <p class="field-error" data-for="endereco">Informe o endereço.</p>
@@ -161,7 +167,14 @@
 
       <section class="step" data-step="1" aria-labelledby="step2-title">
         <h2 class="sr-only" id="step2-title">Serviço e camisa</h2>
-        <p class="section-lead">Informe se quer camisa e em que ano viveu o COR Jovem. A equipe de serviço é definida depois pela organização.</p>
+        <p class="section-lead">Indique em quais funções você gostaria de servir, se quer camisa e em que ano viveu o COR Jovem. A equipe final é confirmada pela organização.</p>
+
+        <div class="field">
+          <span class="lbl">Funções de interesse <span class="req">*</span></span>
+          <p class="hint" style="margin:0 0 10px">Marque uma ou mais áreas. Escolhemos juntos conforme a necessidade do retiro.</p>
+          <div class="check-grid" id="funcoesPreferidas"></div>
+          <p class="field-error" data-for="funcoesPreferidas">Selecione ao menos uma função.</p>
+        </div>
 
         <div class="field">
           <span class="lbl">Vai querer camisa? <span class="req">*</span></span>
@@ -278,6 +291,26 @@
 
   let current = 0;
 
+  function escapeAttr(s){
+    return String(s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  }
+
+  function mountFuncoesPreferidas(){
+    const wrap = document.getElementById('funcoesPreferidas');
+    if(!wrap || wrap.dataset.mounted) return;
+    const list = (window.COR_SITE && window.COR_SITE.SERVO_FUNCOES) || [];
+    wrap.innerHTML = list.map(function(f){
+      return '<label class="chk"><input type="checkbox" name="funcoes_preferidas" value="'+escapeAttr(f)+'">'+escapeAttr(f)+'</label>';
+    }).join('');
+    wrap.dataset.mounted = '1';
+  }
+
+  function selectedFuncoes(){
+    return [...document.querySelectorAll('#funcoesPreferidas input:checked')].map(el => el.value);
+  }
+
+  mountFuncoesPreferidas();
+
   function showError(msg){
     errorMsg.textContent = msg || '';
     errorMsg.classList.toggle('show', !!msg);
@@ -325,6 +358,7 @@
       form.querySelectorAll('#sacramentos input:checked').forEach(el=>{
         draft.checks.push(el.value);
       });
+      draft.funcoes = selectedFuncoes();
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
     }catch(_){}
   }
@@ -345,6 +379,11 @@
       (draft.checks || []).forEach(v=>{
         const el = form.querySelector('#sacramentos input[value="'+v+'"]');
         if(el){ el.checked = true; el.dispatchEvent(new Event('change')); }
+      });
+      (draft.funcoes || []).forEach(v=>{
+        form.querySelectorAll('#funcoesPreferidas input').forEach(el=>{
+          if(el.value === v) el.checked = true;
+        });
       });
       if(typeof draft.step === 'number') current = draft.step;
       const a = calcAge(nascimento.value);
@@ -392,6 +431,11 @@
     }
 
     if(n === 1){
+      const funcoes = selectedFuncoes();
+      if(!funcoes.length){
+        markInvalid('funcoesPreferidas', true);
+        ok = false;
+      }
       const camisa = form.querySelector('input[name="camisa"]:checked');
       if(!camisa){ markInvalid('camisa', true); ok = false; }
       else if(camisa.value === 'sim' && !document.getElementById('tamanho').value){
@@ -425,6 +469,14 @@
     if(validateStep(current)) goTo(current + 1);
   });
 
+  function normalizeInstagram(raw){
+    let v = String(raw || '').trim();
+    if(!v) return null;
+    v = v.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '');
+    v = v.replace(/^@+/, '').replace(/\/+$/, '').split(/[/?#]/)[0];
+    return v ? '@' + v : null;
+  }
+
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     if (window.COR_SITE && window.COR_SITE.isSpamSubmission(form)) {
@@ -449,6 +501,8 @@
         nascimento: nascimento.value,
         endereco: document.getElementById('endereco').value.trim(),
         telefone: tel,
+        instagram: normalizeInstagram(document.getElementById('instagram').value),
+        funcoes_preferidas: selectedFuncoes(),
         camisa,
         tamanho_camisa: camisa === 'sim' ? (document.getElementById('tamanho').value || null) : null,
         equipe: '',

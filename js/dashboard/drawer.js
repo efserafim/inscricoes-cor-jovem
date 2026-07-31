@@ -17,6 +17,20 @@
       '</div></div>';
   }
 
+  function itemInstagram(label, ig, full){
+    const user = instagramUser(ig);
+    const display = user ? '@' + user : null;
+    const link = user ? instagramLink(ig) : null;
+    const btn = link
+      ? '<a class="wa-mini" href="'+esc(link)+'" target="_blank" rel="noopener">Abrir</a>'
+      : '';
+    return '<div class="item'+(full?' full':'')+'"><span class="l">'+esc(label)+'</span>' +
+      '<div class="d phone-row'+(display?'':' empty')+'">' +
+        '<span>'+(display ? esc(display) : 'Não informado')+'</span>' +
+        btn +
+      '</div></div>';
+  }
+
   function field(name, label, value, opts){
     opts = opts || {};
     const full = opts.full ? ' full' : '';

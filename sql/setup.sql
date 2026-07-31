@@ -192,10 +192,12 @@ create table if not exists public.servos_cor_jovem (
   nascimento date not null,
   endereco text not null,
   telefone text not null,
+  instagram text,
 
   camisa text,
   tamanho_camisa text,
   equipe text,
+  funcoes_preferidas text[] default '{}',
   ano_cor_jovem text not null,
   marco_cor text not null,
   oracao_sacramentos text not null,
@@ -272,7 +274,7 @@ security definer
 set search_path = public
 as $$
 declare
-  lim constant int := 70;
+  lim constant int := 50;
   n bigint;
 begin
   if tg_op = 'UPDATE'

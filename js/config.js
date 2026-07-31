@@ -6,7 +6,7 @@ window.COR_CONFIG = {
   decuriasTable: 'decurias_cor_jovem',
   servosTable: 'servos_cor_jovem',
   comprovantesBucket: 'comprovantes-camisas',
-  maxInscricoes: 70,
+  maxInscricoes: 50,
 
   event: {
     name: 'XVI C.O.R Jovem',

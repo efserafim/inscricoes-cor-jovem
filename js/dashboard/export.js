@@ -6,7 +6,9 @@
     { id:'idade', label:'Idade', group:'essencial', get:r => r.idade },
     { id:'nascimento', label:'Nascimento', group:'completo', get:r => fmtDay(r.nascimento) },
     { id:'whatsapp', label:'WhatsApp / Tel.', group:'contato', get:r => r.whatsapp || r.telefone },
+    { id:'instagram', label:'Instagram', group:'contato', get:r => formatInstagram(r.instagram) || '—' },
     { id:'decuria', label:'Decúria / Equipe', group:'essencial', get:r => r.equipe || decuriaName(r.decuria_id) || '—' },
+    { id:'funcoes_preferidas', label:'Funções de interesse', group:'completo', get:r => Array.isArray(r.funcoes_preferidas) ? r.funcoes_preferidas.join('; ') : '' },
     { id:'cidade', label:'Cidade', group:'contato', get:r => r.cidade },
     { id:'uf', label:'UF', group:'contato', get:r => r.uf },
     { id:'bairro', label:'Bairro', group:'completo', get:r => r.bairro },
@@ -33,7 +35,7 @@
   const PRESETS = {
     essencial: ['nome','status','idade','whatsapp','decuria'],
     camisas: ['nome','tamanho','idade','whatsapp','decuria','status'],
-    contato: ['nome','whatsapp','cidade','uf','decuria','status'],
+    contato: ['nome','whatsapp','instagram','cidade','uf','decuria','status'],
     completo: EXPORT_FIELDS.map(f => f.id),
     nenhum: []
   };
