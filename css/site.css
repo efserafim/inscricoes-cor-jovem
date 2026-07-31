@@ -621,6 +621,22 @@ select.ctrl{
   background-repeat:no-repeat;background-position:right 14px center;
   padding-right:36px;
 }
+select.ctrl.ctrl-scroll-list{
+  appearance:auto;
+  background-image:none;
+  padding-right:14px;
+  min-height:11.5rem;
+  max-height:11.5rem;
+  overflow-y:auto;
+  line-height:1.35;
+}
+select.ctrl.ctrl-scroll-list option{
+  padding:8px 12px;
+}
+select.ctrl.ctrl-scroll-list option:checked{
+  background:linear-gradient(0deg, rgba(196,92,38,.18), rgba(196,92,38,.18));
+  color:var(--ink);
+}
 
 .row2{display:flex;gap:12px}
 .row2>*{flex:1;min-width:0}

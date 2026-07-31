@@ -167,13 +167,15 @@
 
       <section class="step" data-step="1" aria-labelledby="step2-title">
         <h2 class="sr-only" id="step2-title">Serviço e camisa</h2>
-        <p class="section-lead">Indique em quais funções você gostaria de servir, se quer camisa e em que ano viveu o COR Jovem. A equipe final é confirmada pela organização.</p>
+        <p class="section-lead">Escolha a função em que gostaria de servir, informe se quer camisa e em que ano viveu o COR Jovem. A equipe final é confirmada pela organização.</p>
 
         <div class="field">
-          <span class="lbl">Funções de interesse <span class="req">*</span></span>
-          <p class="hint" style="margin:0 0 10px">Marque uma ou mais áreas. Escolhemos juntos conforme a necessidade do retiro.</p>
-          <div class="check-grid" id="funcoesPreferidas"></div>
-          <p class="field-error" data-for="funcoesPreferidas">Selecione ao menos uma função.</p>
+          <label class="lbl" for="funcaoPreferida">Função de interesse <span class="req">*</span></label>
+          <p class="hint" style="margin:0 0 10px">Role a lista e escolha <strong>apenas uma</strong> opção.</p>
+          <select class="ctrl ctrl-scroll-list" id="funcaoPreferida" name="funcaoPreferida" size="8" required>
+            <option value="">Selecione uma função…</option>
+          </select>
+          <p class="field-error" data-for="funcaoPreferida">Selecione uma função.</p>
         </div>
 
         <div class="field">
@@ -291,25 +293,24 @@
 
   let current = 0;
 
-  function escapeAttr(s){
-    return String(s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-  }
-
-  function mountFuncoesPreferidas(){
-    const wrap = document.getElementById('funcoesPreferidas');
-    if(!wrap || wrap.dataset.mounted) return;
+  function mountFuncaoPreferida(){
+    const sel = document.getElementById('funcaoPreferida');
+    if(!sel || sel.dataset.mounted) return;
     const list = (window.COR_SITE && window.COR_SITE.SERVO_FUNCOES) || [];
-    wrap.innerHTML = list.map(function(f){
-      return '<label class="chk"><input type="checkbox" name="funcoes_preferidas" value="'+escapeAttr(f)+'">'+escapeAttr(f)+'</label>';
-    }).join('');
-    wrap.dataset.mounted = '1';
+    list.forEach(function(f){
+      const opt = document.createElement('option');
+      opt.value = f;
+      opt.textContent = f;
+      sel.appendChild(opt);
+    });
+    sel.dataset.mounted = '1';
   }
 
-  function selectedFuncoes(){
-    return [...document.querySelectorAll('#funcoesPreferidas input:checked')].map(el => el.value);
+  function selectedFuncao(){
+    return (document.getElementById('funcaoPreferida')?.value || '').trim();
   }
 
-  mountFuncoesPreferidas();
+  mountFuncaoPreferida();
 
   function showError(msg){
     errorMsg.textContent = msg || '';
@@ -358,7 +359,6 @@
       form.querySelectorAll('#sacramentos input:checked').forEach(el=>{
         draft.checks.push(el.value);
       });
-      draft.funcoes = selectedFuncoes();
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
     }catch(_){}
   }
@@ -380,11 +380,10 @@
         const el = form.querySelector('#sacramentos input[value="'+v+'"]');
         if(el){ el.checked = true; el.dispatchEvent(new Event('change')); }
       });
-      (draft.funcoes || []).forEach(v=>{
-        form.querySelectorAll('#funcoesPreferidas input').forEach(el=>{
-          if(el.value === v) el.checked = true;
-        });
-      });
+      if(Array.isArray(draft.funcoes) && draft.funcoes[0] && !draft.fields?.funcaoPreferida){
+        const legacy = document.getElementById('funcaoPreferida');
+        if(legacy) legacy.value = draft.funcoes[0];
+      }
       if(typeof draft.step === 'number') current = draft.step;
       const a = calcAge(nascimento.value);
       if(a != null) idade.value = a;
@@ -431,9 +430,8 @@
     }
 
     if(n === 1){
-      const funcoes = selectedFuncoes();
-      if(!funcoes.length){
-        markInvalid('funcoesPreferidas', true);
+      if(!selectedFuncao()){
+        markInvalid('funcaoPreferida', true);
         ok = false;
       }
       const camisa = form.querySelector('input[name="camisa"]:checked');
@@ -502,7 +500,10 @@
         endereco: document.getElementById('endereco').value.trim(),
         telefone: tel,
         instagram: normalizeInstagram(document.getElementById('instagram').value),
-        funcoes_preferidas: selectedFuncoes(),
+        funcoes_preferidas: (function(){
+          const f = selectedFuncao();
+          return f ? [f] : [];
+        })(),
         camisa,
         tamanho_camisa: camisa === 'sim' ? (document.getElementById('tamanho').value || null) : null,
         equipe: '',
