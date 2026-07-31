@@ -315,12 +315,17 @@ html[data-theme="dark"] .btn-primary:hover{filter:brightness(1.04)}
 }
 .tab:hover{ color:var(--ink); background:var(--tab-hover); }
 .tab.active{
-  background:linear-gradient(135deg, #1a2c38 0%, #152029 100%);
-  color:#fff;
-  box-shadow:0 8px 18px -10px rgba(21,32,41,.55);
+  background:var(--copper-soft);
+  color:var(--copper);
+  box-shadow:none;
+}
+.tab.active:hover{
+  background:var(--copper-soft);
+  color:var(--copper);
 }
 html[data-theme="dark"] .tab.active{
-  background:linear-gradient(135deg,#f2f6f9,#e8eef3); color:#121a21;
+  background:var(--copper-soft);
+  color:var(--copper);
 }
 
 .view{ display:none; }
@@ -953,19 +958,33 @@ body.export-lock{
   .lbl-short{display:inline;}
 
   .tabs{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:6px;
-    margin-bottom:14px;
-    padding:6px;
-    max-width:100%;
+    display:flex;
+    flex-wrap:nowrap;
+    gap:4px;
+    margin:0 -10px 14px;
+    padding:6px 10px;
+    max-width:none;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x proximity;
+    scrollbar-width:none;
+    border-radius:0;
+    border-left:none;
+    border-right:none;
+    mask-image:linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
+    -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
   }
+  .tabs::-webkit-scrollbar{ display:none; }
   .tab{
-    padding:12px 8px;
-    font-size:12px;
+    flex:0 0 auto;
+    scroll-snap-align:start;
+    padding:10px 14px;
+    font-size:12.5px;
     text-align:center;
-    min-height:44px;
+    min-height:40px;
     min-width:0;
+    white-space:nowrap;
   }
 
   .stats{
@@ -1278,7 +1297,7 @@ body.export-lock{
 }
 
 @media(max-width:380px){
-  .tabs{grid-template-columns:1fr 1fr;}
+  .tab{ padding:10px 12px; font-size:12px; }
   .stat .k{font-size:9px;}
   .stat .v{font-size:22px;}
   .actions .btn{font-size:12px; padding:8px 8px;}
@@ -1293,7 +1312,7 @@ body.export-lock{
   box-sizing:border-box;
   text-align:center;
   border-top:1px solid var(--mist);
-  background:rgba(255,255,255,0.95);
+  background:var(--card);
 }
 .site-footer p,
 .dash-footer p{

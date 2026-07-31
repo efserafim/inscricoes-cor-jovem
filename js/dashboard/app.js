@@ -9,6 +9,7 @@
       document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
       tab.classList.add('active');
       tab.setAttribute('aria-selected','true');
+      tab.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' });
       const map = {
         inscricoes:'viewInscricoes',
         servos:'viewServos',
@@ -160,10 +161,12 @@
     if(drawerMode === 'servo'){
       if(!selectedServoId) return;
       try{
-        await window.COR_API.updateServo(selectedServoId, { status });
-        const r = servoRows.find(x => x.id === selectedServoId);
-        if(r) r.status = status;
+        const updated = await window.COR_API.updateServo(selectedServoId, { status });
+        const idx = servoRows.findIndex(x => x.id === selectedServoId);
+        const row = rowFromUpdate(updated, idx >= 0 ? servoRows[idx] : null, { status });
+        if(idx >= 0) servoRows[idx] = row;
         renderServos();
+        if(!editing) fillServoDrawer(row);
         toast('Status atualizado: ' + (STATUS_LABEL[status] || status));
       }catch(err){
         console.error(err);
@@ -174,10 +177,12 @@
     }
     if(!selectedId) return;
     try{
-      await window.COR_API.update(selectedId, { status });
-      const r = rows.find(x => x.id === selectedId);
-      if(r) r.status = status;
+      const updated = await window.COR_API.update(selectedId, { status });
+      const idx = rows.findIndex(x => x.id === selectedId);
+      const row = rowFromUpdate(updated, idx >= 0 ? rows[idx] : null, { status });
+      if(idx >= 0) rows[idx] = row;
       render();
+      if(!editing) fillDrawer(row);
       toast('Status atualizado: ' + (STATUS_LABEL[status] || status));
     }catch(err){
       console.error(err);
@@ -199,11 +204,13 @@
       }
     }
     try{
-      await window.COR_API.update(selectedId, { decuria_id });
-      if(r) r.decuria_id = decuria_id;
+      const updated = await window.COR_API.update(selectedId, { decuria_id });
+      const idx = rows.findIndex(x => x.id === selectedId);
+      const row = rowFromUpdate(updated, idx >= 0 ? rows[idx] : null, { decuria_id });
+      if(idx >= 0) rows[idx] = row;
       render();
       renderDecurias();
-      if(r) fillDrawer(r);
+      if(!editing) fillDrawer(row);
       toast(decuria_id ? 'Adicionado à Decúria' : 'Removido da Decúria');
     }catch(err){
       console.error(err);
@@ -225,13 +232,14 @@
       equipe = custom.trim();
     }
     try{
-      await window.COR_API.updateServo(selectedServoId, { equipe: equipe || '' });
-      const r = servoRows.find(x => x.id === selectedServoId);
-      if(r) r.equipe = equipe || '';
-      fillEquipeSelect(equipe || '');
+      const updated = await window.COR_API.updateServo(selectedServoId, { equipe: equipe || '' });
+      const idx = servoRows.findIndex(x => x.id === selectedServoId);
+      const row = rowFromUpdate(updated, idx >= 0 ? servoRows[idx] : null, { equipe: equipe || '' });
+      if(idx >= 0) servoRows[idx] = row;
+      fillEquipeSelect(row.equipe || '');
       fillServoEquipeFilter();
       renderServos();
-      if(r && !editing) fillServoDrawer(r);
+      if(!editing) fillServoDrawer(row);
       toast(equipe ? 'Equipe: ' + equipe : 'Equipe removida');
     }catch(err){
       console.error(err);
@@ -311,9 +319,11 @@
     if(drawerMode === 'servo'){
       if(!selectedServoId) return;
       try{
-        await window.COR_API.updateServo(selectedServoId, { observacoes });
-        const r = servoRows.find(x => x.id === selectedServoId);
-        if(r) r.observacoes = observacoes;
+        const updated = await window.COR_API.updateServo(selectedServoId, { observacoes });
+        const idx = servoRows.findIndex(x => x.id === selectedServoId);
+        const row = rowFromUpdate(updated, idx >= 0 ? servoRows[idx] : null, { observacoes });
+        if(idx >= 0) servoRows[idx] = row;
+        if(!editing) fillServoDrawer(row);
         toast('Observações salvas');
       }catch(err){
         console.error(err);
@@ -323,9 +333,11 @@
     }
     if(!selectedId) return;
     try{
-      await window.COR_API.update(selectedId, { observacoes });
-      const r = rows.find(x => x.id === selectedId);
-      if(r) r.observacoes = observacoes;
+      const updated = await window.COR_API.update(selectedId, { observacoes });
+      const idx = rows.findIndex(x => x.id === selectedId);
+      const row = rowFromUpdate(updated, idx >= 0 ? rows[idx] : null, { observacoes });
+      if(idx >= 0) rows[idx] = row;
+      if(!editing) fillDrawer(row);
       toast('Observações salvas');
     }catch(err){
       console.error(err);

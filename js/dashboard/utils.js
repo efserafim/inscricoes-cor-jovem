@@ -105,6 +105,14 @@
     const [y,m,d] = String(iso).slice(0,10).split('-');
     return d + '/' + m + '/' + y;
   }
+  function fmtEditorMeta(r){
+    if(!r || !r.updated_by) return '';
+    const when = r.updated_at ? fmtDate(r.updated_at) : '—';
+    return 'Editado por ' + r.updated_by + ' em ' + when;
+  }
+  function rowFromUpdate(updated, fallback, patch){
+    return Array.isArray(updated) && updated[0] ? updated[0] : Object.assign({}, fallback, patch);
+  }
   function val(v){
     if(v == null || v === '' || (Array.isArray(v) && !v.length)) return null;
     return v;

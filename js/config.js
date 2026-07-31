@@ -221,6 +221,14 @@ window.COR_API = {
     });
   },
 
+  _withEditor(patch) {
+    const body = Object.assign({}, patch);
+    const editorName = (window.COR_AUTH && window.COR_AUTH.userDisplayName && window.COR_AUTH.userDisplayName())
+      || (window.COR_AUTH && window.COR_AUTH.userEmail && window.COR_AUTH.userEmail());
+    if (editorName) body.updated_by = editorName;
+    return body;
+  },
+
   async headers(extra, opts) {
     const c = window.COR_CONFIG;
     const staff = opts && opts.staff;
@@ -297,10 +305,11 @@ window.COR_API = {
   },
 
   async update(id, patch) {
+    const body = this._withEditor(patch);
     const res = await fetch(this.url('?id=eq.' + encodeURIComponent(id)), {
       method: 'PATCH',
       headers: await this.headers({ Prefer: 'return=representation' }, { staff: true }),
-      body: JSON.stringify(patch)
+      body: JSON.stringify(body)
     });
     if (!res.ok) throw new Error(await res.text());
     return res.json();
@@ -399,10 +408,11 @@ window.COR_API = {
   },
 
   async updateServo(id, patch) {
+    const body = this._withEditor(patch);
     const res = await fetch(this.servosUrl('?id=eq.' + encodeURIComponent(id)), {
       method: 'PATCH',
       headers: await this.headers({ Prefer: 'return=representation' }, { staff: true }),
-      body: JSON.stringify(patch)
+      body: JSON.stringify(body)
     });
     if (!res.ok) throw new Error(await res.text());
     return res.json();

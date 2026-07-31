@@ -421,7 +421,7 @@
 
     try{
       const updated = await window.COR_API.update(selectedId, patch);
-      const row = Array.isArray(updated) && updated[0] ? updated[0] : Object.assign({}, rows.find(x=>x.id===selectedId), patch);
+      const row = rowFromUpdate(updated, rows.find(x=>x.id===selectedId), patch);
       const idx = rows.findIndex(x => x.id === selectedId);
       if(idx >= 0) rows[idx] = row;
       setToolbarEditing(false);
@@ -451,6 +451,7 @@
     document.getElementById('dStatus').value = r.status || 'nova';
     document.getElementById('dDecuria').value = r.decuria_id || '';
     document.getElementById('dNotes').value = r.observacoes || '';
+    document.getElementById('dEditor').textContent = fmtEditorMeta(r);
 
     if(editing) fillDrawerEdit(r);
     else fillDrawerView(r);

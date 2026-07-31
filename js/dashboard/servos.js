@@ -136,6 +136,7 @@
     document.getElementById('dStatus').value = r.status || 'nova';
     document.getElementById('dNotes').value = r.observacoes || '';
     fillEquipeSelect(r.equipe);
+    document.getElementById('dEditor').textContent = fmtEditorMeta(r);
 
     if(editing) fillServoDrawerEdit(r);
     else fillServoDrawerView(r);
@@ -267,9 +268,7 @@
 
     try{
       const updated = await window.COR_API.updateServo(selectedServoId, patch);
-      const row = Array.isArray(updated) && updated[0]
-        ? updated[0]
-        : Object.assign({}, servoRows.find(x=>x.id===selectedServoId), patch);
+      const row = rowFromUpdate(updated, servoRows.find(x=>x.id===selectedServoId), patch);
       const idx = servoRows.findIndex(x => x.id === selectedServoId);
       if(idx >= 0) servoRows[idx] = row;
       fillServoEquipeFilter();

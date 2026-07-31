@@ -130,6 +130,7 @@
         body +
         '<footer class="ficha-foot">' +
           '<span>Documento interno da equipe · XVI C.O.R Jovem</span>' +
+          (r.updated_by ? '<span>'+esc('Editado por ' + r.updated_by + (r.updated_at ? ' em ' + fmtDate(r.updated_at) : ''))+'</span>' : '') +
           '<span>Gerado em '+esc(new Date().toLocaleString('pt-BR'))+'</span>' +
         '</footer>' +
       '</article>';

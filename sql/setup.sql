@@ -51,6 +51,8 @@ create table if not exists public.inscricoes_cor_jovem (
 alter table public.inscricoes_cor_jovem
   add column if not exists updated_at timestamptz not null default now();
 alter table public.inscricoes_cor_jovem
+  add column if not exists updated_by text;
+alter table public.inscricoes_cor_jovem
   add column if not exists status text not null default 'nova';
 alter table public.inscricoes_cor_jovem
   add column if not exists observacoes text;
@@ -183,6 +185,7 @@ create table if not exists public.servos_cor_jovem (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
+  updated_by text,
 
   nome text not null,
   idade integer not null,
@@ -203,6 +206,9 @@ create table if not exists public.servos_cor_jovem (
     check (status in ('nova', 'confirmada', 'lista_espera', 'cancelada')),
   observacoes text
 );
+
+alter table public.servos_cor_jovem
+  add column if not exists updated_by text;
 
 drop trigger if exists trg_servos_updated_at on public.servos_cor_jovem;
 create trigger trg_servos_updated_at
