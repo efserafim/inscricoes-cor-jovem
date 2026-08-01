@@ -20,12 +20,18 @@
   ];
 
   function formatFuncoesPreferidas(r){
-    const list = Array.isArray(r.funcoes_preferidas) ? r.funcoes_preferidas.filter(Boolean) : [];
+    let raw = r.funcoes_preferidas;
+    if(typeof raw === 'string'){
+      raw = raw.replace(/^\{|\}$/g, '').split(',')
+        .map(s => s.trim().replace(/^"|"$/g, '')).filter(Boolean);
+    }
+    const list = Array.isArray(raw) ? raw.filter(Boolean) : [];
     return list.length ? list.join(', ') : null;
   }
 
+  /** Escolha na ficha; se vazio (inscrições antigas), usa função definida pela organização. */
   function servoFuncaoEscolhida(r){
-    return formatFuncoesPreferidas(r) || '—';
+    return formatFuncoesPreferidas(r) || r.equipe || 'A definir';
   }
 
   function servoFuncaoFilterValues(r){
