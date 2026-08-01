@@ -496,7 +496,7 @@
     </div>
     <div class="panel">
       <div class="toolbar">
-        <input class="search" id="servoSearch" type="search" placeholder="Buscar nome, telefone, equipe…">
+        <input class="search" id="servoSearch" type="search" placeholder="Buscar nome, telefone, função…">
         <div class="filters">
           <select id="servoFilterCamisa">
             <option value="">Camisa</option>
@@ -504,12 +504,12 @@
             <option value="nao">Não quer</option>
           </select>
           <select id="servoFilterEquipe">
-            <option value="">Equipe: todas</option>
+            <option value="">Função: todas</option>
           </select>
           <select id="servoFilterSort">
             <option value="recent">Mais recentes</option>
             <option value="nome">Nome A–Z</option>
-            <option value="equipe">Equipe</option>
+            <option value="equipe">Função</option>
           </select>
         </div>
       </div>
@@ -520,7 +520,7 @@
               <th>Status</th>
               <th>Nome</th>
               <th>Idade</th>
-              <th>Equipe</th>
+              <th>Função</th>
               <th>Telefone</th>
               <th>Camisa</th>
               <th>Ações</th>
@@ -567,8 +567,8 @@
       <select id="dDecuria" aria-label="Decúria">
         <option value="">Sem Décúria</option>
       </select>
-      <select id="dEquipe" aria-label="Equipe do servo" hidden>
-        <option value="">Sem equipe</option>
+      <select id="dEquipe" aria-label="Função do servo" hidden title="Função em que a pessoa vai servir">
+        <option value="">Função: a definir</option>
       </select>
     </div>
     <div class="tool-row tool-row-actions">

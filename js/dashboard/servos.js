@@ -29,7 +29,7 @@
     if(!sel) return;
     const cur = sel.value;
     const equipes = [...new Set(servoRows.map(r => r.equipe).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-    sel.innerHTML = '<option value="">Equipe: todas</option>' +
+    sel.innerHTML = '<option value="">Função: todas</option>' +
       equipes.map(e => '<option value="'+esc(e)+'">'+esc(e)+'</option>').join('');
     sel.value = [...sel.options].some(o=>o.value===cur) ? cur : '';
   }
@@ -70,7 +70,7 @@
       '<div class="summary-card"><span class="title">Aguardando</span><strong class="value">'+waiting+'</strong><span class="meta">Lista de espera</span></div>' +
       '<div class="summary-card"><span class="title">Camisas</span><strong class="value">'+shirts+'</strong><span class="meta">Pedem camisa</span></div>' +
       '<div class="summary-card"><span class="title">Sem tamanho</span><strong class="value">'+missingSize+'</strong><span class="meta">Falta tamanho</span></div>' +
-      '<div class="summary-card"><span class="title">Equipes</span><strong class="value">'+teams+'</strong><span class="meta">Equipas diferentes</span></div>';
+      '<div class="summary-card"><span class="title">Funções</span><strong class="value">'+teams+'</strong><span class="meta">Funções diferentes</span></div>';
   }
 
   function renderServos(){
@@ -100,7 +100,7 @@
         '<td data-label="Status"><span class="pill pill-'+esc(st)+'">'+esc(STATUS_LABEL[st]||st)+'</span></td>' +
         '<td data-label="Nome"><strong>'+esc(r.nome||'—')+'</strong></td>' +
         '<td data-label="Idade">'+esc(r.idade != null ? r.idade : '—')+'</td>' +
-        '<td data-label="Equipe">'+esc(r.equipe || 'A definir')+'</td>' +
+        '<td data-label="Função">'+esc(r.equipe || 'A definir')+'</td>' +
         '<td data-label="Telefone">'+telCell+'</td>' +
         '<td data-label="Camisa">'+esc(camisa)+'</td>' +
         '<td data-label="Ações"><button class="btn btn-ghost btn-sm btn-table-action" type="button" data-action="open">Ver</button></td>' +
@@ -163,7 +163,7 @@
       '</div></div>' +
       '<div class="sec"><h3>Serviço</h3><div class="grid">' +
         item('Função de interesse', formatFuncoesPreferidas(r), true) +
-        item('Equipe definida', r.equipe || 'A definir pela organização') +
+        item('Função definida', r.equipe || 'A definir pela organização') +
         item('Ano COR Jovem', r.ano_cor_jovem) +
         item('Quer camisa', simNao(r.camisa)) +
         item('Tamanho', r.tamanho_camisa) +
@@ -192,7 +192,7 @@
         field('endereco','Endereço', r.endereco, { type:'textarea', full:true }) +
       '</div></div>' +
       '<div class="sec"><h3>Serviço</h3><div class="grid">' +
-        field('equipe','Equipe', r.equipe, {
+        field('equipe','Função definida', r.equipe, {
           type:'select',
           options:[{value:'',label:'—'}].concat(equipes.map(e=>({value:e,label:e})))
         }) +

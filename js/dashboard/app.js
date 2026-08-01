@@ -223,7 +223,7 @@
     if(drawerMode !== 'servo' || !selectedServoId || editing) return;
     let equipe = e.target.value || null;
     if(equipe === '__outro__'){
-      const custom = prompt('Nome da equipe:');
+      const custom = prompt('Nome da função:');
       if(!custom || !custom.trim()){
         const cur = servoRows.find(x => x.id === selectedServoId);
         fillEquipeSelect(cur && cur.equipe);
@@ -240,10 +240,10 @@
       fillServoEquipeFilter();
       renderServos();
       if(!editing) fillServoDrawer(row);
-      toast(equipe ? 'Equipe: ' + equipe : 'Equipe removida');
+      toast(equipe ? 'Função: ' + equipe : 'Função removida');
     }catch(err){
       console.error(err);
-      toast('Não foi possível salvar a equipe.');
+      toast('Não foi possível salvar a função.');
       load(true);
     }
   });

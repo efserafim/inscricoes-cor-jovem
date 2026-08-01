@@ -90,7 +90,7 @@
     if(!sel) return;
     const cur = current || '';
     sel.innerHTML =
-      '<option value="">Sem equipe</option>' +
+      '<option value="">Função: a definir</option>' +
       SERVO_EQUIPES.filter(e => e !== 'Outro').map(e =>
         '<option value="'+esc(e)+'">'+esc(e)+'</option>'
       ).join('') +

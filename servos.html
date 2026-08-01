@@ -171,8 +171,7 @@
 
         <div class="field">
           <label class="lbl" for="funcaoPreferida">Função de interesse <span class="req">*</span></label>
-          <p class="hint" style="margin:0 0 10px">Role a lista e escolha <strong>apenas uma</strong> opção.</p>
-          <select class="ctrl ctrl-scroll-list" id="funcaoPreferida" name="funcaoPreferida" size="8" required>
+          <select class="ctrl" id="funcaoPreferida" name="funcaoPreferida" required>
             <option value="">Selecione uma função…</option>
           </select>
           <p class="field-error" data-for="funcaoPreferida">Selecione uma função.</p>
@@ -475,6 +474,25 @@
     return v ? '@' + v : null;
   }
 
+  function servoSubmitError(err){
+    const raw = String(err && err.message || err || '');
+    let msg = raw;
+    try{
+      const parsed = JSON.parse(raw);
+      if(parsed && parsed.message) msg = parsed.message;
+    }catch(_){}
+    if(/servos_cor_jovem.*does not exist|Could not find the table/i.test(msg)){
+      return 'A tabela de servos ainda não existe no Supabase. No SQL Editor, rode a seção de servos do arquivo sql/setup.sql.';
+    }
+    if(/funcoes_preferidas|instagram|Could not find the .* column/i.test(msg)){
+      return 'O banco precisa ser atualizado. No Supabase (SQL Editor), rode o arquivo sql/servos-fix-envio.sql e tente de novo.';
+    }
+    if(/permission denied|42501|row-level security/i.test(msg)){
+      return 'Sem permissão para salvar a ficha. No Supabase, rode sql/servos-fix-envio.sql (políticas e permissões).';
+    }
+    return 'Não deu pra enviar agora. Verifique sua conexão e tente de novo.';
+  }
+
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     if (window.COR_SITE && window.COR_SITE.isSpamSubmission(form)) {
@@ -537,7 +555,7 @@
         submitBtn.textContent = 'Confirmar inscrição';
         return;
       }
-      showError('Não deu pra enviar agora. Verifique sua conexão e se a tabela de servos foi criada no Supabase.');
+      showError(servoSubmitError(err));
       submitBtn.disabled = false;
       submitBtn.textContent = 'Confirmar inscrição';
     }
