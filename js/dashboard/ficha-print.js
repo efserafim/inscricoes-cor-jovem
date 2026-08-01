@@ -62,7 +62,7 @@
           fichaCell('Endereço', r.endereco, true) +
         '</div></section>' +
         '<section class="ficha-sec"><h2>Serviço</h2><div class="ficha-grid">' +
-          fichaCell('Função de interesse', formatFuncoesPreferidas(r) || '—', true) +
+          fichaCell('Equipe de trabalho', formatFuncoesPreferidas(r) || '—', true) +
           fichaCell('Função definida', r.equipe || '—') +
           fichaCell('Ano COR Jovem', r.ano_cor_jovem) +
           fichaCell('Quer camisa', simNao(r.camisa)) +

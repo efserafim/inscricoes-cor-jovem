@@ -162,7 +162,7 @@
         item('Endereço', r.endereco, true) +
       '</div></div>' +
       '<div class="sec"><h3>Serviço</h3><div class="grid">' +
-        item('Função de interesse', formatFuncoesPreferidas(r), true) +
+        item('Equipe de trabalho', formatFuncoesPreferidas(r), true) +
         item('Função definida', r.equipe || 'A definir pela organização') +
         item('Ano COR Jovem', r.ano_cor_jovem) +
         item('Quer camisa', simNao(r.camisa)) +
