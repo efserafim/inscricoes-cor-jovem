@@ -211,6 +211,10 @@ create table if not exists public.servos_cor_jovem (
 
 alter table public.servos_cor_jovem
   add column if not exists updated_by text;
+alter table public.servos_cor_jovem
+  add column if not exists instagram text;
+alter table public.servos_cor_jovem
+  add column if not exists funcoes_preferidas text[] default '{}';
 
 drop trigger if exists trg_servos_updated_at on public.servos_cor_jovem;
 create trigger trg_servos_updated_at

@@ -528,7 +528,7 @@
         ano_cor_jovem: document.getElementById('anoCor').value.trim(),
         marco_cor: document.getElementById('marcoCor').value.trim(),
         oracao_sacramentos: document.getElementById('oracao').value.trim(),
-        sacramentos,
+        sacramentos: [...document.querySelectorAll('#sacramentos input:checked')].map(el => el.value),
         foto_url: null,
         status: 'nova'
       };
