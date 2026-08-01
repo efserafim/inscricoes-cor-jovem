@@ -24,11 +24,20 @@
     return list.length ? list.join(', ') : null;
   }
 
+  function servoFuncaoEscolhida(r){
+    return formatFuncoesPreferidas(r) || '—';
+  }
+
+  function servoFuncaoFilterValues(r){
+    const escolhidas = Array.isArray(r.funcoes_preferidas) ? r.funcoes_preferidas.filter(Boolean) : [];
+    return escolhidas.length ? escolhidas : (r.equipe ? [r.equipe] : []);
+  }
+
   function fillServoEquipeFilter(){
     const sel = document.getElementById('servoFilterEquipe');
     if(!sel) return;
     const cur = sel.value;
-    const equipes = [...new Set(servoRows.map(r => r.equipe).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+    const equipes = [...new Set(servoRows.flatMap(servoFuncaoFilterValues))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
     sel.innerHTML = '<option value="">Função: todas</option>' +
       equipes.map(e => '<option value="'+esc(e)+'">'+esc(e)+'</option>').join('');
     sel.value = [...sel.options].some(o=>o.value===cur) ? cur : '';
@@ -41,7 +50,7 @@
     const sort = document.getElementById('servoFilterSort').value;
     let list = servoRows.slice();
     if(servoStatusFilter) list = list.filter(r => (r.status || 'nova') === servoStatusFilter);
-    if(eq) list = list.filter(r => r.equipe === eq);
+    if(eq) list = list.filter(r => servoFuncaoFilterValues(r).includes(eq));
     if(camisa) list = list.filter(r => r.camisa === camisa);
     if(q){
       list = list.filter(r => {
@@ -50,7 +59,7 @@
       });
     }
     if(sort === 'nome') list.sort((a,b)=>(a.nome||'').localeCompare(b.nome||'','pt-BR'));
-    else if(sort === 'equipe') list.sort((a,b)=>(a.equipe||'').localeCompare(b.equipe||'','pt-BR') || (a.nome||'').localeCompare(b.nome||'','pt-BR'));
+    else if(sort === 'equipe') list.sort((a,b)=>(servoFuncaoEscolhida(a)||'').localeCompare(servoFuncaoEscolhida(b)||'','pt-BR') || (a.nome||'').localeCompare(b.nome||'','pt-BR'));
     else list.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
     return list;
   }
@@ -61,7 +70,10 @@
     const waiting = servoRows.filter(r => r.status === 'lista_espera').length;
     const shirts = servoRows.filter(r => r.camisa === 'sim').length;
     const missingSize = servoRows.filter(r => r.camisa === 'sim' && !r.tamanho_camisa).length;
-    const teams = [...new Set(servoRows.map(r => r.equipe).filter(Boolean))].length;
+    const teams = [...new Set(servoRows.flatMap(r => {
+      const escolhidas = Array.isArray(r.funcoes_preferidas) ? r.funcoes_preferidas.filter(Boolean) : [];
+      return escolhidas;
+    }))].length;
     const cards = document.getElementById('servoSummaryCards');
     if(!cards) return;
     cards.innerHTML =
@@ -100,7 +112,7 @@
         '<td data-label="Status"><span class="pill pill-'+esc(st)+'">'+esc(STATUS_LABEL[st]||st)+'</span></td>' +
         '<td data-label="Nome"><strong>'+esc(r.nome||'—')+'</strong></td>' +
         '<td data-label="Idade">'+esc(r.idade != null ? r.idade : '—')+'</td>' +
-        '<td data-label="Função">'+esc(r.equipe || 'A definir')+'</td>' +
+        '<td data-label="Função">'+esc(servoFuncaoEscolhida(r))+'</td>' +
         '<td data-label="Telefone">'+telCell+'</td>' +
         '<td data-label="Camisa">'+esc(camisa)+'</td>' +
         '<td data-label="Ações"><button class="btn btn-ghost btn-sm btn-table-action" type="button" data-action="open">Ver</button></td>' +
@@ -130,7 +142,7 @@
     document.getElementById('dMeta').textContent =
       'Servo · Protocolo ' + protocol(r.id) +
       (r.idade ? ' · ' + r.idade + ' anos' : '') +
-      (r.equipe ? ' · ' + r.equipe : '') +
+      (formatFuncoesPreferidas(r) || r.equipe ? ' · ' + (formatFuncoesPreferidas(r) || r.equipe) : '') +
       ' · ' + fmtDate(r.created_at);
 
     const wa = waLink(r.telefone);
