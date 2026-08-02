@@ -24,7 +24,6 @@
     const btn = link
       ? '<a class="ig-mini" href="'+esc(link)+'" target="_blank" rel="noopener">Instagram</a>'
       : '';
-      : '';
     return '<div class="item'+(full?' full':'')+'"><span class="l">'+esc(label)+'</span>' +
       '<div class="d phone-row'+(display?'':' empty')+'">' +
         '<span>'+(display ? esc(display) : 'Não informado')+'</span>' +
