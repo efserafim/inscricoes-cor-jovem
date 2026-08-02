@@ -16,6 +16,27 @@ Use o painel do Supabase para criar usuários:
 
 5. Desative **Enable sign ups** (Authentication → Providers → Email).
 
+## Administrador (senhas da equipe)
+
+Para permitir que um usuário **redefina a senha de qualquer pessoa** do painel:
+
+1. Authentication → Users → abra o usuário (ex.: `efserafimflu@gmail.com`)
+2. Em **User Metadata**, inclua `"role": "admin"`:
+
+```json
+{
+  "display_name": "Administrador",
+  "role": "admin",
+  "must_change_password": false
+}
+```
+
+3. No **SQL Editor**, rode [`admin-usuarios.sql`](admin-usuarios.sql) uma vez.
+4. Publique a Edge Function `admin-users` (veja comentário no final do SQL ou use `npx supabase functions deploy admin-users`).
+5. No painel, o botão **Equipe** aparece só para admin — lista usuários e permite redefinir senha.
+
+O admin também enxerga a aba **PIX** (tesoureiro).
+
 ## Tesoureiro (PIX)
 
 Para liberar a aba **PIX** no painel (camisas + taxa de contribuição):

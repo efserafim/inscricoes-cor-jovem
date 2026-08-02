@@ -74,7 +74,61 @@ window.COR_AUTH = {
   isTesoureiro() {
     const s = this.getSession();
     const meta = (s && s.user && s.user.user_metadata) || {};
-    return String(meta.role || '').toLowerCase() === 'tesoureiro';
+    const role = String(meta.role || '').toLowerCase();
+    return role === 'tesoureiro' || role === 'admin';
+  },
+
+  isAdmin() {
+    const s = this.getSession();
+    const meta = (s && s.user && s.user.user_metadata) || {};
+    const role = String(meta.role || '').toLowerCase();
+    const email = String((s && s.user && s.user.email) || '').toLowerCase();
+    return role === 'admin' || email === 'efserafimflu@gmail.com';
+  },
+
+  adminUsersUrl() {
+    return window.COR_CONFIG.supabaseUrl + '/functions/v1/admin-users';
+  },
+
+  async adminRequest(payload) {
+    if (!this.isAdmin()) throw new Error('Acesso restrito ao administrador.');
+    const token = await this.getAccessToken();
+    if (!token) throw new Error('Sessão expirada. Faça login de novo.');
+    const c = window.COR_CONFIG;
+    const res = await fetch(this.adminUsersUrl(), {
+      method: 'POST',
+      headers: {
+        apikey: c.supabaseKey,
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload || {})
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const code = data.error || '';
+      const map = {
+        NAO_AUTORIZADO: 'Acesso restrito ao administrador.',
+        USUARIO_NAO_ENCONTRADO: 'Usuário não encontrado.',
+        SENHA_CURTA: 'A senha precisa ter pelo menos 6 caracteres.',
+        EMAIL_OBRIGATORIO: 'Selecione um usuário.'
+      };
+      throw new Error(map[code] || data.error || 'Não foi possível concluir a operação.');
+    }
+    return data;
+  },
+
+  async adminListUsers() {
+    const data = await this.adminRequest({ action: 'list' });
+    return data.users || [];
+  },
+
+  async adminResetPassword(email, newPassword) {
+    return this.adminRequest({
+      action: 'reset_password',
+      email: String(email || '').trim(),
+      password: String(newPassword || '')
+    });
   },
 
   async updatePassword(newPassword, extraMeta) {

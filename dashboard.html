@@ -44,7 +44,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="image/logos/geracao-eucaristica.png">
-<link rel="stylesheet" href="css/dash.css?v=20260724-clear-valores">
+<link rel="stylesheet" href="css/dash.css?v=20260802-admin">
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
 
 </head>
@@ -93,6 +93,7 @@
         <a class="btn btn-ghost" href="servos.html" target="_blank" rel="noopener" title="Abrir inscrição de servos"><span class="lbl-long">Ficha servos</span><span class="lbl-short">Servos</span></a>
         <span class="sep" aria-hidden="true"></span>
         <button class="btn btn-primary" type="button" id="exportBtn">Exportar</button>
+        <button class="btn btn-ghost" type="button" id="adminUsersBtn" title="Gerenciar senhas da equipe" hidden><span class="lbl-long">Equipe</span><span class="lbl-short">Equipe</span></button>
         <button class="btn btn-ghost" type="button" id="changePassBtn" title="Alterar senha"><span class="lbl-long">Senha</span><span class="lbl-short">Senha</span></button>
         <button class="btn btn-ghost" type="button" id="logoutBtn">Sair</button>
       </nav>
@@ -585,6 +586,27 @@
 <div class="toast" id="toast"></div>
 <div id="printSheet"></div>
 
+<div class="pwd-overlay" id="adminUsersOverlay" aria-hidden="true">
+  <div class="pwd-dialog admin-users-dialog" role="dialog" aria-modal="true" aria-labelledby="adminUsersTitle">
+    <div class="admin-users-head">
+      <div>
+        <h2 id="adminUsersTitle">Senhas da equipe</h2>
+        <p class="hint">Redefina a senha de qualquer usuário do painel. A pessoa precisará trocar no próximo acesso.</p>
+      </div>
+      <button type="button" class="icon-btn" id="adminUsersClose" aria-label="Fechar">×</button>
+    </div>
+    <p class="gate-err" id="adminUsersErr">Não foi possível concluir.</p>
+    <ul class="admin-users-list" id="adminUsersList"></ul>
+    <form id="adminResetForm" class="admin-reset-form">
+      <label for="adminResetEmail">Usuário</label>
+      <select id="adminResetEmail" required></select>
+      <label for="adminResetPass">Nova senha</label>
+      <input type="password" id="adminResetPass" minlength="6" autocomplete="new-password" required placeholder="Mínimo 6 caracteres">
+      <button class="btn btn-primary" type="submit" id="adminResetSubmit" style="width:100%;margin-top:8px">Redefinir senha</button>
+    </form>
+  </div>
+</div>
+
 <div class="pwd-overlay" id="pwdOverlay" aria-hidden="true">
   <div class="pwd-dialog" role="dialog" aria-modal="true" aria-labelledby="pwdTitle">
     <h2 id="pwdTitle">Alterar senha</h2>
@@ -671,6 +693,7 @@
 <script src="js/dashboard/decurias.js"></script>
 <script src="js/dashboard/camisas.js"></script>
 <script src="js/dashboard/pagamentos.js"></script>
+<script src="js/dashboard/admin-users.js"></script>
 <script src="js/dashboard/ficha-print.js"></script>
 <script src="js/dashboard/export.js"></script>
 <script src="js/dashboard/app.js"></script>

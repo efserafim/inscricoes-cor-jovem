@@ -25,6 +25,7 @@
       welcome.hidden = false;
     }
     setupTesoureiroUi();
+    if(typeof setupAdminUsersUi === 'function') setupAdminUsersUi();
     wirePixPanel();
     if(typeof restoreInscFilters === 'function') restoreInscFilters();
     load();
