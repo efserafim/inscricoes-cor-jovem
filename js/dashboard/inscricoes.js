@@ -1,5 +1,13 @@
 
-  function filtered(){
+  function resetInscSecondaryFilters(){
+    const search = document.getElementById('search');
+    const camisa = document.getElementById('filterCamisa');
+    const decuria = document.getElementById('filterDecuria');
+    if(search) search.value = '';
+    if(camisa) camisa.value = '';
+    if(decuria) decuria.value = '';
+  }
+
     const q = document.getElementById('search').value.trim().toLowerCase();
     const fCamisa = document.getElementById('filterCamisa').value;
     const fDecuria = document.getElementById('filterDecuria').value;
@@ -168,6 +176,8 @@
         seeAll.addEventListener('click', ()=>{
           statusFilter = '';
           quickFilter = 'saude';
+          resetInscSecondaryFilters();
+          saveInscFilters();
           render();
           document.getElementById('viewInscricoes')?.scrollIntoView({ behavior:'smooth', block:'start' });
         });
