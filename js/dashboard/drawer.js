@@ -22,7 +22,8 @@
     const display = user ? '@' + user : null;
     const link = user ? instagramLink(ig) : null;
     const btn = link
-      ? '<a class="wa-mini" href="'+esc(link)+'" target="_blank" rel="noopener">Abrir</a>'
+      ? '<a class="ig-mini" href="'+esc(link)+'" target="_blank" rel="noopener">Instagram</a>'
+      : '';
       : '';
     return '<div class="item'+(full?' full':'')+'"><span class="l">'+esc(label)+'</span>' +
       '<div class="d phone-row'+(display?'':' empty')+'">' +

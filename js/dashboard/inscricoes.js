@@ -200,6 +200,10 @@
       const waCell = wa
         ? '<a class="wa-mini" href="'+esc(wa)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+esc(r.whatsapp||'WhatsApp')+'</a>'
         : esc(r.whatsapp||'—');
+      const ig = instagramLink(r.rede_usuario);
+      const igBtn = ig
+        ? '<a class="ig-mini" href="'+esc(ig)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Abrir Instagram">IG</a>'
+        : '';
       const tr = document.createElement('tr');
       if(r.id === selectedId) tr.classList.add('active');
       tr.innerHTML =
@@ -217,7 +221,7 @@
         '<td data-label="Camisa">'+(r.camisa==='sim'
           ? '<span class="tag tag-shirt">'+esc(r.tamanho_camisa||'Sim')+'</span>'
           : '<span class="muted">—</span>')+'</td>' +
-        '<td data-label="Ações"><button class="btn btn-ghost btn-sm btn-table-action" type="button" data-action="open">Ver</button></td>' +
+        '<td data-label="Ações"><div class="table-actions">'+igBtn+'<button class="btn btn-ghost btn-sm btn-table-action" type="button" data-action="open">Ver</button></div></td>' +
         '<td data-label="Quando" class="muted">'+esc(fmtDate(r.created_at))+'</td>';
       tr.addEventListener('click', ()=> openDetail(r));
       tr.querySelector('[data-action="open"]').addEventListener('click', (e)=>{
@@ -241,7 +245,7 @@
         item('Endereço', r.endereco, true) +
         item('Bairro', r.bairro) +
         item('Cidade / UF', (r.cidade||'') + (r.uf ? ' — ' + r.uf : '')) +
-        item('Instagram', r.rede_usuario ? ((r.rede_nome && r.rede_nome !== 'Instagram' ? r.rede_nome+': ' : '') + r.rede_usuario) : null, true) +
+        itemInstagram('Instagram', r.rede_usuario, true) +
       '</div></div>' +
 
       '<div class="sec"><h3>Responsável</h3><div class="grid">' +
@@ -458,6 +462,13 @@
     const waEl = document.getElementById('dWa');
     if(wa){ waEl.href = wa; waEl.hidden = false; }
     else waEl.hidden = true;
+
+    const ig = instagramLink(r.rede_usuario);
+    const igEl = document.getElementById('dIg');
+    if(igEl){
+      if(ig){ igEl.href = ig; igEl.hidden = false; }
+      else igEl.hidden = true;
+    }
 
     document.getElementById('dStatus').value = r.status || 'nova';
     document.getElementById('dDecuria').value = r.decuria_id || '';

@@ -156,6 +156,13 @@
     if(wa){ waEl.href = wa; waEl.hidden = false; }
     else waEl.hidden = true;
 
+    const ig = instagramLink(r.instagram);
+    const igEl = document.getElementById('dIg');
+    if(igEl){
+      if(ig){ igEl.href = ig; igEl.hidden = false; }
+      else igEl.hidden = true;
+    }
+
     document.getElementById('dStatus').value = r.status || 'nova';
     document.getElementById('dNotes').value = r.observacoes || '';
     fillEquipeSelect(r.equipe);
