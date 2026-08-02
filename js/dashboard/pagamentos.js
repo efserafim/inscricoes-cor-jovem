@@ -13,6 +13,14 @@
   let pixContribRows = [];
   let pixConfigDirty = false;
 
+  function exportLogoUrl(){
+    try{
+      return new URL('image/logos/geracao-eucaristica.png', location.href).href;
+    }catch(_){
+      return 'image/logos/geracao-eucaristica.png';
+    }
+  }
+
   function setPixConfigDirty(dirty){
     pixConfigDirty = !!dirty;
     const btn = document.getElementById('pixSaveBtn');
@@ -361,8 +369,13 @@
     return (
       '<div class="doc pdf-root">' +
         '<div class="banner">' +
-          '<p class="eyebrow">XVI C.O.R Jovem · Tesouraria</p>' +
-          '<h1>Relatório financeiro</h1>' +
+          '<div class="banner-head">' +
+            '<img class="banner-logo" src="'+exportLogoUrl()+'" alt="Geração Eucarística">' +
+            '<div class="banner-text">' +
+              '<p class="eyebrow">XVI C.O.R Jovem · Tesouraria</p>' +
+              '<h1>Relatório financeiro</h1>' +
+            '</div>' +
+          '</div>' +
           '<p class="sub">'+esc(meta.subtitle || '')+'</p>' +
           '<p class="meta">'+esc(meta.when)+' · <strong>'+list.length+'</strong> registro(s)</p>' +
         '</div>' +
@@ -388,7 +401,11 @@
       '<style>' +
       '.doc{font-family:"Source Sans 3",Segoe UI,sans-serif;color:#2a3238;}' +
       '.banner{border-bottom:3px solid #c45c26;padding:0 0 14px;margin:0 0 14px;}' +
+      '.banner-head{display:flex;align-items:center;gap:14px;margin:0 0 8px;}' +
+      '.banner-logo{width:56px;height:56px;object-fit:contain;flex-shrink:0;}' +
+      '.banner-text{min-width:0;}' +
       '.eyebrow{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#c45c26;margin:0 0 6px;}' +
+      '.banner-text h1{font-family:Outfit,Impact,sans-serif;font-size:24px;margin:0;letter-spacing:.04em;text-transform:uppercase;line-height:1.05;}' +
       'h1{font-family:Outfit,Impact,sans-serif;font-size:24px;margin:0;letter-spacing:.04em;text-transform:uppercase;line-height:1.05;}' +
       '.sub{margin:8px 0 0;color:#4a5560;font-size:12.5px;font-weight:600;}' +
       '.meta{margin:6px 0 0;font-size:12px;color:#4a5560;}' +

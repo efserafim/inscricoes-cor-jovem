@@ -45,6 +45,8 @@
     err.classList.remove('show');
     document.getElementById('pwdForm').reset();
     overlay.dataset.forced = forced ? '1' : '0';
+    const closeBtn = document.getElementById('pwdClose');
+    if(closeBtn) closeBtn.hidden = !!forced;
     if(forced){
       title.textContent = 'Troque a senha de primeiro acesso';
       hint.textContent = 'Por segurança, defina uma senha pessoal agora. A senha de primeiro acesso não deve continuar em uso.';
@@ -62,7 +64,19 @@
     if(overlay.dataset.forced === '1') return;
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden','true');
+    document.getElementById('pwdForm')?.reset();
+    document.getElementById('pwdErr')?.classList.remove('show');
   }
+
+  document.getElementById('pwdClose')?.addEventListener('click', closePasswordModal);
+  document.getElementById('pwdOverlay')?.addEventListener('click', (e)=>{
+    if(e.target.id === 'pwdOverlay') closePasswordModal();
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key !== 'Escape') return;
+    const overlay = document.getElementById('pwdOverlay');
+    if(overlay?.classList.contains('open')) closePasswordModal();
+  });
 
   async function bootAuth(){
     if(!window.COR_AUTH){

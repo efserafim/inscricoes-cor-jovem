@@ -745,6 +745,12 @@ td strong{font-weight:800}
   font-family:'Outfit',sans-serif; font-size:20px; margin:0 0 6px;
   letter-spacing:-.02em; text-transform:uppercase; font-weight:800;
 }
+.pwd-dialog-head{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+  margin-bottom:16px;
+}
+.pwd-dialog-head .hint{ margin:0; }
+.pwd-dialog-head h2{ margin:0 0 6px; }
 .pwd-dialog .hint{ margin:0 0 16px; color:var(--slate); font-size:13px; font-weight:600; line-height:1.45; }
 .pwd-dialog label{
   display:block; font-size:11px; font-weight:800; color:var(--slate);
