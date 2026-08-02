@@ -8,6 +8,7 @@
     if(decuria) decuria.value = '';
   }
 
+  function filtered(){
     const q = document.getElementById('search').value.trim().toLowerCase();
     const fCamisa = document.getElementById('filterCamisa').value;
     const fDecuria = document.getElementById('filterDecuria').value;
