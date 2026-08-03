@@ -306,17 +306,17 @@
     return (
       '<style>' +
       '.doc{font-family:"Source Sans 3",Segoe UI,sans-serif;color:#2a3238;}' +
-      '.banner{border-bottom:3px solid #c45c26;padding:0 0 14px;margin:0 0 14px;}' +
+      '.banner{border-bottom:3px solid #2f6f8f;padding:0 0 14px;margin:0 0 14px;}' +
       '.banner-head{display:flex;align-items:center;gap:14px;margin:0 0 8px;}' +
       '.banner-logo{width:56px;height:56px;object-fit:contain;flex-shrink:0;}' +
       '.banner-text{min-width:0;}' +
-      '.eyebrow{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#c45c26;margin:0 0 6px;}' +
+      '.eyebrow{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#2f6f8f;margin:0 0 6px;}' +
       '.banner-text h1{font-family:Outfit,Impact,sans-serif;font-size:26px;margin:0;letter-spacing:.04em;text-transform:uppercase;line-height:1.05;}' +
       'h1{font-family:Outfit,Impact,sans-serif;font-size:26px;margin:0;letter-spacing:.04em;text-transform:uppercase;line-height:1.05;}' +
       '.sub{margin:8px 0 0;color:#4a5560;font-size:13px;font-weight:600;}' +
       '.meta{margin:6px 0 0;font-size:12px;color:#4a5560;}' +
       '.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;}' +
-      '.chip{background:rgba(196,92,38,.12);color:#c45c26;font-size:11px;font-weight:700;padding:5px 9px;border-radius:3px;}' +
+      '.chip{background:rgba(47,111,143,.12);color:#2f6f8f;font-size:11px;font-weight:700;padding:5px 9px;border-radius:3px;}' +
       '.chip b{color:#2a3238;}' +
       '.doc-table{width:100%;border-collapse:collapse;font-size:11.5px;}' +
       '.doc-table th{text-align:left;background:#2a3238;color:#fff;padding:8px 7px;font-size:10px;letter-spacing:.05em;text-transform:uppercase;}' +

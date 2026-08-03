@@ -237,7 +237,7 @@
         item('Nome completo', r.nome, true) +
         item('Nascimento', fmtDay(r.nascimento)) +
         item('Idade', r.idade) +
-        item('WhatsApp', r.whatsapp) +
+        itemPhone('WhatsApp', r.whatsapp) +
         itemInstagram('Instagram', r.rede_usuario) +
         item('Endereço', r.endereco, true) +
         item('Bairro', r.bairro) +

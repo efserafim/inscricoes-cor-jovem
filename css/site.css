@@ -1504,3 +1504,23 @@ body{
   .board{ border-radius:20px; }
   .brand{ font-size:clamp(34px, 10vw, 48px); }
 }
+
+/* Site polish */
+.hero-cta{
+  box-shadow:0 16px 40px -12px rgba(14,24,32,.45), inset 0 1px 0 rgba(255,255,255,.25);
+  transition:transform .15s var(--ease), box-shadow .15s var(--ease), filter .15s;
+}
+.hero-cta:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.05);
+  box-shadow:0 20px 44px -10px rgba(14,24,32,.5), inset 0 1px 0 rgba(255,255,255,.28);
+}
+.board-head .board-mark{
+  transition:transform .2s var(--ease);
+}
+.board:hover .board-head .board-mark{
+  transform:scale(1.03);
+}
+.site-footer{
+  letter-spacing:.02em;
+}
