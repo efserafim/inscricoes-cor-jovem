@@ -1,9 +1,30 @@
 
   function runBrowserPrint(){
+    const sheet = document.getElementById('printSheet');
+    const url = logoAssetUrl();
+    const triggerPrint = ()=> requestAnimationFrame(()=> setTimeout(()=> window.print(), 80));
 
-    requestAnimationFrame(()=>{
-      setTimeout(()=> window.print(), 50);
-    });
+    function ensureSheetImg(){
+      if(!sheet){ triggerPrint(); return; }
+      const img = sheet.querySelector('img');
+      if(!img){ triggerPrint(); return; }
+
+      img.src = url;
+      const prevStyle = sheet.style.cssText;
+      sheet.style.cssText = 'position:fixed;left:-9999px;top:0;width:900px;display:block;visibility:hidden;pointer-events:none;';
+
+      const finish = ()=>{
+        sheet.style.cssText = prevStyle;
+        triggerPrint();
+      };
+
+      if(img.complete && img.naturalWidth > 0){ finish(); return; }
+      img.addEventListener('load', finish, { once: true });
+      img.addEventListener('error', finish, { once: true });
+      setTimeout(finish, 2000);
+    }
+
+    preloadAssetImage(url).then(ensureSheetImg);
   }
 
   function fichaPrintStyles(){
@@ -113,7 +134,7 @@
       '<article class="ficha">' +
         '<header class="ficha-top">' +
           '<div class="ficha-brand">' +
-            '<img src="image/logos/geracao-eucaristica.png" alt="">' +
+            '<img src="'+logoAssetUrl()+'" alt="Geração Eucarística" width="52" height="52">' +
             '<div class="t"><strong>XVI C.O.R Jovem</strong><span>Paróquia Santo Antônio — Bacaxá</span></div>' +
           '</div>' +
           '<div class="ficha-badge">' +

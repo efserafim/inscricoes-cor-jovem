@@ -907,7 +907,13 @@ body.export-lock{
     -webkit-print-color-adjust:exact;
     print-color-adjust:exact;
   }
-  #printSheet img{ display:block !important; max-width:52px !important; }
+  #printSheet img{
+    display:block !important;
+    width:52px !important;
+    height:52px !important;
+    max-width:52px !important;
+    object-fit:contain !important;
+  }
   #printSheet .ficha-grid{ display:grid !important; }
   #printSheet .ficha-top,
   #printSheet .ficha-brand,

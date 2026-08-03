@@ -151,3 +151,22 @@
   function protocol(id){
     return String(id || '').slice(0,8).toUpperCase();
   }
+
+  function logoAssetUrl(){
+    try{
+      return new URL('image/logos/geracao-eucaristica.png', location.href).href;
+    }catch(_){
+      return 'image/logos/geracao-eucaristica.png';
+    }
+  }
+
+  function preloadAssetImage(url){
+    return new Promise(resolve=>{
+      const img = new Image();
+      const done = ()=> resolve(img);
+      img.onload = done;
+      img.onerror = done;
+      img.src = url;
+      if(img.complete) done();
+    });
+  }
