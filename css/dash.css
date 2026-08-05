@@ -450,81 +450,26 @@ td strong{font-weight:800}
   background:var(--soft2);
 }
 
-/* Tabela cursistas — colunas alinhadas */
-.insc-table-wrap{
-  max-height:min(68vh, 680px);
-}
-.insc-table{
-  min-width:980px;
-  table-layout:fixed;
-}
-.insc-table col.col-status{ width:84px; }
-.insc-table col.col-nome{ width:22%; }
-.insc-table col.col-idade{ width:56px; }
-.insc-table col.col-decuria{ width:88px; }
-.insc-table col.col-wa{ width:132px; }
-.insc-table col.col-cidade{ width:128px; }
-.insc-table col.col-camisa{ width:72px; }
-.insc-table col.col-acoes{ width:76px; }
-.insc-table col.col-quando{ width:138px; }
-.insc-table th,
-.insc-table td{
-  padding:10px 12px;
+/* Cursistas — só alinha cabeçalho com conteúdo, sem mudar o layout */
+#viewInscricoes .table-wrap table th,
+#viewInscricoes .table-wrap table td{
   vertical-align:middle;
-  overflow:hidden;
 }
-.insc-table th:nth-child(1),
-.insc-table td:nth-child(1),
-.insc-table th:nth-child(3),
-.insc-table td:nth-child(3),
-.insc-table th:nth-child(4),
-.insc-table td:nth-child(4),
-.insc-table th:nth-child(5),
-.insc-table td:nth-child(5),
-.insc-table th:nth-child(7),
-.insc-table td:nth-child(7),
-.insc-table th:nth-child(8),
-.insc-table td:nth-child(8){
+#viewInscricoes .table-wrap table th:nth-child(3),
+#viewInscricoes .table-wrap table td:nth-child(3),
+#viewInscricoes .table-wrap table th:nth-child(4),
+#viewInscricoes .table-wrap table td:nth-child(4),
+#viewInscricoes .table-wrap table th:nth-child(7),
+#viewInscricoes .table-wrap table td:nth-child(7),
+#viewInscricoes .table-wrap table th:nth-child(8),
+#viewInscricoes .table-wrap table td:nth-child(8){
   text-align:center;
 }
-.insc-table th:nth-child(9),
-.insc-table td:nth-child(9){
-  text-align:right;
-  white-space:nowrap;
+#viewInscricoes .table-wrap table td[data-label="Nome"] strong{
+  vertical-align:middle;
 }
-.insc-name-cell{
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:6px;
-  min-width:0;
-}
-.insc-name{
-  font-weight:800;
-  line-height:1.35;
-  min-width:0;
-}
-.insc-tags{
-  display:inline-flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:4px;
-}
-.insc-tags .tag{ margin-left:0; }
-.insc-city{ white-space:nowrap; }
-.insc-when{
-  font-size:12px;
-  font-variant-numeric:tabular-nums;
-}
-.insc-table .wa-mini{
-  display:inline-flex;
-  max-width:100%;
-  padding:5px 9px;
-  font-size:11px;
-}
-.insc-table .btn-table-action{
-  min-width:52px;
-  justify-content:center;
+#viewInscricoes .table-wrap table td[data-label="Nome"] .tag{
+  vertical-align:middle;
 }
 
 .pill{

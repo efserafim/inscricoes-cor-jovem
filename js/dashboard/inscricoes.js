@@ -188,26 +188,21 @@
       if(r.id === selectedId) tr.classList.add('active');
       tr.innerHTML =
         '<td data-label="Status"><span class="pill pill-'+esc(st)+'">'+esc(STATUS_LABEL[st]||st)+'</span></td>' +
-        '<td data-label="Nome"><div class="insc-name-cell">' +
-          '<strong class="insc-name">'+esc(r.nome)+'</strong>' +
-          (r.menor_idade || hasHealth(r)
-            ? '<span class="insc-tags">' +
-                (r.menor_idade ? '<span class="tag tag-minor">Menor</span>' : '') +
-                (hasHealth(r) ? '<span class="tag tag-health">Saúde</span>' : '') +
-              '</span>'
-            : '') +
-        '</div></td>' +
+        '<td data-label="Nome"><strong>'+esc(r.nome)+'</strong>' +
+          (r.menor_idade ? '<span class="tag tag-minor">Menor</span>' : '') +
+          (hasHealth(r) ? '<span class="tag tag-health">Saúde</span>' : '') +
+        '</td>' +
         '<td data-label="Idade">'+esc(r.idade)+'</td>' +
         '<td data-label="Decúria">'+(r.decuria_id
           ? '<span class="tag tag-shirt">'+esc(decuriaName(r.decuria_id))+'</span>'
           : '<span class="muted">—</span>')+'</td>' +
         '<td data-label="WhatsApp">'+waCell+'</td>' +
-        '<td data-label="Cidade"><span class="insc-city">'+esc(titleWords(r.cidade))+'</span> <span class="muted">'+esc(String(r.uf||'').toUpperCase())+'</span></td>' +
+        '<td data-label="Cidade">'+esc(r.cidade)+' <span class="muted">'+esc(r.uf)+'</span></td>' +
         '<td data-label="Camisa">'+(r.camisa==='sim'
           ? '<span class="tag tag-shirt">'+esc(r.tamanho_camisa||'Sim')+'</span>'
           : '<span class="muted">—</span>')+'</td>' +
         '<td data-label="Ações"><button class="btn btn-ghost btn-sm btn-table-action" type="button" data-action="open">Ver</button></td>' +
-        '<td data-label="Quando" class="insc-when muted">'+esc(fmtDate(r.created_at))+'</td>';
+        '<td data-label="Quando" class="muted">'+esc(fmtDate(r.created_at))+'</td>';
       tr.addEventListener('click', ()=> openDetail(r));
       tr.querySelector('[data-action="open"]').addEventListener('click', (e)=>{
         e.stopPropagation();
