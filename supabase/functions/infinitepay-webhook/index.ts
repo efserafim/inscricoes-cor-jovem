@@ -30,6 +30,11 @@ Deno.serve(async (req) => {
   const paidAmount = body.paid_amount ?? body.amount ?? null;
   const paidCents = paidAmount == null ? null : Number(paidAmount);
 
+  if (String(body.capture_method || '').toLowerCase() === 'pix') {
+    console.warn('InfinitePay PIX ignorado — use a aba PIX do site');
+    return new Response('PIX not supported', { status: 400 });
+  }
+
   const { data, error } = await admin.rpc('confirmar_pagamento_infinitepay', {
     p_order_nsu: orderNsu,
     p_transaction_nsu: body.transaction_nsu ? String(body.transaction_nsu) : null,

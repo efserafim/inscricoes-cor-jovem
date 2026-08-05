@@ -1547,6 +1547,9 @@ body.export-lock{
   text-transform:uppercase;
   color:var(--slate);
 }
+.pix-section-toggles .pix-section-title{
+  margin-bottom:10px;
+}
 .pix-section-head{
   display:flex;
   align-items:center;
@@ -1606,10 +1609,11 @@ html[data-theme="dark"] .pix-config-form select:focus{
   gap:8px;
 }
 .chk-line{
-  display:flex;
-  align-items:flex-start;
-  gap:10px;
-  padding:10px 12px;
+  display:grid;
+  grid-template-columns:18px minmax(0, 1fr);
+  align-items:center;
+  column-gap:12px;
+  padding:12px 14px;
   border-radius:10px;
   border:1.5px solid var(--mist);
   background:var(--input-bg);
@@ -1624,15 +1628,18 @@ html[data-theme="dark"] .pix-config-form select:focus{
   background:rgba(42,143,82,.08);
 }
 .chk-line input{
-  width:auto;
-  margin-top:2px;
+  width:16px;
+  height:16px;
+  margin:0;
   accent-color:var(--ok);
+  justify-self:center;
 }
 .chk-line span{
   display:flex;
   flex-direction:column;
-  gap:2px;
+  gap:3px;
   min-width:0;
+  line-height:1.35;
 }
 .chk-line strong{
   font-size:13.5px;

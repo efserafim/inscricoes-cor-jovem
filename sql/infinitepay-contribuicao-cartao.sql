@@ -105,11 +105,12 @@ begin
     return jsonb_build_object('ok', false, 'erro', 'ORDER_NSU_INVALIDO');
   end;
 
-  forma := case
-    when lower(coalesce(p_capture_method, '')) = 'pix' then 'pix'
-    else 'cartao'
-  end;
-  nota_auto := 'Confirmado automaticamente via InfinitePay (' || coalesce(p_capture_method, 'cartao') || ')';
+  if lower(coalesce(p_capture_method, '')) = 'pix' then
+    return jsonb_build_object('ok', false, 'erro', 'PIX_INFINITE_NAO_SUPORTADO');
+  end if;
+
+  forma := 'cartao';
+  nota_auto := 'Confirmado automaticamente via InfinitePay (cartão)';
 
   select * into pay from public.pagamentos_camisas where id = pid for update;
   if found then

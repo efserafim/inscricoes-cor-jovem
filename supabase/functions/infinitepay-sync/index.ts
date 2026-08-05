@@ -127,6 +127,11 @@ Deno.serve(async (req) => {
     return json({ ok: true, confirmado: false, paid: false });
   }
 
+  const captureMethod = String(ipData.capture_method || '').toLowerCase();
+  if (captureMethod === 'pix') {
+    return json({ ok: false, erro: 'PIX_INFINITE_NAO_SUPORTADO' }, 400);
+  }
+
   const paidAmount = ipData.paid_amount ?? ipData.amount ?? null;
   const paidCents = paidAmount == null ? null : Number(paidAmount);
 
