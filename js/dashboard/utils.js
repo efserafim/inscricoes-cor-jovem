@@ -148,6 +148,11 @@
     return String(s == null ? '' : s)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
+  function titleWords(s){
+    return String(s || '').trim().replace(/\S+/g, w =>
+      w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+    );
+  }
   function protocol(id){
     return String(id || '').slice(0,8).toUpperCase();
   }
