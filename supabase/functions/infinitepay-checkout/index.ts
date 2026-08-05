@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
     return json({ ok: false, erro: 'CONFIG_INCOMPLETA' }, 500);
   }
 
-  let body: { pagamentoId?: string; busca?: string };
+  let body: { pagamentoId?: string; busca?: string; tipo?: string };
   try {
     body = await req.json();
   } catch {
@@ -43,6 +43,8 @@ Deno.serve(async (req) => {
 
   const pagamentoId = String(body.pagamentoId || '').trim();
   const busca = String(body.busca || '').trim();
+  const tipo = String(body.tipo || 'camisa').trim().toLowerCase();
+  const isContrib = tipo === 'contribuicao';
   if (!pagamentoId || busca.length < 4) {
     return json({ ok: false, erro: 'DADOS_INVALIDOS' }, 400);
   }
@@ -51,7 +53,8 @@ Deno.serve(async (req) => {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  const { data: check, error: checkErr } = await admin.rpc('consultar_pagamento_camisa', {
+  const rpcName = isContrib ? 'consultar_pagamento_contribuicao' : 'consultar_pagamento_camisa';
+  const { data: check, error: checkErr } = await admin.rpc(rpcName, {
     p_busca: busca,
   });
   if (checkErr) {
@@ -82,7 +85,7 @@ Deno.serve(async (req) => {
 
   const { data: cfgRows, error: cfgErr } = await admin
     .from('config_camisa_pix')
-    .select('infinitepay_handle,infinitepay_habilitado,valor_camisa')
+    .select('infinitepay_handle,infinitepay_habilitado,valor_camisa,valor_contribuicao_servo')
     .order('created_at', { ascending: true })
     .limit(1);
   if (cfgErr || !cfgRows?.[0]) {
@@ -96,16 +99,19 @@ Deno.serve(async (req) => {
     return json({ ok: false, erro: 'CARTAO_INDISPONIVEL' }, 400);
   }
 
-  const valor = Number(pay.valor_esperado ?? cfg.valor_camisa);
+  const valorDefault = isContrib ? cfg.valor_contribuicao_servo : cfg.valor_camisa;
+  const valor = Number(pay.valor_esperado ?? valorDefault);
   if (!Number.isFinite(valor) || valor <= 0) {
     return json({ ok: false, erro: 'VALOR_INVALIDO' }, 400);
   }
 
   const siteUrl = (Deno.env.get('COR_SITE_URL') || 'https://corjovem.geucaristica.com.br').replace(/\/$/, '');
   const webhookUrl = `${supabaseUrl}/functions/v1/infinitepay-webhook`;
-  const redirectUrl = `${siteUrl}/pagamento-camisa.html?busca=${encodeURIComponent(busca)}&pago=1`;
+  const returnPage = isContrib ? 'pagamento-contribuicao.html' : 'pagamento-camisa.html';
+  const redirectUrl = `${siteUrl}/${returnPage}?busca=${encodeURIComponent(busca)}&pago=1`;
   const protocolo = String(pay.protocolo || '').slice(0, 8);
   const nome = String(pay.nome || '').slice(0, 40);
+  const label = isContrib ? 'Contribuição COR Jovem' : 'Camisa COR Jovem';
 
   const payload = {
     handle,
@@ -115,7 +121,7 @@ Deno.serve(async (req) => {
     items: [{
       quantity: 1,
       price: Math.round(valor * 100),
-      description: `Camisa COR Jovem · ${protocolo}${nome ? ' · ' + nome : ''}`.slice(0, 120),
+      description: `${label} · ${protocolo}${nome ? ' · ' + nome : ''}`.slice(0, 120),
     }],
   };
 
@@ -138,9 +144,10 @@ Deno.serve(async (req) => {
 
   const checkoutUrl = String(ipData.url);
   const invoiceSlug = ipData.invoice_slug || ipData.slug || null;
+  const table = isContrib ? 'pagamentos_contribuicao' : 'pagamentos_camisas';
 
   const { error: updErr } = await admin
-    .from('pagamentos_camisas')
+    .from(table)
     .update({
       gateway_checkout_url: checkoutUrl,
       gateway_reference_id: pagamentoId,

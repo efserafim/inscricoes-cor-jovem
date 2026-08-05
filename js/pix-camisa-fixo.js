@@ -2,6 +2,6 @@
 window.COR_PIX_CAMISA_FIXO = {
   nome: 'Welerson Mendonça de Almeida',
   cidade: 'SAQUAREMA',
-  chave: '22998750491',
+  chave: '+5522998750491',
   tipoChave: 'telefone'
 };

@@ -1,21 +1,38 @@
 (function () {
   const STATUS_LABEL = {
-    aguardando_pagamento: 'Aguardando pagamento',
-    valor_confere: 'Valor confere — em análise',
-    divergente: 'Valor divergente — em análise',
-    confirmado: 'Pagamento confirmado',
-    rejeitado: 'Comprovante rejeitado — envie de novo'
+    aguardando_pagamento: 'Pendente',
+    valor_confere: 'Em análise',
+    divergente: 'Valor divergente',
+    confirmado: 'Pago',
+    rejeitado: 'Rejeitado'
   };
 
   let lastBusca = '';
   let current = null;
+  let cartaoIntegrado = false;
+  let pixDisponivel = false;
+  let activeTab = 'cartao';
 
   const closedCard = document.getElementById('closedCard');
   const searchCard = document.getElementById('searchCard');
   const resultCard = document.getElementById('resultCard');
   const searchErr = document.getElementById('searchErr');
+  const payErr = document.getElementById('payErr');
   const uploadErr = document.getElementById('uploadErr');
   const doneMsg = document.getElementById('doneMsg');
+  const methodsBlock = document.getElementById('payMethodsBlock');
+  const payTabs = document.getElementById('payTabs');
+  const tabCartao = document.getElementById('tabCartao');
+  const tabPix = document.getElementById('tabPix');
+  const panelCartao = document.getElementById('panelCartao');
+  const panelPix = document.getElementById('panelPix');
+  const cardBtn = document.getElementById('cardPayBtn');
+  const cardSyncBtn = document.getElementById('cardSyncBtn');
+
+  function money(n) {
+    if (n == null || n === '') return '—';
+    return Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
 
   function showErr(el, msg) {
     if (!el) return;
@@ -35,64 +52,232 @@
     if (c === 'BUSCA_INVALIDA') return 'Informe um telefone ou protocolo válido.';
     if (c === 'JA_CONFIRMADO') return 'Esta contribuição já foi confirmada.';
     if (c === 'RATE_LIMITED') return 'Muitas tentativas. Aguarde alguns minutos.';
+    if (c === 'CHECKOUT_FALHOU') return 'Não foi possível abrir o checkout. Tente de novo.';
     return 'Não foi possível consultar. Tente de novo.';
   }
 
-  async function renderQr(payload){
+  function pixConfig(pub) {
+    const fixo = window.COR_PIX_CAMISA_FIXO || {};
+    const chaveFixa = String(fixo.chave || '').trim();
+    if (chaveFixa) {
+      return {
+        chave: chaveFixa,
+        tipoChave: fixo.tipoChave || 'telefone',
+        nome: fixo.nome || 'Welerson Mendonça de Almeida',
+        cidade: fixo.cidade || 'SAQUAREMA'
+      };
+    }
+    if (pub && pub.chave_pix && pub.nome_recebedor && pub.cidade) {
+      return {
+        chave: pub.chave_pix,
+        tipoChave: pub.tipo_chave || 'telefone',
+        nome: pub.nome_recebedor,
+        cidade: pub.cidade
+      };
+    }
+    return null;
+  }
+
+  function readReturnParams() {
+    const q = new URLSearchParams(location.search);
+    return {
+      busca: q.get('busca') || '',
+      pago: q.get('pago') === '1',
+      orderNsu: q.get('order_nsu') || '',
+      transactionNsu: q.get('transaction_nsu') || '',
+      slug: q.get('slug') || ''
+    };
+  }
+
+  function clearReturnParams() {
+    if (!location.search) return;
+    history.replaceState({}, '', location.pathname);
+  }
+
+  function selectPayTab(tab) {
+    activeTab = tab;
+    const isCartao = tab === 'cartao';
+    if (tabCartao) {
+      tabCartao.classList.toggle('active', isCartao);
+      tabCartao.setAttribute('aria-selected', isCartao ? 'true' : 'false');
+    }
+    if (tabPix) {
+      tabPix.classList.toggle('active', !isCartao);
+      tabPix.setAttribute('aria-selected', !isCartao ? 'true' : 'false');
+    }
+    if (panelCartao) {
+      panelCartao.classList.toggle('active', isCartao);
+      panelCartao.hidden = !isCartao;
+    }
+    if (panelPix) {
+      panelPix.classList.toggle('active', !isCartao);
+      panelPix.hidden = isCartao;
+    }
+  }
+
+  async function renderQr(payload) {
     const canvas = document.getElementById('pixQr');
-    if(!canvas || !payload) return;
-    await window.COR_PIX.drawQr(canvas, payload, 220);
+    if (!canvas || !payload || !window.COR_PIX) return;
+    await window.COR_PIX.drawQr(canvas, payload, 200);
+  }
+
+  function setDoneStyle(kind) {
+    if (!doneMsg) return;
+    if (kind === 'ok') {
+      doneMsg.style.background = '#e5f6ec';
+      doneMsg.style.borderColor = '#b7e0c6';
+      doneMsg.style.color = '#1a6b3c';
+    } else if (kind === 'warn') {
+      doneMsg.style.background = '#fff8e8';
+      doneMsg.style.borderColor = '#f0dca8';
+      doneMsg.style.color = '#6b4f1a';
+    } else if (kind === 'err') {
+      doneMsg.style.background = '#fff0e8';
+      doneMsg.style.borderColor = '#f0c9a8';
+      doneMsg.style.color = '#8a3f1a';
+    } else {
+      doneMsg.style.background = '';
+      doneMsg.style.borderColor = '';
+      doneMsg.style.color = '';
+    }
+  }
+
+  function setupMethodsUi(p, pub, confirmed) {
+    cartaoIntegrado = !!pub.cartao_integrado;
+    pixDisponivel = !!pixConfig(pub) && !confirmed;
+
+    if (methodsBlock) methodsBlock.hidden = confirmed || (!cartaoIntegrado && !pixDisponivel);
+
+    if (payTabs) {
+      payTabs.hidden = !(cartaoIntegrado && pixDisponivel);
+    }
+
+    if (cartaoIntegrado && cardBtn) {
+      cardBtn.textContent = 'Pagar ' + money(p.valor_esperado) + ' com cartão de crédito';
+      cardBtn.disabled = false;
+    }
+    if (cardSyncBtn) cardSyncBtn.hidden = !cartaoIntegrado;
+
+    if (pixDisponivel) {
+      const cfg = pixConfig(pub);
+      const recebedor = document.getElementById('pixRecebedor');
+      if (recebedor) recebedor.textContent = cfg.nome;
+
+      const valor = p.valor_esperado != null ? p.valor_esperado : pub.valor_contribuicao_servo;
+      const payload = window.COR_PIX.buildPayload({
+        chave: cfg.chave,
+        tipoChave: cfg.tipoChave,
+        nome: cfg.nome,
+        cidade: cfg.cidade,
+        valor: valor,
+        txid: ('TX' + (p.protocolo || 'COR')).slice(0, 25)
+      });
+      document.getElementById('pixCopia').value = payload;
+      renderQr(payload);
+
+      if (valor != null) {
+        document.getElementById('valorPago').value = String(valor).replace('.', ',');
+      }
+    }
+
+    if (confirmed) return;
+
+    if (cartaoIntegrado && pixDisponivel) {
+      selectPayTab(activeTab === 'pix' ? 'pix' : 'cartao');
+    } else if (pixDisponivel) {
+      selectPayTab('pix');
+    } else {
+      selectPayTab('cartao');
+    }
   }
 
   function fillResult(data) {
     const p = data.pagamento;
-    const pix = data.pix || {};
+    const pub = data.pix || {};
     current = p;
+
     document.getElementById('rNome').textContent = p.nome || '—';
-    document.getElementById('rMeta').textContent =
-      'Protocolo ' + (p.protocolo || '—') + ' · Servo';
+    document.getElementById('rMeta').textContent = 'Protocolo ' + (p.protocolo || '—') + ' · Servo';
+
     const st = document.getElementById('rStatus');
     st.textContent = STATUS_LABEL[p.status] || p.status;
     st.dataset.status = p.status || '';
 
-    document.getElementById('rValor').textContent = window.COR_PIX.formatBRL(
-      p.valor_esperado != null ? p.valor_esperado : pix.valor_contribuicao_servo
-    );
-    document.getElementById('pixMsg').textContent = pix.mensagem || '';
-
-    const valor = p.valor_esperado != null ? p.valor_esperado : pix.valor_contribuicao_servo;
-    const payload = window.COR_PIX.buildPayload({
-      chave: pix.chave_pix,
-      tipoChave: pix.tipo_chave,
-      nome: pix.nome_recebedor,
-      cidade: pix.cidade,
-      valor: valor,
-      txid: ('TX' + (p.protocolo || 'COR')).slice(0, 25)
-    });
-    document.getElementById('pixCopia').value = payload;
-    renderQr(payload);
+    const valor = p.valor_esperado != null ? p.valor_esperado : pub.valor_contribuicao_servo;
+    document.getElementById('rValor').textContent = money(valor);
 
     const confirmed = p.status === 'confirmado';
-    const payTools = document.getElementById('pixPayTools');
-    document.getElementById('uploadForm').hidden = confirmed;
-    if (payTools) payTools.hidden = confirmed;
-    doneMsg.hidden = !confirmed;
+    setupMethodsUi(p, pub, confirmed);
+
+    showErr(payErr, '');
+    showErr(uploadErr, '');
+
     if (confirmed) {
-      doneMsg.innerHTML = '<strong>Contribuição confirmada.</strong> Obrigado por servir — Deus multiplica o que é dado com amor.';
+      doneMsg.hidden = false;
+      setDoneStyle('ok');
+      doneMsg.innerHTML = '<strong>Contribuição confirmada.</strong> Obrigado por servir!';
     } else if (p.status === 'divergente') {
       doneMsg.hidden = false;
-      doneMsg.textContent = 'Comprovante recebido com valor diferente. A tesouraria vai conferir.';
+      setDoneStyle('warn');
+      doneMsg.textContent = 'Comprovante recebido. A tesouraria vai conferir.';
+    } else if (p.status === 'valor_confere') {
+      doneMsg.hidden = false;
+      setDoneStyle('warn');
+      doneMsg.textContent = 'Comprovante recebido. Aguardando confirmação.';
     } else if (p.status === 'rejeitado') {
       doneMsg.hidden = false;
+      setDoneStyle('err');
       doneMsg.textContent = p.nota_tesoureiro
         ? ('Rejeitado: ' + p.nota_tesoureiro)
         : 'Comprovante rejeitado. Envie novamente.';
+    } else {
+      doneMsg.hidden = true;
+      setDoneStyle('');
     }
 
-    if (valor != null) {
-      document.getElementById('valorPago').value = String(valor).replace('.', ',');
-    }
     resultCard.hidden = false;
+  }
+
+  async function syncCartao(extra) {
+    if (!lastBusca) return null;
+    return window.COR_API.sincronizarInfinitepayContrib(Object.assign({
+      busca: lastBusca,
+      orderNsu: current && current.id,
+      transactionNsu: null,
+      slug: null
+    }, extra || {}));
+  }
+
+  async function refreshConsulta() {
+    if (!lastBusca) return;
+    const data = await window.COR_API.consultarPagamentoContribuicao(lastBusca);
+    if (data && data.ok) fillResult(data);
+    return data;
+  }
+
+  async function openCheckoutCartao() {
+    if (!current || !lastBusca) return;
+    showErr(payErr, '');
+    const prev = cardBtn.textContent;
+    cardBtn.disabled = true;
+    cardBtn.textContent = 'Abrindo…';
+    try {
+      const data = await window.COR_API.criarCheckoutInfinitepayContrib({
+        pagamentoId: current.id,
+        busca: lastBusca
+      });
+      if (!data || !data.url) {
+        showErr(payErr, mapErro('CHECKOUT_FALHOU'));
+        return;
+      }
+      location.href = data.url;
+    } catch (err) {
+      console.error(err);
+      showErr(payErr, mapErro(err.code || err.message));
+    } finally {
+      cardBtn.disabled = false;
+      cardBtn.textContent = prev;
+    }
   }
 
   async function init() {
@@ -110,44 +295,94 @@
       searchCard.hidden = true;
       closedCard.querySelector('h2').textContent = 'Indisponível no momento';
       closedCard.querySelector('p').textContent = 'Não foi possível verificar se as contribuições estão liberadas.';
+      return;
+    }
+
+    const ret = readReturnParams();
+    if (ret.busca.length >= 4) {
+      document.getElementById('busca').value = ret.busca;
+      lastBusca = ret.busca.trim();
+      await consultar(true);
+      if (ret.pago && cartaoIntegrado) {
+        selectPayTab('cartao');
+        try {
+          await syncCartao({
+            orderNsu: ret.orderNsu || (current && current.id),
+            transactionNsu: ret.transactionNsu || null,
+            slug: ret.slug || null
+          });
+          await refreshConsulta();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      clearReturnParams();
     }
   }
 
-  async function consultar() {
-    showErr(searchErr, '');
+  async function consultar(silent) {
+    if (!silent) showErr(searchErr, '');
     const busca = document.getElementById('busca').value.trim();
     if (busca.length < 4) {
-      showErr(searchErr, 'Informe telefone ou protocolo.');
+      if (!silent) showErr(searchErr, 'Informe telefone ou protocolo.');
       return;
     }
     const btn = document.getElementById('buscarBtn');
-    btn.disabled = true;
-    btn.textContent = 'Consultando…';
+    if (!silent) {
+      btn.disabled = true;
+      btn.textContent = 'Consultando…';
+    }
     try {
       const data = await window.COR_API.consultarPagamentoContribuicao(busca);
       if (!data || !data.ok) {
-        showErr(searchErr, mapErro(data && data.erro));
-        resultCard.hidden = true;
+        if (!silent) {
+          showErr(searchErr, mapErro(data && data.erro));
+          resultCard.hidden = true;
+        }
         return;
       }
       lastBusca = busca;
       fillResult(data);
     } catch (err) {
       console.error(err);
-      showErr(searchErr, err.code === 'RATE_LIMITED' ? mapErro('RATE_LIMITED') : mapErro());
+      if (!silent) showErr(searchErr, err.code === 'RATE_LIMITED' ? mapErro('RATE_LIMITED') : mapErro());
     } finally {
-      btn.disabled = false;
-      btn.textContent = 'Consultar';
+      if (!silent) {
+        btn.disabled = false;
+        btn.textContent = 'Consultar';
+      }
     }
   }
 
-  document.getElementById('buscarBtn').addEventListener('click', consultar);
+  document.getElementById('buscarBtn').addEventListener('click', () => consultar(false));
   document.getElementById('busca').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      consultar();
+      consultar(false);
     }
   });
+
+  if (tabCartao) tabCartao.addEventListener('click', () => selectPayTab('cartao'));
+  if (tabPix) tabPix.addEventListener('click', () => selectPayTab('pix'));
+
+  if (cardBtn) cardBtn.addEventListener('click', openCheckoutCartao);
+
+  if (cardSyncBtn) {
+    cardSyncBtn.addEventListener('click', async () => {
+      cardSyncBtn.disabled = true;
+      cardSyncBtn.textContent = 'Verificando…';
+      try {
+        await syncCartao();
+        await refreshConsulta();
+      } catch (err) {
+        console.error(err);
+        showErr(payErr, 'Ainda não confirmado. Aguarde e tente de novo.');
+      } finally {
+        cardSyncBtn.disabled = false;
+        cardSyncBtn.textContent = 'Atualizar status do cartão';
+      }
+    });
+  }
 
   document.getElementById('copyPixBtn').addEventListener('click', async () => {
     const t = document.getElementById('pixCopia').value;
@@ -156,7 +391,7 @@
       document.getElementById('copyPixBtn').textContent = 'Copiado!';
       setTimeout(() => { document.getElementById('copyPixBtn').textContent = 'Copiar código PIX'; }, 1600);
     } catch (_) {
-      document.getElementById('pixCopia').select();
+      showErr(uploadErr, 'Não foi possível copiar. Escaneie o QR Code.');
     }
   });
 
@@ -193,14 +428,14 @@
         showErr(uploadErr, mapErro(data && data.erro) || 'Falha ao enviar.');
         return;
       }
-      const refreshed = await window.COR_API.consultarPagamentoContribuicao(lastBusca);
-      if (refreshed && refreshed.ok) fillResult(refreshed);
+      document.getElementById('proofDetails').open = false;
+      await refreshConsulta();
     } catch (err) {
       console.error(err);
       showErr(uploadErr, err.message || 'Falha ao enviar comprovante.');
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Enviar comprovante';
+      btn.textContent = 'Enviar';
     }
   });
 

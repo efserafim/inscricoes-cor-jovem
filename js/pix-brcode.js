@@ -17,7 +17,14 @@ window.COR_PIX = {
   normalizeKey(chave, tipo) {
     const raw = String(chave || '').trim();
     const t = String(tipo || '').toLowerCase();
-    if (t === 'cpf' || t === 'cnpj' || t === 'telefone') return this.onlyDigits(raw);
+    if (t === 'cpf' || t === 'cnpj') return this.onlyDigits(raw);
+    if (t === 'telefone') {
+      const d = this.onlyDigits(raw);
+      if (!d) return raw;
+      if (raw.startsWith('+')) return '+' + d;
+      if (d.startsWith('55') && d.length >= 12) return '+' + d;
+      return '+55' + d;
+    }
     if (t === 'email') return raw.toLowerCase();
     return raw;
   },

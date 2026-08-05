@@ -132,7 +132,7 @@
     }
 
     if (cartaoIntegrado && cardBtn) {
-      cardBtn.textContent = 'Pagar ' + money(p.valor_esperado);
+      cardBtn.textContent = 'Pagar ' + money(p.valor_esperado) + ' com cartão de crédito';
       cardBtn.disabled = false;
     }
     if (cardSyncBtn) cardSyncBtn.hidden = !cartaoIntegrado;

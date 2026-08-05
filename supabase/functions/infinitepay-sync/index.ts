@@ -39,6 +39,7 @@ Deno.serve(async (req) => {
     order_nsu?: string;
     transaction_nsu?: string;
     slug?: string;
+    tipo?: string;
   };
   try {
     body = await req.json();
@@ -47,6 +48,8 @@ Deno.serve(async (req) => {
   }
 
   const busca = String(body.busca || '').trim();
+  const tipo = String(body.tipo || 'camisa').trim().toLowerCase();
+  const isContrib = tipo === 'contribuicao';
   if (busca.length < 4) {
     return json({ ok: false, erro: 'BUSCA_INVALIDA' }, 400);
   }
@@ -55,7 +58,8 @@ Deno.serve(async (req) => {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  const { data: check, error: checkErr } = await admin.rpc('consultar_pagamento_camisa', {
+  const rpcName = isContrib ? 'consultar_pagamento_contribuicao' : 'consultar_pagamento_camisa';
+  const { data: check, error: checkErr } = await admin.rpc(rpcName, {
     p_busca: busca,
   });
   if (checkErr) {

@@ -1195,10 +1195,21 @@ body.export-lock{
     margin-top:8px;
     display:flex;
     justify-content:stretch;
+    overflow:visible;
   }
   .pix-table-wrap .pix-menu{
     width:100%;
     max-width:none;
+  }
+  .pix-table-wrap .pix-menu-panel{
+    position:static;
+    width:100%;
+    max-width:none;
+    min-width:0;
+    margin-top:8px;
+    box-shadow:none;
+    border-color:var(--mist);
+    background:var(--soft2);
   }
   .pix-table-scroll{
     border:0;
@@ -1822,8 +1833,7 @@ html[data-theme="dark"] .pix-seg.active{
   border-radius:0;
 }
 .pix-table-scroll{
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
+  overflow:visible;
   border-radius:12px;
   border:1px solid var(--mist);
 }
@@ -1840,8 +1850,10 @@ html[data-theme="dark"] .pix-seg.active{
   width:148px;
   min-width:148px;
   white-space:normal;
-  vertical-align:top;
+  vertical-align:middle;
   padding-right:14px;
+  position:relative;
+  overflow:visible;
 }
 .pix-menu{
   position:relative;
@@ -1869,6 +1881,7 @@ html[data-theme="dark"] .pix-seg.active{
   user-select:none;
   width:100%;
   box-sizing:border-box;
+  outline:none;
 }
 .pix-menu > summary::-webkit-details-marker{ display:none; }
 .pix-menu > summary::after{
@@ -1880,24 +1893,41 @@ html[data-theme="dark"] .pix-seg.active{
   border-top:5px solid var(--slate);
   opacity:.85;
   flex:0 0 auto;
+  transition:transform .15s ease;
+}
+.pix-menu[open] > summary::after{
+  transform:rotate(180deg);
+}
+.pix-menu > summary:focus-visible{
+  box-shadow:0 0 0 2px rgba(47,111,143,.35);
 }
 .pix-menu[open] > summary{
   border-color:rgba(47,111,143,.45);
   background:rgba(47,111,143,.1);
 }
 .pix-menu-panel{
-  position:static;
-  margin-top:8px;
-  min-width:0;
-  width:100%;
+  position:absolute;
+  top:calc(100% + 6px);
+  right:0;
+  z-index:40;
+  min-width:176px;
+  width:max-content;
+  max-width:min(220px, calc(100vw - 24px));
+  margin-top:0;
   padding:6px;
   border-radius:10px;
-  border:1px solid var(--mist);
-  background:var(--soft2);
-  box-shadow:none;
+  border:1px solid var(--card-border);
+  background:var(--card);
+  box-shadow:0 10px 28px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.12);
   display:flex;
   flex-direction:column;
   gap:2px;
+}
+.pix-menu-panel.is-fixed{
+  position:fixed;
+  top:0;
+  left:0;
+  margin:0;
 }
 .pix-menu-panel a,
 .pix-menu-panel button{

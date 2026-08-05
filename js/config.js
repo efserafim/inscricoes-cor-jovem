@@ -524,7 +524,27 @@ window.COR_API = {
       headers: await this.headers(),
       body: JSON.stringify({
         pagamentoId: payload.pagamentoId,
-        busca: payload.busca
+        busca: payload.busca,
+        tipo: 'camisa'
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+      const err = new Error(data.erro || 'CHECKOUT_FALHOU');
+      err.code = data.erro;
+      throw err;
+    }
+    return data;
+  },
+
+  async criarCheckoutInfinitepayContrib(payload) {
+    const res = await fetch(this.infinitepayUrl('infinitepay-checkout'), {
+      method: 'POST',
+      headers: await this.headers(),
+      body: JSON.stringify({
+        pagamentoId: payload.pagamentoId,
+        busca: payload.busca,
+        tipo: 'contribuicao'
       })
     });
     const data = await res.json().catch(() => ({}));
@@ -544,7 +564,29 @@ window.COR_API = {
         busca: payload.busca,
         order_nsu: payload.orderNsu || null,
         transaction_nsu: payload.transactionNsu || null,
-        slug: payload.slug || null
+        slug: payload.slug || null,
+        tipo: 'camisa'
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+      const err = new Error(data.erro || 'SYNC_FALHOU');
+      err.code = data.erro;
+      throw err;
+    }
+    return data;
+  },
+
+  async sincronizarInfinitepayContrib(payload) {
+    const res = await fetch(this.infinitepayUrl('infinitepay-sync'), {
+      method: 'POST',
+      headers: await this.headers(),
+      body: JSON.stringify({
+        busca: payload.busca,
+        order_nsu: payload.orderNsu || null,
+        transaction_nsu: payload.transactionNsu || null,
+        slug: payload.slug || null,
+        tipo: 'contribuicao'
       })
     });
     const data = await res.json().catch(() => ({}));

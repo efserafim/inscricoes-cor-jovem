@@ -259,14 +259,11 @@ begin
     and c.valor_camisa > 0
     and c.tipo_chave is not null;
 
-  contrib_ok := camisa_ok
-    and c.valor_contribuicao_servo is not null
+  contrib_ok := c.valor_contribuicao_servo is not null
     and c.valor_contribuicao_servo > 0;
 
   cartao_integrado := coalesce(c.infinitepay_habilitado, false)
-    and coalesce(nullif(btrim(c.infinitepay_handle), ''), '') <> ''
-    and c.valor_camisa is not null
-    and c.valor_camisa > 0;
+    and coalesce(nullif(btrim(c.infinitepay_handle), ''), '') <> '';
 
   return jsonb_build_object(
     'liberado', coalesce(c.pagamentos_liberados, false)
