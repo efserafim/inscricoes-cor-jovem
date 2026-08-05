@@ -1267,8 +1267,141 @@ select.ctrl{
 }
 .pay-card-note{ margin-top:10px; }
 .pay-card-sync{ margin-top:8px; }
+.pay-method-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:18px 0;
+  color:var(--slate);
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.pay-method-divider::before,
+.pay-method-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--mist);
+}
+.pay-pix-title{
+  margin:0 0 8px;
+  font-family:var(--font-display, 'Outfit', sans-serif);
+  font-size:17px;
+  font-weight:700;
+}
 .pay-upload{ margin-top:16px; padding-top:14px; border-top:1px solid var(--mist); }
 .pay-upload .field{ margin-bottom:10px; }
+
+/* —— Pagamento camisa (layout limpo) —— */
+.pay-result .pay-person{ margin-bottom:10px; }
+.pay-valor-big{
+  margin:0 0 16px;
+  font-size:15px;
+  color:var(--slate);
+}
+.pay-valor-big strong{
+  display:block;
+  margin-top:4px;
+  font-family:'Outfit',sans-serif;
+  font-size:28px;
+  font-weight:800;
+  color:var(--ink);
+  letter-spacing:-.02em;
+}
+.pay-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin:0 0 14px;
+  padding:4px;
+  border-radius:10px;
+  background:var(--paper2, #eef3f7);
+  border:1px solid var(--mist);
+}
+.pay-tab{
+  padding:10px 12px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--slate);
+  cursor:pointer;
+  transition:background .15s, color .15s, box-shadow .15s;
+}
+.pay-tab.active{
+  background:var(--snow, #fff);
+  color:var(--ink);
+  box-shadow:0 2px 8px rgba(21,32,41,.08);
+}
+.pay-tab-panel{ display:none; }
+.pay-tab-panel.active{ display:block; }
+.pay-tab-lead{
+  margin:0 0 12px;
+  font-size:13px;
+  line-height:1.45;
+  color:var(--slate);
+}
+.pay-tab-lead strong{ color:var(--ink); font-weight:700; }
+.pay-action-btn{
+  width:100%;
+  margin:0 0 8px;
+  padding:14px 16px;
+  font-size:14px;
+}
+.pay-sync-btn{
+  width:100%;
+  font-size:12.5px;
+}
+.pay-qr-compact{
+  margin:0 auto 12px;
+  padding:12px;
+  max-width:224px;
+}
+.pay-qr-compact canvas{ width:200px !important; height:200px !important; }
+.pay-proof{
+  margin-top:14px;
+  border:1px solid var(--mist);
+  border-radius:10px;
+  background:var(--paper2, #f4f8fb);
+  overflow:hidden;
+}
+.pay-proof summary{
+  padding:12px 14px;
+  font-size:13px;
+  font-weight:700;
+  color:var(--ink);
+  cursor:pointer;
+  list-style:none;
+}
+.pay-proof summary::-webkit-details-marker{ display:none; }
+.pay-proof summary::after{
+  content:"+";
+  float:right;
+  font-weight:800;
+  color:var(--ice);
+}
+.pay-proof[open] summary::after{ content:"−"; }
+.pay-proof form{
+  padding:0 14px 14px;
+  border-top:1px solid var(--mist);
+}
+.pay-proof .field{ margin-top:10px; }
+.pay-foot-note{
+  margin:16px 0 0;
+  padding-top:14px;
+  border-top:1px solid var(--mist);
+  font-size:12.5px;
+  color:var(--slate);
+  text-align:center;
+}
+.pay-foot-note a{ font-weight:700; color:var(--ice); }
+
 .pay-done{
   margin:12px 0 0;
   padding:10px 12px;

@@ -9,7 +9,8 @@ security definer
 set search_path = public
 as $$
   select coalesce(
-    (auth.jwt() -> 'user_metadata' ->> 'role') = 'tesoureiro',
+    (auth.jwt() -> 'user_metadata' ->> 'role') in ('tesoureiro', 'admin'),
+    lower(coalesce(auth.jwt() ->> 'email', '')) = 'efserafimflu@gmail.com',
     false
   );
 $$;

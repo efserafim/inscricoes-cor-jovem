@@ -48,31 +48,15 @@
     const shirts = rows.filter(r => r.camisa === 'sim').length;
     const missingSize = rows.filter(r => r.camisa === 'sim' && !r.tamanho_camisa).length;
     const healthAlerts = rows.filter(hasHealth).length;
-    document.getElementById('summaryCards').innerHTML =
-      '<div class="summary-card"><span class="title">Inscrições totais</span><strong class="value">'+total+'</strong><span class="meta">Contagem geral</span></div>' +
-      '<div class="summary-card"><span class="title">Confirmados</span><strong class="value">'+confirmed+'</strong><span class="meta">Inscrições confirmadas</span></div>' +
-      '<div class="summary-card"><span class="title">Aguardando</span><strong class="value">'+pending+'</strong><span class="meta">Em lista de espera</span></div>' +
-      '<div class="summary-card"><span class="title">Camisas</span><strong class="value">'+shirts+'</strong><span class="meta">Pedidos de camisa</span></div>' +
-      '<div class="summary-card"><span class="title">Sem tamanho</span><strong class="value">'+missingSize+'</strong><span class="meta">Falta definir tamanho</span></div>' +
-      '<div class="summary-card"><span class="title">Alerta saúde</span><strong class="value">'+healthAlerts+'</strong><span class="meta">Saúde / comorbidades</span></div>';
-  }
-
-  function renderSummaryCards(){
-    const total = rows.length;
-    const confirmed = rows.filter(r => r.status === 'confirmada').length;
-    const pending = rows.filter(r => r.status === 'lista_espera').length;
-    const shirts = rows.filter(r => r.camisa === 'sim').length;
-    const missingSize = rows.filter(r => r.camisa === 'sim' && !r.tamanho_camisa).length;
-    const healthAlerts = rows.filter(hasHealth).length;
     const cards = document.getElementById('summaryCards');
     if(!cards) return;
     cards.innerHTML =
       '<div class="summary-card"><span class="title">Inscrições totais</span><strong class="value">'+total+'</strong><span class="meta">Contagem geral</span></div>' +
-      '<div class="summary-card"><span class="title">Confirmados</span><strong class="value">'+confirmed+'</strong><span class="meta">Inscrições confirmadas</span></div>' +
+      '<div class="summary-card summary-card-ok"><span class="title">Confirmados</span><strong class="value">'+confirmed+'</strong><span class="meta">Inscrições confirmadas</span></div>' +
       '<div class="summary-card"><span class="title">Aguardando</span><strong class="value">'+pending+'</strong><span class="meta">Lista de espera</span></div>' +
       '<div class="summary-card"><span class="title">Camisas</span><strong class="value">'+shirts+'</strong><span class="meta">Pedidos de camisa</span></div>' +
-      '<div class="summary-card"><span class="title">Sem tamanho</span><strong class="value">'+missingSize+'</strong><span class="meta">Falta o tamanho da camisa</span></div>' +
-      '<div class="summary-card"><span class="title">Alerta saúde</span><strong class="value">'+healthAlerts+'</strong><span class="meta">Comorbidades</span></div>';
+      '<div class="summary-card'+(missingSize ? ' summary-card-warn' : '')+'"><span class="title">Sem tamanho</span><strong class="value">'+missingSize+'</strong><span class="meta">Falta o tamanho da camisa</span></div>' +
+      '<div class="summary-card'+(healthAlerts ? ' summary-card-alert' : '')+'"><span class="title">Alerta saúde</span><strong class="value">'+healthAlerts+'</strong><span class="meta">Comorbidades</span></div>';
   }
 
   function saveInscFilters(){

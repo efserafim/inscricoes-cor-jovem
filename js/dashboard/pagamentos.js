@@ -29,6 +29,44 @@
     if(st) st.textContent = pixConfigDirty ? 'Alterações não salvas.' : 'Configuração atualizada.';
   }
 
+  function updatePixLiveBadge(){
+    const badge = document.getElementById('pixLiveBadge');
+    if(!badge) return;
+    const handle = document.getElementById('pixInfiniteHandle')?.value.trim();
+    const libCamisa = document.getElementById('pixLibCamisa')?.checked;
+    const valorCamisa = window.COR_PIX.parseMoney(document.getElementById('pixValorCamisa')?.value || '');
+    const live = !!handle && libCamisa && valorCamisa != null && valorCamisa > 0;
+    badge.dataset.state = live ? 'live' : 'off';
+    badge.textContent = live ? 'Site liberado' : 'Site fechado';
+  }
+
+  function updatePixValorDisplay(){
+    const el = document.getElementById('pixValorDisplay');
+    if(!el) return;
+    const valorCamisa = window.COR_PIX.parseMoney(document.getElementById('pixValorCamisa')?.value || '');
+    el.textContent = valorCamisa != null ? moneyLabel(valorCamisa) : '—';
+  }
+
+  function setHiddenPixValores(cfg){
+    const camisa = document.getElementById('pixValorCamisa');
+    const contrib = document.getElementById('pixValorContrib');
+    const msg = document.getElementById('pixMensagem');
+    if(camisa) camisa.value = cfg && cfg.valor_camisa != null
+      ? String(cfg.valor_camisa).replace('.', ',') : '';
+    if(contrib) contrib.value = cfg && cfg.valor_contribuicao_servo != null
+      ? String(cfg.valor_contribuicao_servo).replace('.', ',') : '';
+    if(msg) msg.value = (cfg && cfg.mensagem) || '';
+    updatePixValorDisplay();
+  }
+
+  function updateQueueTabCounts(){
+    const pendCam = pixCamisasRows.filter(r => r.status === 'aguardando_pagamento').length;
+    const pendCont = pixContribRows.filter(r => r.status === 'aguardando_pagamento').length;
+    const qCam = document.getElementById('pixQCamisas');
+    const qCont = document.getElementById('pixQContrib');
+    if(qCam) qCam.textContent = 'Camisas' + (pendCam ? ' · ' + pendCam : '');
+    if(qCont) qCont.textContent = 'Contribuição' + (pendCont ? ' · ' + pendCont : '');
+  }
   function setupTesoureiroUi(){
     const isT = !!(window.COR_AUTH && window.COR_AUTH.isTesoureiro());
     document.querySelectorAll('.tab-tesoureiro').forEach(el => {
@@ -48,101 +86,47 @@
       const cfg = await window.COR_API.getPixConfigStaff();
       if(cfg){
         pixConfigId = cfg.id;
-        document.getElementById('pixTipoChave').value = cfg.tipo_chave || 'aleatoria';
-        document.getElementById('pixChave').value = cfg.chave_pix || '';
-        document.getElementById('pixNome').value = cfg.nome_recebedor || '';
-        document.getElementById('pixCidade').value = cfg.cidade || '';
-        document.getElementById('pixValorCamisa').value = cfg.valor_camisa != null
-          ? String(cfg.valor_camisa).replace('.', ',') : '';
-        document.getElementById('pixValorContrib').value = cfg.valor_contribuicao_servo != null
-          ? String(cfg.valor_contribuicao_servo).replace('.', ',') : '';
-        document.getElementById('pixMensagem').value = cfg.mensagem || '';
+        setHiddenPixValores(cfg);
         document.getElementById('pixInfiniteHandle').value = cfg.infinitepay_handle || 'nicolegiagio';
-        document.getElementById('pixInfiniteHabilitado').checked = cfg.infinitepay_habilitado !== false;
         document.getElementById('pixLibCamisa').checked = !!cfg.pagamentos_liberados;
         document.getElementById('pixLibContrib').checked = !!cfg.contribuicoes_liberadas;
-        await refreshPixPreview();
         updatePixConfigSummary();
+        updatePixLiveBadge();
         setPixConfigDirty(false);
+        const st = document.getElementById('pixConfigStatus');
+        if(st) st.textContent = 'Configuração atualizada.';
+      }else{
+        toast('Configuração não carregou. Saia e entre de novo no painel, ou peça papel tesoureiro/admin.');
       }
       await refreshPixQueues();
     }catch(err){
       console.error(err);
-      toast('Não foi possível carregar a aba PIX (verifique o papel tesoureiro e o SQL).');
+      toast('Não foi possível carregar a aba Pagamentos (verifique o papel tesoureiro e o SQL).');
     }
   }
 
   async function refreshPixPreview(){
-    const preview = document.getElementById('pixPreview');
-    const canvas = document.getElementById('pixPreviewCanvas');
-    const note = document.getElementById('pixPreviewNote');
-    if(!window.COR_PIX){
-      if(note) note.textContent = 'Aguardando a biblioteca PIX.';
-      return;
-    }
-    const chave = document.getElementById('pixChave').value.trim();
-    const nome = document.getElementById('pixNome').value.trim();
-    const cidade = document.getElementById('pixCidade').value.trim();
-    const tipo = document.getElementById('pixTipoChave').value;
-    const valor = window.COR_PIX.parseMoney(document.getElementById('pixValorCamisa').value);
-    if(!chave || !nome || !cidade || valor == null){
-      if(note) note.textContent = 'Complete chave, nome, cidade e valor da camisa para ver a prévia do QR.';
-      if(preview) preview.hidden = true;
-      updatePixConfigSummary();
-      return;
-    }
-    const payload = window.COR_PIX.buildPayload({
-      chave: chave,
-      tipoChave: tipo,
-      nome: nome,
-      cidade: cidade,
-      valor: valor,
-      txid: 'PREVIEW'
-    });
-    preview.hidden = false;
-    await window.COR_PIX.drawQr(canvas, payload, 160);
-    if(note) note.textContent = 'Prévia pronta para valor ' + moneyLabel(valor) + ' e chave ' + pixKeyLabel(tipo, chave) + '.';
     updatePixConfigSummary();
-  }
-
-  function pixKeyLabel(tipo, chave){
-    if(!chave) return '—';
-    switch(tipo){
-      case 'cpf': return 'CPF · ' + chave;
-      case 'cnpj': return 'CNPJ · ' + chave;
-      case 'email': return 'E-mail · ' + chave;
-      case 'telefone': return 'Telefone · ' + chave;
-      default: return 'EVP · ' + chave;
-    }
   }
 
   function updatePixConfigSummary(){
     const summary = document.getElementById('pixConfigSummary');
     if(!summary) return;
-    const chave = document.getElementById('pixChave').value.trim();
-    const nome = document.getElementById('pixNome').value.trim();
-    const cidade = document.getElementById('pixCidade').value.trim();
-    const tipo = document.getElementById('pixTipoChave').value;
+    const handle = document.getElementById('pixInfiniteHandle')?.value.trim();
     const valorCamisa = window.COR_PIX.parseMoney(document.getElementById('pixValorCamisa').value);
     const valorContrib = window.COR_PIX.parseMoney(document.getElementById('pixValorContrib').value);
     const libCamisa = document.getElementById('pixLibCamisa').checked;
     const libContrib = document.getElementById('pixLibContrib').checked;
     const parts = [];
-    if(!chave || !nome || !cidade){
-      parts.push('Preencha chave, nome e cidade para ativar o PIX e gerar prévia.');
-    } else {
-      parts.push('Chave: ' + pixKeyLabel(tipo, chave));
-      parts.push('Recebedor: ' + nome + ' · ' + cidade);
-      if(valorCamisa != null) parts.push('Valor camisa: ' + moneyLabel(valorCamisa));
-      if(valorContrib != null) parts.push('Valor contribuição: ' + moneyLabel(valorContrib));
-      const handle = document.getElementById('pixInfiniteHandle')?.value.trim();
-      const integrado = document.getElementById('pixInfiniteHabilitado')?.checked;
-      if(integrado && handle) parts.push('Cartão: ' + handle + ' (integrado)');
-      else parts.push('Cartão: desativado');
-      parts.push('Camisa: ' + (libCamisa ? 'ativada' : 'desativada'));
-      parts.push('Contribuição: ' + (libContrib ? 'ativada' : 'desativada'));
-    }
+    if(!handle) parts.push('Informe o handle InfinitePay.');
+    else parts.push('InfinitePay: ' + handle);
+    if(valorCamisa != null) parts.push('Camisa: ' + moneyLabel(valorCamisa));
+    else parts.push('Defina o valor da camisa.');
+    if(valorContrib != null) parts.push('Contribuição: ' + moneyLabel(valorContrib));
+    parts.push(libCamisa ? 'Camisas liberadas no site' : 'Camisas fechadas no site');
+    parts.push(libContrib ? 'Contribuição liberada' : 'Contribuição fechada');
     summary.innerHTML = '<p class="pix-config-summary-note">' + parts.join(' · ') + '</p>';
+    updatePixLiveBadge();
   }
 
   function moneyLabel(n){
@@ -267,11 +251,6 @@
         '<span class="v">'+t.pendente+'</span>' +
         '<span class="s">Aberto '+esc(moneyLabel(t.esperadoAberto))+'</span>' +
       '</div>' +
-      '<div class="pix-stat">' +
-        '<span class="k">Conferir extrato</span>' +
-        '<span class="v">'+t.pendenteExtrato+'</span>' +
-        '<span class="s">PIX confirmado sem bate-extrato</span>' +
-      '</div>' +
       '<div class="pix-stat pix-stat-money">' +
         '<span class="k">Arrecadado</span>' +
         '<span class="v">'+esc(moneyLabel(t.arrecadado))+'</span>' +
@@ -290,6 +269,7 @@
       tb.innerHTML = '';
       empty.hidden = false;
       renderPixTotals();
+      updateQueueTabCounts();
       return;
     }
     empty.hidden = true;
@@ -298,32 +278,20 @@
         ? (r.tipo_pessoa === 'servo' ? ' · Servo' : ' · Cursista') + (r.tamanho_camisa ? ' · '+r.tamanho_camisa : '')
         : ' · Contribuição';
       const canAct = r.status !== 'confirmado';
-      const needsExtrato = r.status === 'confirmado' && r.forma_pagamento !== 'dinheiro' && !r.conferido_extrato;
-      const extratoOk = r.status === 'confirmado' && !!r.conferido_extrato;
       const statusCell =
-        '<span class="tag tag-pix" data-st="'+esc(r.status)+'">'+esc(PIX_STATUS_LABEL[r.status]||r.status)+'</span>' +
-        (needsExtrato
-          ? '<div class="pix-extrato-row">' +
-              '<span class="pix-extrato-hint">Conferir no extrato</span>' +
-              '<button type="button" class="pix-extrato-btn" data-act="extrato" title="Marcar como conferido no extrato bancário">Confirmei</button>' +
-            '</div>'
-          : '') +
-        (extratoOk ? '<span class="pix-extrato-ok">Extrato OK</span>' : '');
-      return '<tr data-id="'+esc(r.id)+'"'+(needsExtrato ? ' class="pix-row-extrato"' : '')+'>' +
+        '<span class="tag tag-pix" data-st="'+esc(r.status)+'">'+esc(PIX_STATUS_LABEL[r.status]||r.status)+'</span>';
+      return '<tr data-id="'+esc(r.id)+'">' +
         '<td data-label="Status">'+statusCell+'</td>' +
         '<td data-label="Nome">'+esc(r.nome)+'<div class="muted" style="font-size:11px">'+esc(r.telefone||'')+esc(extra)+'</div></td>' +
         '<td data-label="Protocolo">'+esc(r.protocolo)+'</td>' +
         '<td data-label="Forma">'+esc(formaLabel(r.forma_pagamento))+'</td>' +
-        '<td data-label="Esperado">'+esc(moneyLabel(r.valor_esperado))+'</td>' +
-        '<td data-label="Informado">'+esc(r.valor_informado != null ? moneyLabel(r.valor_informado) : '—')+'</td>' +
+        '<td data-label="Valor">'+esc(moneyLabel(r.valor_informado != null ? r.valor_informado : r.valor_esperado))+'</td>' +
         '<td data-label="Ações">' +
           '<details class="pix-menu">' +
             '<summary>Ações</summary>' +
             '<div class="pix-menu-panel">' +
-              (r.comprovante_url ? '<a href="'+esc(r.comprovante_url)+'" target="_blank" rel="noopener">Ver comprovante</a>' : '') +
-              (canAct ? '<button type="button" data-act="confirm">Confirmar PIX</button>' : '') +
+              (canAct ? '<button type="button" data-act="confirm">Confirmar pagamento</button>' : '') +
               (canAct ? '<button type="button" data-act="cash">Dinheiro</button>' : '') +
-              (needsExtrato ? '<button type="button" data-act="extrato">Conferir no extrato</button>' : '') +
               (canAct ? '<button type="button" data-act="reject" class="is-warn">Rejeitar</button>' : '') +
               '<button type="button" data-act="delete" class="is-danger">Excluir</button>' +
             '</div>' +
@@ -332,6 +300,7 @@
       '</tr>';
     }).join('');
     renderPixTotals();
+    updateQueueTabCounts();
   }
 
   function financeFilterCaption(){
@@ -488,7 +457,7 @@
 
   async function persistPixConfig(patch, okMsg){
     if(!pixConfigId){
-      toast('Configuração PIX não encontrada. Rode o SQL pagamentos-pix.sql.');
+      toast('Configuração de pagamentos não encontrada. Rode o SQL no Supabase.');
       return false;
     }
     const st = document.getElementById('pixConfigStatus');
@@ -506,49 +475,9 @@
     }catch(err){
       console.error(err);
       if(st) st.textContent = '';
-      toast('Falha ao salvar configuração PIX.');
+      toast('Falha ao salvar configuração de pagamentos.');
       return false;
     }
-  }
-
-  async function clearPixRecebedor(){
-    if(!pixConfigId){
-      toast('Configuração PIX não encontrada.');
-      return;
-    }
-    if(!confirm('Apagar chave, nome e cidade salvos?\n\nOs pagamentos PIX no site serão desativados até configurar de novo.')) return;
-    document.getElementById('pixTipoChave').value = 'aleatoria';
-    document.getElementById('pixChave').value = '';
-    document.getElementById('pixNome').value = '';
-    document.getElementById('pixCidade').value = '';
-    document.getElementById('pixLibCamisa').checked = false;
-    document.getElementById('pixLibContrib').checked = false;
-    const ok = await persistPixConfig({
-      tipo_chave: 'aleatoria',
-      chave_pix: null,
-      nome_recebedor: null,
-      cidade: null,
-      pagamentos_liberados: false,
-      contribuicoes_liberadas: false
-    }, 'Recebedor apagado.');
-    if(ok) toast('Recebedor apagado. Campos em branco.');
-  }
-
-  async function clearPixValores(){
-    if(!pixConfigId){
-      toast('Configuração PIX não encontrada.');
-      return;
-    }
-    if(!confirm('Apagar valores e mensagem salvos?')) return;
-    document.getElementById('pixValorCamisa').value = '';
-    document.getElementById('pixValorContrib').value = '';
-    document.getElementById('pixMensagem').value = '';
-    const ok = await persistPixConfig({
-      valor_camisa: null,
-      valor_contribuicao_servo: null,
-      mensagem: null
-    }, 'Valores apagados.');
-    if(ok) toast('Valores apagados. Campos em branco.');
   }
 
   function clearFinanceFilters(){
@@ -576,29 +505,30 @@
   async function savePixConfig(e){
     e.preventDefault();
     if(!pixConfigId){
-      toast('Configuração PIX não encontrada. Rode o SQL pagamentos-pix.sql.');
+      toast('Configuração de pagamentos não encontrada. Rode o SQL no Supabase.');
       return;
     }
+    const handle = document.getElementById('pixInfiniteHandle').value.trim().replace(/^\$+/, '').replace(/-/g, '');
     const valorCamisa = window.COR_PIX.parseMoney(document.getElementById('pixValorCamisa').value);
     const valorContrib = window.COR_PIX.parseMoney(document.getElementById('pixValorContrib').value);
+    if(!handle){
+      toast('Informe o handle InfinitePay.');
+      return;
+    }
+    if(valorCamisa == null){
+      toast('Valor da camisa não carregou. Atualize a página ou rode o SQL no Supabase.');
+      return;
+    }
     const patch = {
-      tipo_chave: document.getElementById('pixTipoChave').value,
-      chave_pix: document.getElementById('pixChave').value.trim(),
-      nome_recebedor: document.getElementById('pixNome').value.trim(),
-      cidade: document.getElementById('pixCidade').value.trim(),
       valor_camisa: valorCamisa,
       valor_contribuicao_servo: valorContrib,
       mensagem: document.getElementById('pixMensagem').value.trim() || null,
       link_cartao_infinitepay: null,
-      infinitepay_handle: document.getElementById('pixInfiniteHandle').value.trim().replace(/^\$+/, '').replace(/-/g, '') || null,
-      infinitepay_habilitado: document.getElementById('pixInfiniteHabilitado').checked,
+      infinitepay_handle: handle,
+      infinitepay_habilitado: true,
       pagamentos_liberados: document.getElementById('pixLibCamisa').checked,
       contribuicoes_liberadas: document.getElementById('pixLibContrib').checked
     };
-    if(!patch.chave_pix || !patch.nome_recebedor || !patch.cidade){
-      toast('Preencha chave, nome e cidade.');
-      return;
-    }
     const btn = document.getElementById('pixSaveBtn');
     const st = document.getElementById('pixConfigStatus');
     btn.disabled = true;
@@ -607,15 +537,15 @@
       await window.COR_API.savePixConfigStaff(pixConfigId, patch);
       await syncOpenExpected(patch);
       st.textContent = 'Salvo.';
-      toast('Configuração PIX salva.');
-      await refreshPixPreview();
+      toast('Configuração salva.');
       updatePixConfigSummary();
+      updatePixLiveBadge();
       setPixConfigDirty(false);
       await refreshPixQueues();
     }catch(err){
       console.error(err);
       st.textContent = '';
-      toast('Falha ao salvar configuração PIX.');
+      toast('Falha ao salvar configuração de pagamentos.');
     }finally{
       btn.disabled = false;
     }
@@ -657,26 +587,7 @@
       }
       return;
     }
-    if(act === 'extrato'){
-      const row = (pixQueue === 'camisas' ? pixCamisasRows : pixContribRows).find(r => r.id === id)
-        || filteredFinanceRows(pixQueue).find(r => r.id === id);
-      if(!row) return;
-      const patch = {
-        conferido_extrato: true,
-        conferido_extrato_em: new Date().toISOString()
-      };
-      try{
-        const origem = row._origem || (pixQueue === 'contribuicao' ? 'contribuicao' : 'camisa');
-        if(origem === 'contribuicao') await window.COR_API.updatePagamentoContribuicao(id, patch);
-        else await window.COR_API.updatePagamentoCamisa(id, patch);
-        toast('Extrato conferido.');
-        await refreshPixQueues();
-      }catch(err){
-        console.error(err);
-        toast('Falha ao marcar extrato. Rode sql/conferido-extrato.sql no Supabase.');
-      }
-      return;
-    }
+    if(act === 'extrato') return;
     if(act === 'cash'){
       const row = (pixQueue === 'camisas' ? pixCamisasRows : pixContribRows).find(r => r.id === id);
       if(!row) return;
@@ -705,7 +616,7 @@
       : (prompt('Nota (opcional):') || null);
     const patch = {
       status: act === 'confirm' ? 'confirmado' : 'rejeitado',
-      forma_pagamento: act === 'confirm' ? 'pix' : null,
+      forma_pagamento: act === 'confirm' ? 'cartao' : null,
       confirmado_em: new Date().toISOString(),
       nota_tesoureiro: nota
     };
@@ -760,7 +671,7 @@
     form.dataset.wired = '1';
     form.addEventListener('submit', savePixConfig);
     const markPixConfigDirty = ()=> setPixConfigDirty(true);
-    ['pixChave','pixNome','pixCidade','pixValorCamisa','pixValorContrib','pixMensagem','pixInfiniteHandle','pixTipoChave'].forEach(id=>{
+    ['pixInfiniteHandle'].forEach(id=>{
       const el = document.getElementById(id);
       if(!el) return;
       el.addEventListener('change', ()=> {
@@ -773,7 +684,7 @@
         markPixConfigDirty();
       });
     });
-    ['pixLibCamisa','pixLibContrib','pixInfiniteHabilitado'].forEach(id=>{
+    ['pixLibCamisa','pixLibContrib'].forEach(id=>{
       const el = document.getElementById(id);
       if(!el) return;
       el.addEventListener('change', ()=> {
@@ -784,8 +695,6 @@
     });
     document.getElementById('pixRefreshBtn').addEventListener('click', ()=> refreshPixQueues());
     document.getElementById('pixClearFiltersBtn').addEventListener('click', clearFinanceFilters);
-    document.getElementById('pixClearValoresBtn').addEventListener('click', clearPixValores);
-    document.getElementById('pixClearRecebedorBtn').addEventListener('click', clearPixRecebedor);
     document.getElementById('pixPdfBtn').addEventListener('click', ()=> downloadFinancePdf());
     ['pixFilterSearch','pixFilterStatus','pixFilterForma','pixFilterPessoa','pixFilterFrom','pixFilterTo','pixFilterDateField']
       .forEach(id=>{
