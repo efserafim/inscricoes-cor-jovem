@@ -1,0 +1,3 @@
+# InfinitePay envia POST sem JWT — webhook precisa aceitar chamadas públicas.
+[functions.infinitepay-webhook]
+verify_jwt = false

@@ -936,7 +936,7 @@
     await window.COR_SITE.loadPixCta('#pixCtaBar', function(pub){
       const links = [];
       if(pub && pub.liberado === true){
-        links.push('<a class="pay-cta" href="pagamento-camisa.html">Pagar camisa (PIX)</a>');
+        links.push('<a class="pay-cta" href="pagamento-camisa.html">Pagar camisa</a>');
       }
       return links;
     });
@@ -948,7 +948,7 @@
         if(closed && !note){
           const el = document.createElement('p');
           el.className = 'board-pay-note';
-          el.innerHTML = 'Pediu camisa? <a href="pagamento-camisa.html">Consulte seu protocolo e pague via PIX</a>.';
+          el.innerHTML = 'Pediu camisa? <a href="pagamento-camisa.html">Consulte seu protocolo e pague (PIX ou cartão)</a>.';
           closed.appendChild(el);
         }
       } else if(note){

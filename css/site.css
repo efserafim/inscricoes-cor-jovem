@@ -1250,6 +1250,23 @@ select.ctrl{
   text-align:center;
 }
 .pay-copia{ font-size:11px; font-family:ui-monospace, monospace; resize:vertical; }
+.pay-card-alt{
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px solid var(--mist);
+}
+.pay-card-alt h3{
+  margin:0 0 8px;
+  font-size:15px;
+  font-weight:800;
+}
+.pay-card-btn{
+  display:inline-flex;
+  margin-top:4px;
+  text-decoration:none;
+}
+.pay-card-note{ margin-top:10px; }
+.pay-card-sync{ margin-top:8px; }
 .pay-upload{ margin-top:16px; padding-top:14px; border-top:1px solid var(--mist); }
 .pay-upload .field{ margin-bottom:10px; }
 .pay-done{

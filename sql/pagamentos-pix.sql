@@ -35,13 +35,22 @@ create table if not exists public.config_camisa_pix (
   cidade text,
   valor_camisa numeric(10,2),
   valor_contribuicao_servo numeric(10,2),
-  mensagem text
+  mensagem text,
+  link_cartao_infinitepay text,
+  infinitepay_handle text,
+  infinitepay_habilitado boolean not null default false
 );
 
 alter table public.config_camisa_pix
   add column if not exists contribuicoes_liberadas boolean not null default false;
 alter table public.config_camisa_pix
   add column if not exists valor_contribuicao_servo numeric(10,2);
+alter table public.config_camisa_pix
+  add column if not exists link_cartao_infinitepay text;
+alter table public.config_camisa_pix
+  add column if not exists infinitepay_handle text;
+alter table public.config_camisa_pix
+  add column if not exists infinitepay_habilitado boolean not null default false;
 
 drop trigger if exists trg_config_camisa_pix_updated_at on public.config_camisa_pix;
 create trigger trg_config_camisa_pix_updated_at
@@ -229,6 +238,7 @@ declare
   c public.config_camisa_pix%rowtype;
   camisa_ok boolean;
   contrib_ok boolean;
+  cartao_integrado boolean;
 begin
   select * into c from public.config_camisa_pix order by created_at asc limit 1;
   if not found then
@@ -236,7 +246,8 @@ begin
       'liberado', false,
       'configurado', false,
       'contribuicoes_liberadas', false,
-      'contribuicao_configurada', false
+      'contribuicao_configurada', false,
+      'cartao_integrado', false
     );
   end if;
 
@@ -251,8 +262,14 @@ begin
     and c.valor_contribuicao_servo is not null
     and c.valor_contribuicao_servo > 0;
 
+  cartao_integrado := coalesce(c.infinitepay_habilitado, false)
+    and coalesce(nullif(btrim(c.infinitepay_handle), ''), '') <> ''
+    and c.valor_camisa is not null
+    and c.valor_camisa > 0;
+
   return jsonb_build_object(
-    'liberado', coalesce(c.pagamentos_liberados, false) and camisa_ok,
+    'liberado', coalesce(c.pagamentos_liberados, false)
+      and (camisa_ok or cartao_integrado),
     'configurado', camisa_ok,
     'pagamentos_liberados', coalesce(c.pagamentos_liberados, false),
     'contribuicoes_liberadas', coalesce(c.contribuicoes_liberadas, false) and contrib_ok,
@@ -261,9 +278,10 @@ begin
     'tipo_chave', case when camisa_ok then c.tipo_chave else null end,
     'nome_recebedor', case when camisa_ok then c.nome_recebedor else null end,
     'cidade', case when camisa_ok then c.cidade else null end,
-    'valor_camisa', case when camisa_ok then c.valor_camisa else null end,
+    'valor_camisa', c.valor_camisa,
     'valor_contribuicao_servo', case when contrib_ok then c.valor_contribuicao_servo else null end,
-    'mensagem', c.mensagem
+    'mensagem', c.mensagem,
+    'cartao_integrado', cartao_integrado
   );
 end;
 $$;

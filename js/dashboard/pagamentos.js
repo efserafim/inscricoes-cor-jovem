@@ -57,6 +57,8 @@
         document.getElementById('pixValorContrib').value = cfg.valor_contribuicao_servo != null
           ? String(cfg.valor_contribuicao_servo).replace('.', ',') : '';
         document.getElementById('pixMensagem').value = cfg.mensagem || '';
+        document.getElementById('pixInfiniteHandle').value = cfg.infinitepay_handle || 'nicolegiagio';
+        document.getElementById('pixInfiniteHabilitado').checked = cfg.infinitepay_habilitado !== false;
         document.getElementById('pixLibCamisa').checked = !!cfg.pagamentos_liberados;
         document.getElementById('pixLibContrib').checked = !!cfg.contribuicoes_liberadas;
         await refreshPixPreview();
@@ -133,6 +135,10 @@
       parts.push('Recebedor: ' + nome + ' · ' + cidade);
       if(valorCamisa != null) parts.push('Valor camisa: ' + moneyLabel(valorCamisa));
       if(valorContrib != null) parts.push('Valor contribuição: ' + moneyLabel(valorContrib));
+      const handle = document.getElementById('pixInfiniteHandle')?.value.trim();
+      const integrado = document.getElementById('pixInfiniteHabilitado')?.checked;
+      if(integrado && handle) parts.push('Cartão: ' + handle + ' (integrado)');
+      else parts.push('Cartão: desativado');
       parts.push('Camisa: ' + (libCamisa ? 'ativada' : 'desativada'));
       parts.push('Contribuição: ' + (libContrib ? 'ativada' : 'desativada'));
     }
@@ -146,6 +152,7 @@
   function formaLabel(f){
     if(f === 'dinheiro') return 'Dinheiro';
     if(f === 'pix') return 'PIX';
+    if(f === 'cartao') return 'Cartão';
     return '—';
   }
 
@@ -340,6 +347,7 @@
     else if(status === 'extrato_ok') bits.push('Extrato OK');
     else if(status) bits.push(PIX_STATUS_LABEL[status] || status);
     if(forma === 'pix') bits.push('Forma PIX');
+    if(forma === 'cartao') bits.push('Forma cartão');
     if(forma === 'dinheiro') bits.push('Forma dinheiro');
     if(forma === '__none__') bits.push('Sem forma');
     if(pessoa) bits.push(pessoa === 'servo' ? 'Servos' : 'Cursistas');
@@ -581,6 +589,9 @@
       valor_camisa: valorCamisa,
       valor_contribuicao_servo: valorContrib,
       mensagem: document.getElementById('pixMensagem').value.trim() || null,
+      link_cartao_infinitepay: null,
+      infinitepay_handle: document.getElementById('pixInfiniteHandle').value.trim().replace(/^\$+/, '').replace(/-/g, '') || null,
+      infinitepay_habilitado: document.getElementById('pixInfiniteHabilitado').checked,
       pagamentos_liberados: document.getElementById('pixLibCamisa').checked,
       contribuicoes_liberadas: document.getElementById('pixLibContrib').checked
     };
@@ -749,7 +760,7 @@
     form.dataset.wired = '1';
     form.addEventListener('submit', savePixConfig);
     const markPixConfigDirty = ()=> setPixConfigDirty(true);
-    ['pixChave','pixNome','pixCidade','pixValorCamisa','pixValorContrib','pixMensagem','pixTipoChave'].forEach(id=>{
+    ['pixChave','pixNome','pixCidade','pixValorCamisa','pixValorContrib','pixMensagem','pixInfiniteHandle','pixTipoChave'].forEach(id=>{
       const el = document.getElementById(id);
       if(!el) return;
       el.addEventListener('change', ()=> {
@@ -762,7 +773,7 @@
         markPixConfigDirty();
       });
     });
-    ['pixLibCamisa','pixLibContrib'].forEach(id=>{
+    ['pixLibCamisa','pixLibContrib','pixInfiniteHabilitado'].forEach(id=>{
       const el = document.getElementById(id);
       if(!el) return;
       el.addEventListener('change', ()=> {

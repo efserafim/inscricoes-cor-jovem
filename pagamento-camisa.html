@@ -4,20 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pagar camisa — XVI C.O.R Jovem</title>
-<meta name="description" content="Consulte seu protocolo ou telefone e pague a camisa do XVI C.O.R Jovem via PIX.">
+<meta name="description" content="Consulte seu protocolo ou telefone e pague a camisa do XVI C.O.R Jovem via PIX ou cartão.">
 <meta name="theme-color" content="#0e1820">
 <link rel="icon" href="image/logos/geracao-eucaristica.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css?v=20260803-polish">
+<link rel="stylesheet" href="css/site.css?v=20260805-infinitepay">
 </head>
 <body class="pay-page">
 <header class="pay-top">
   <a class="pay-back" href="index.html">← Voltar</a>
   <p class="pay-kicker">XVI C.O.R Jovem</p>
   <h1>Pagar camisa</h1>
-  <p class="pay-lead">Informe o WhatsApp/telefone da inscrição ou o protocolo (8 caracteres) para gerar o PIX.</p>
+  <p class="pay-lead">Informe o WhatsApp/telefone da inscrição ou o protocolo (8 caracteres) para pagar via PIX ou cartão.</p>
 </header>
 
 <main class="pay-main">
@@ -68,6 +68,13 @@
         <textarea class="ctrl pay-copia" id="pixCopia" rows="3" readonly></textarea>
         <button type="button" class="btn btn-ghost" id="copyPixBtn">Copiar código PIX</button>
         <p class="pay-hint" id="pixMsg"></p>
+      </div>
+      <div class="pay-card-alt" id="cardPayBlock" hidden>
+        <h3>Pagar com cartão</h3>
+        <p class="pay-hint">Parcelamento em até 12x via InfinitePay. Só pague depois de consultar seu protocolo acima.</p>
+        <button type="button" class="btn btn-primary pay-card-btn" id="cardPayBtn">Pagar com cartão</button>
+        <p class="pay-hint pay-card-note" id="cardPayNote">A confirmação entra automaticamente após o pagamento.</p>
+        <button type="button" class="btn btn-ghost pay-card-sync" id="cardSyncBtn" hidden>Atualizar status do cartão</button>
       </div>
     </div>
 

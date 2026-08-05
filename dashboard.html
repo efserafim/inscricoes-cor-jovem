@@ -350,8 +350,24 @@
             </div>
             <div class="field-mini">
               <label for="pixMensagem">Mensagem pública (opcional)</label>
-              <input type="text" id="pixMensagem" maxlength="160" placeholder="Ex.: Envie o comprovante após o PIX">
+              <input type="text" id="pixMensagem" maxlength="160" placeholder="Ex.: Consulte protocolo ou telefone antes de pagar">
             </div>
+          </section>
+
+          <section class="pix-section">
+            <h4 class="pix-section-title">Cartão InfinitePay</h4>
+            <div class="field-mini">
+              <label for="pixInfiniteHandle">InfiniteTag (handle)</label>
+              <input type="text" id="pixInfiniteHandle" placeholder="nicolegiagio" autocomplete="off">
+              <p class="muted pix-help" style="margin:6px 0 0;font-size:12px">Conta InfinitePay da tesouraria. Sem $ e sem traços.</p>
+            </div>
+            <label class="chk-line" for="pixInfiniteHabilitado">
+              <input type="checkbox" id="pixInfiniteHabilitado" checked>
+              <span>
+                <strong>Checkout integrado ativo</strong>
+                <em>Cada pessoa consulta protocolo/telefone → link único → confirmação automática</em>
+              </span>
+            </label>
           </section>
 
           <section class="pix-section pix-section-toggles">
@@ -362,7 +378,7 @@
                 <input type="checkbox" id="pixLibCamisa">
                 <span>
                   <strong>Camisas</strong>
-                  <em>Mostrar botão “Pagar camisa (PIX)” no site</em>
+                  <em>Mostrar botão “Pagar camisa” no site (PIX e/ou cartão)</em>
                 </span>
               </label>
               <label class="chk-line" for="pixLibContrib">
@@ -435,6 +451,7 @@
             <select id="pixFilterForma" aria-label="Forma">
               <option value="">Forma</option>
               <option value="pix">PIX</option>
+              <option value="cartao">Cartão</option>
               <option value="dinheiro">Dinheiro</option>
               <option value="__none__">Sem forma</option>
             </select>

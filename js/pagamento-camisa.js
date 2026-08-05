@@ -9,6 +9,7 @@
 
   let lastBusca = '';
   let current = null;
+  let cartaoIntegrado = false;
 
   const closedCard = document.getElementById('closedCard');
   const searchCard = document.getElementById('searchCard');
@@ -16,6 +17,10 @@
   const searchErr = document.getElementById('searchErr');
   const uploadErr = document.getElementById('uploadErr');
   const doneMsg = document.getElementById('doneMsg');
+  const cardBtn = document.getElementById('cardPayBtn');
+  const cardBlock = document.getElementById('cardPayBlock');
+  const cardSyncBtn = document.getElementById('cardSyncBtn');
+  const cardPayNote = document.getElementById('cardPayNote');
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -40,13 +45,61 @@
     if (c === 'BUSCA_INVALIDA') return 'Informe um telefone ou protocolo válido.';
     if (c === 'JA_CONFIRMADO') return 'Este pagamento já foi confirmado.';
     if (c === 'RATE_LIMITED') return 'Muitas tentativas. Aguarde alguns minutos.';
+    if (c === 'CARTAO_INDISPONIVEL') return 'Pagamento por cartão indisponível no momento.';
+    if (c === 'CHECKOUT_FALHOU') return 'Não foi possível abrir o checkout do cartão. Tente de novo ou use PIX.';
     return 'Não foi possível consultar. Tente de novo.';
   }
 
-  async function renderQr(payload){
+  function readReturnParams() {
+    const q = new URLSearchParams(location.search);
+    return {
+      busca: q.get('busca') || '',
+      pago: q.get('pago') === '1',
+      orderNsu: q.get('order_nsu') || '',
+      transactionNsu: q.get('transaction_nsu') || '',
+      slug: q.get('slug') || ''
+    };
+  }
+
+  function clearReturnParams() {
+    if (!location.search) return;
+    history.replaceState({}, '', location.pathname);
+  }
+
+  async function renderQr(payload) {
     const canvas = document.getElementById('pixQr');
-    if(!canvas || !payload) return;
+    if (!canvas || !payload) return;
     await window.COR_PIX.drawQr(canvas, payload, 220);
+  }
+
+  function setupCardUi(p, pix, confirmed) {
+    cartaoIntegrado = !!pix.cartao_integrado;
+
+    if (!cardBlock || !cardBtn) return;
+
+    const showCard = !confirmed && cartaoIntegrado;
+    cardBlock.hidden = !showCard;
+
+    if (!showCard) {
+      cardBtn.removeAttribute('href');
+      cardBtn.dataset.mode = '';
+      if (cardSyncBtn) cardSyncBtn.hidden = true;
+      return;
+    }
+
+    cardBtn.textContent = 'Pagar com cartão (' + window.COR_PIX.formatBRL(p.valor_esperado) + ')';
+    cardBtn.dataset.mode = 'integrado';
+    cardBtn.removeAttribute('href');
+    cardBtn.removeAttribute('target');
+    if (cardPayNote) {
+      cardPayNote.textContent =
+        'Antes de pagar, confira se o nome e protocolo acima são seus. ' +
+        'A confirmação entra automaticamente após o pagamento.';
+    }
+    if (cardSyncBtn) {
+      cardSyncBtn.hidden = false;
+      cardSyncBtn.disabled = false;
+    }
   }
 
   function fillResult(data) {
@@ -76,10 +129,14 @@
     document.getElementById('pixCopia').value = payload;
     renderQr(payload);
 
+    cartaoIntegrado = !!pix.cartao_integrado;
     const confirmed = p.status === 'confirmado';
     const payTools = document.getElementById('pixPayTools');
-    document.getElementById('uploadForm').hidden = confirmed;
-    if (payTools) payTools.hidden = confirmed;
+    const pixOk = !!pix.configurado;
+    document.getElementById('uploadForm').hidden = confirmed || cartaoIntegrado;
+    if (payTools) payTools.hidden = confirmed || !pixOk;
+    setupCardUi(p, pix, confirmed);
+
     document.getElementById('pixBlock').hidden = false;
     doneMsg.hidden = !confirmed;
     if (confirmed) {
@@ -103,6 +160,49 @@
     resultCard.hidden = false;
   }
 
+  async function syncCartao(extra) {
+    if (!lastBusca) return null;
+    const payload = Object.assign({
+      busca: lastBusca,
+      orderNsu: current && current.id,
+      transactionNsu: null,
+      slug: null
+    }, extra || {});
+    return window.COR_API.sincronizarInfinitepayCamisa(payload);
+  }
+
+  async function refreshConsulta() {
+    if (!lastBusca) return;
+    const data = await window.COR_API.consultarPagamentoCamisa(lastBusca);
+    if (data && data.ok) fillResult(data);
+    return data;
+  }
+
+  async function openCheckoutCartao() {
+    if (!current || !lastBusca) return;
+    showErr(uploadErr, '');
+    const prev = cardBtn.textContent;
+    cardBtn.disabled = true;
+    cardBtn.textContent = 'Gerando checkout…';
+    try {
+      const data = await window.COR_API.criarCheckoutInfinitepayCamisa({
+        pagamentoId: current.id,
+        busca: lastBusca
+      });
+      if (!data || !data.url) {
+        showErr(uploadErr, mapErro('CHECKOUT_FALHOU'));
+        return;
+      }
+      location.href = data.url;
+    } catch (err) {
+      console.error(err);
+      showErr(uploadErr, mapErro(err.code || err.message));
+    } finally {
+      cardBtn.disabled = false;
+      cardBtn.textContent = prev;
+    }
+  }
+
   async function init() {
     if (window.COR_SITE) window.COR_SITE.renderContato('#contatoEquipe');
     try {
@@ -118,44 +218,97 @@
       searchCard.hidden = true;
       closedCard.querySelector('h2').textContent = 'Indisponível no momento';
       closedCard.querySelector('p').textContent = 'Não foi possível verificar se os pagamentos estão liberados.';
+      return;
+    }
+
+    const ret = readReturnParams();
+    if (ret.busca.length >= 4) {
+      document.getElementById('busca').value = ret.busca;
+      lastBusca = ret.busca.trim();
+      await consultar(true);
+      if (ret.pago && cartaoIntegrado) {
+        try {
+          await syncCartao({
+            orderNsu: ret.orderNsu || (current && current.id),
+            transactionNsu: ret.transactionNsu || null,
+            slug: ret.slug || null
+          });
+          await refreshConsulta();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      clearReturnParams();
     }
   }
 
-  async function consultar() {
-    showErr(searchErr, '');
+  async function consultar(silent) {
+    if (!silent) showErr(searchErr, '');
     const busca = document.getElementById('busca').value.trim();
     if (busca.length < 4) {
-      showErr(searchErr, 'Informe telefone ou protocolo.');
+      if (!silent) showErr(searchErr, 'Informe telefone ou protocolo.');
       return;
     }
     const btn = document.getElementById('buscarBtn');
-    btn.disabled = true;
-    btn.textContent = 'Consultando…';
+    if (!silent) {
+      btn.disabled = true;
+      btn.textContent = 'Consultando…';
+    }
     try {
       const data = await window.COR_API.consultarPagamentoCamisa(busca);
       if (!data || !data.ok) {
-        showErr(searchErr, mapErro(data && data.erro));
-        resultCard.hidden = true;
+        if (!silent) {
+          showErr(searchErr, mapErro(data && data.erro));
+          resultCard.hidden = true;
+        }
         return;
       }
       lastBusca = busca;
       fillResult(data);
     } catch (err) {
       console.error(err);
-      showErr(searchErr, err.code === 'RATE_LIMITED' ? mapErro('RATE_LIMITED') : mapErro());
+      if (!silent) showErr(searchErr, err.code === 'RATE_LIMITED' ? mapErro('RATE_LIMITED') : mapErro());
     } finally {
-      btn.disabled = false;
-      btn.textContent = 'Consultar';
+      if (!silent) {
+        btn.disabled = false;
+        btn.textContent = 'Consultar';
+      }
     }
   }
 
-  document.getElementById('buscarBtn').addEventListener('click', consultar);
+  document.getElementById('buscarBtn').addEventListener('click', () => consultar(false));
   document.getElementById('busca').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      consultar();
+      consultar(false);
     }
   });
+
+  if (cardBtn) {
+    cardBtn.addEventListener('click', (e) => {
+      if (cardBtn.dataset.mode === 'integrado') {
+        e.preventDefault();
+        openCheckoutCartao();
+      }
+    });
+  }
+
+  if (cardSyncBtn) {
+    cardSyncBtn.addEventListener('click', async () => {
+      cardSyncBtn.disabled = true;
+      cardSyncBtn.textContent = 'Verificando…';
+      try {
+        await syncCartao();
+        await refreshConsulta();
+      } catch (err) {
+        console.error(err);
+        showErr(uploadErr, 'Pagamento ainda não confirmado. Aguarde alguns instantes e tente de novo.');
+      } finally {
+        cardSyncBtn.disabled = false;
+        cardSyncBtn.textContent = 'Atualizar status do cartão';
+      }
+    });
+  }
 
   document.getElementById('copyPixBtn').addEventListener('click', async () => {
     const t = document.getElementById('pixCopia').value;
@@ -201,8 +354,7 @@
         showErr(uploadErr, mapErro(data && data.erro) || 'Falha ao enviar.');
         return;
       }
-      const refreshed = await window.COR_API.consultarPagamentoCamisa(lastBusca);
-      if (refreshed && refreshed.ok) fillResult(refreshed);
+      await refreshConsulta();
     } catch (err) {
       console.error(err);
       showErr(uploadErr, err.message || 'Falha ao enviar comprovante.');
