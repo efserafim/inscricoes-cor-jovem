@@ -72,6 +72,7 @@ window.COR_SITE = {
     'Base',
     'Capela',
     'Cozinha',
+    'Copa',
     'Limpeza',
     'Secretaria',
     'Tesouraria',

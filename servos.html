@@ -220,14 +220,13 @@
         </div>
 
         <div class="field">
-          <span class="lbl">Quais sacramentos você já possui? <span class="req">*</span></span>
+          <span class="lbl">Quais sacramentos você já possui? <span class="opt">(opcional)</span></span>
           <div class="check-grid" id="sacramentos">
             <label class="chk"><input type="checkbox" value="Batismo">Batismo</label>
             <label class="chk"><input type="checkbox" value="Primeira Eucaristia">Primeira Eucaristia</label>
             <label class="chk"><input type="checkbox" value="Crisma">Crisma</label>
             <label class="chk"><input type="checkbox" value="Matrimônio">Matrimônio</label>
           </div>
-          <p class="field-error" data-for="sacramentos">Selecione ao menos um sacramento.</p>
         </div>
 
         <div class="consent">
@@ -445,8 +444,6 @@
     if(n === 2){
       if(!document.getElementById('marcoCor').value.trim()){ markInvalid('marcoCor', true); ok = false; }
       if(!document.getElementById('oracao').value.trim()){ markInvalid('oracao', true); ok = false; }
-      const sacs = [...document.querySelectorAll('#sacramentos input:checked')];
-      if(!sacs.length){ markInvalid('sacramentos', true); ok = false; }
       if(!document.getElementById('consentCheck').checked){
         markInvalid('consentCheck', true);
         showError('Marque a declaração no final do formulário para confirmar.');

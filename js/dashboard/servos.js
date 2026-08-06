@@ -4,6 +4,7 @@
     'Base',
     'Capela',
     'Cozinha',
+    'Copa',
     'Limpeza',
     'Secretaria',
     'Tesouraria',
