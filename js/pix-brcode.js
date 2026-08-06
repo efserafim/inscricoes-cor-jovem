@@ -110,6 +110,15 @@ window.COR_PIX = {
     return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   },
 
+  /** Taxa repassada no cartão InfinitePay (PIX mantém valor base). */
+  taxaCartao: 2,
+
+  valorCartao(base) {
+    const v = Number(base);
+    if (!isFinite(v) || v <= 0) return null;
+    return Math.round((v + this.taxaCartao) * 100) / 100;
+  },
+
   parseMoney(str) {
     let s = String(str || '').trim();
     if (!s) return null;

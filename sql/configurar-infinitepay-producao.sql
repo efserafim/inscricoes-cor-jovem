@@ -329,7 +329,7 @@ grant execute on function public.consultar_pagamento_camisa(text) to anon, authe
 
 update public.config_camisa_pix
 set
-  valor_camisa = coalesce(valor_camisa, 42.00),
+  valor_camisa = coalesce(valor_camisa, 40.00),
   infinitepay_handle = 'nicolegiagio',
   infinitepay_habilitado = true,
   link_cartao_infinitepay = null,

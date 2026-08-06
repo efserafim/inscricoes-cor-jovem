@@ -29,6 +29,30 @@
   const cardBtn = document.getElementById('cardPayBtn');
   const cardSyncBtn = document.getElementById('cardSyncBtn');
 
+  let lastPub = null;
+
+  function valorBase(p, pub) {
+    if (p.valor_esperado != null) return p.valor_esperado;
+    return pub.valor_contribuicao_servo;
+  }
+
+  function updateValorDisplay() {
+    if (!current) return;
+    const base = valorBase(current, lastPub || {});
+    const el = document.getElementById('rValor');
+    if (!el) return;
+    const v = (activeTab === 'cartao' && cartaoIntegrado && window.COR_PIX)
+      ? window.COR_PIX.valorCartao(base)
+      : base;
+    el.textContent = money(v);
+  }
+
+  function updateCardButton() {
+    if (!cardBtn || !current || !window.COR_PIX) return;
+    const v = window.COR_PIX.valorCartao(valorBase(current, lastPub || {}));
+    cardBtn.textContent = 'Pagar ' + money(v) + ' com cartão de crédito';
+  }
+
   function showClosedWaiting() {
     closedCard.hidden = false;
     searchCard.hidden = true;
@@ -135,6 +159,7 @@
       panelPix.classList.toggle('active', !isCartao);
       panelPix.hidden = isCartao;
     }
+    updateValorDisplay();
   }
 
   async function renderQr(payload) {
@@ -165,6 +190,7 @@
   }
 
   function setupMethodsUi(p, pub, confirmed) {
+    lastPub = pub;
     cartaoIntegrado = !!pub.cartao_integrado;
     pixDisponivel = !!pixConfig(pub) && !confirmed;
 
@@ -175,7 +201,7 @@
     }
 
     if (cartaoIntegrado && cardBtn) {
-      cardBtn.textContent = 'Pagar ' + money(p.valor_esperado) + ' com cartão de crédito';
+      updateCardButton();
       cardBtn.disabled = false;
     }
     if (cardSyncBtn) cardSyncBtn.hidden = !cartaoIntegrado;
@@ -211,6 +237,7 @@
     } else {
       selectPayTab('cartao');
     }
+    updateValorDisplay();
   }
 
   function fillResult(data) {
@@ -225,7 +252,7 @@
     st.textContent = STATUS_LABEL[p.status] || p.status;
     st.dataset.status = p.status || '';
 
-    const valor = p.valor_esperado != null ? p.valor_esperado : pub.valor_contribuicao_servo;
+    const valor = valorBase(p, pub);
     document.getElementById('rValor').textContent = money(valor);
 
     const confirmed = p.status === 'confirmado';

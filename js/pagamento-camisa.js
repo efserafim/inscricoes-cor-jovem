@@ -51,6 +51,29 @@
     if (note) note.hidden = true;
   }
 
+  let lastPub = null;
+
+  function valorBase(p) {
+    return p.valor_esperado;
+  }
+
+  function updateValorDisplay() {
+    if (!current) return;
+    const base = valorBase(current);
+    const el = document.getElementById('rValor');
+    if (!el) return;
+    const v = (activeTab === 'cartao' && cartaoIntegrado && window.COR_PIX)
+      ? window.COR_PIX.valorCartao(base)
+      : base;
+    el.textContent = money(v);
+  }
+
+  function updateCardButton() {
+    if (!cardBtn || !current || !window.COR_PIX) return;
+    const v = window.COR_PIX.valorCartao(valorBase(current));
+    cardBtn.textContent = 'Pagar ' + money(v) + ' com cartão de crédito';
+  }
+
   function money(n) {
     if (n == null || n === '') return '—';
     return Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -135,6 +158,7 @@
       panelPix.classList.toggle('active', !isCartao);
       panelPix.hidden = isCartao;
     }
+    updateValorDisplay();
   }
 
   async function renderQr(payload) {
@@ -144,6 +168,7 @@
   }
 
   function setupMethodsUi(p, pub, confirmed) {
+    lastPub = pub;
     cartaoIntegrado = !!pub.cartao_integrado;
     pixDisponivel = !!pixCamisaConfig(pub) && !confirmed;
 
@@ -154,7 +179,7 @@
     }
 
     if (cartaoIntegrado && cardBtn) {
-      cardBtn.textContent = 'Pagar ' + money(p.valor_esperado) + ' com cartão de crédito';
+      updateCardButton();
       cardBtn.disabled = false;
     }
     if (cardSyncBtn) cardSyncBtn.hidden = !cartaoIntegrado;
@@ -190,6 +215,7 @@
     } else {
       selectPayTab('cartao');
     }
+    updateValorDisplay();
   }
 
   function fillResult(data) {

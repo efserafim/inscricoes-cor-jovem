@@ -20,6 +20,8 @@ function normalizeHandle(raw: string) {
     .toLowerCase();
 }
 
+const TAXA_CARTAO_REAIS = 2;
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -78,11 +80,6 @@ Deno.serve(async (req) => {
     return json({ ok: false, erro: 'CARTAO_INDISPONIVEL' }, 400);
   }
 
-  const existingUrl = String(pay.gateway_checkout_url || '').trim();
-  if (existingUrl) {
-    return json({ ok: true, url: existingUrl, reused: true });
-  }
-
   const { data: cfgRows, error: cfgErr } = await admin
     .from('config_camisa_pix')
     .select('infinitepay_handle,infinitepay_habilitado,valor_camisa,valor_contribuicao_servo')
@@ -100,8 +97,9 @@ Deno.serve(async (req) => {
   }
 
   const valorDefault = isContrib ? cfg.valor_contribuicao_servo : cfg.valor_camisa;
-  const valor = Number(pay.valor_esperado ?? valorDefault);
-  if (!Number.isFinite(valor) || valor <= 0) {
+  const valorBase = Number(pay.valor_esperado ?? valorDefault);
+  const valor = Math.round((valorBase + TAXA_CARTAO_REAIS) * 100) / 100;
+  if (!Number.isFinite(valorBase) || valorBase <= 0) {
     return json({ ok: false, erro: 'VALOR_INVALIDO' }, 400);
   }
 
