@@ -14,4 +14,11 @@ set valor_esperado = 40.00,
 where status in ('aguardando_pagamento', 'divergente', 'rejeitado', 'valor_confere')
   and valor_esperado is distinct from 40.00;
 
+-- Legado: valor antigo R$ 42 (preço único antes da taxa de cartão)
+update public.pagamentos_camisas
+set valor_esperado = 40.00,
+    updated_at = now()
+where status in ('aguardando_pagamento', 'divergente', 'rejeitado', 'valor_confere')
+  and valor_esperado = 42.00;
+
 notify pgrst, 'reload schema';

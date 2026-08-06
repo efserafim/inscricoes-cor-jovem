@@ -99,6 +99,8 @@
     if (c === 'JA_CONFIRMADO') return 'Esta contribuição já foi confirmada.';
     if (c === 'RATE_LIMITED') return 'Muitas tentativas. Aguarde alguns minutos.';
     if (c === 'CHECKOUT_FALHOU') return 'Não foi possível abrir o checkout. Tente de novo.';
+    if (c === 'CHECKOUT_NAO_INICIADO') return 'Abra o checkout do cartão antes de atualizar o status.';
+    if (c === 'SEM_TRANSACAO') return 'Pagamento ainda não identificado. Conclua o cartão ou aguarde alguns minutos.';
     return 'Não foi possível consultar. Tente de novo.';
   }
 
@@ -292,8 +294,8 @@
     return window.COR_API.sincronizarInfinitepayContrib(Object.assign({
       busca: lastBusca,
       orderNsu: current && current.id,
-      transactionNsu: null,
-      slug: null
+      transactionNsu: (current && current.gateway_charge_id) || null,
+      slug: (current && current.gateway_checkout_id) || null
     }, extra || {}));
   }
 
@@ -424,7 +426,7 @@
         await refreshConsulta();
       } catch (err) {
         console.error(err);
-        showErr(payErr, 'Ainda não confirmado. Aguarde e tente de novo.');
+        showErr(payErr, mapErro(err.code || err.message) || 'Ainda não confirmado. Aguarde e tente de novo.');
       } finally {
         cardSyncBtn.disabled = false;
         cardSyncBtn.textContent = 'Atualizar status do cartão';

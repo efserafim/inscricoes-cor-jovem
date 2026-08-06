@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
   }
 
   const valorDefault = isContrib ? cfg.valor_contribuicao_servo : cfg.valor_camisa;
-  const valorBase = Number(pay.valor_esperado ?? valorDefault);
+  const valorBase = Number(valorDefault ?? pay.valor_esperado);
   const valor = Math.round((valorBase + TAXA_CARTAO_REAIS) * 100) / 100;
   if (!Number.isFinite(valorBase) || valorBase <= 0) {
     return json({ ok: false, erro: 'VALOR_INVALIDO' }, 400);
@@ -141,7 +141,13 @@ Deno.serve(async (req) => {
   }
 
   const checkoutUrl = String(ipData.url);
-  const invoiceSlug = ipData.invoice_slug || ipData.slug || null;
+  let invoiceSlug = ipData.invoice_slug || ipData.slug || null;
+  if (!invoiceSlug && checkoutUrl) {
+    try {
+      const parts = new URL(checkoutUrl).pathname.split('/').filter(Boolean);
+      if (parts.length) invoiceSlug = parts[parts.length - 1];
+    } catch { /* ignore */ }
+  }
   const table = isContrib ? 'pagamentos_contribuicao' : 'pagamentos_camisas';
 
   const { error: updErr } = await admin

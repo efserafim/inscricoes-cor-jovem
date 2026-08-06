@@ -313,6 +313,8 @@ begin
       'comprovante_url', pay.comprovante_url,
       'enviado_em', pay.enviado_em,
       'nota_tesoureiro', pay.nota_tesoureiro,
+      'gateway_checkout_id', pay.gateway_checkout_id,
+      'gateway_charge_id', pay.gateway_charge_id,
       'gateway_checkout_url', pay.gateway_checkout_url,
       'tem_checkout_cartao', pay.gateway_checkout_url is not null
     ),

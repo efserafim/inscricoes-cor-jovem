@@ -53,13 +53,16 @@
 
   let lastPub = null;
 
-  function valorBase(p) {
+  function valorBase(p, pub) {
+    if (p.status === 'confirmado') return p.valor_esperado;
+    const cfgVal = pub && pub.valor_camisa != null ? Number(pub.valor_camisa) : null;
+    if (cfgVal != null && cfgVal > 0) return cfgVal;
     return p.valor_esperado;
   }
 
   function updateValorDisplay() {
     if (!current) return;
-    const base = valorBase(current);
+    const base = valorBase(current, lastPub || {});
     const el = document.getElementById('rValor');
     if (!el) return;
     const v = (activeTab === 'cartao' && cartaoIntegrado && window.COR_PIX)
@@ -70,7 +73,7 @@
 
   function updateCardButton() {
     if (!cardBtn || !current || !window.COR_PIX) return;
-    const v = window.COR_PIX.valorCartao(valorBase(current));
+    const v = window.COR_PIX.valorCartao(valorBase(current, lastPub || {}));
     cardBtn.textContent = 'Pagar ' + money(v) + ' com cartão de crédito';
   }
 
@@ -98,6 +101,8 @@
     if (c === 'JA_CONFIRMADO') return 'Este pagamento já foi confirmado.';
     if (c === 'RATE_LIMITED') return 'Muitas tentativas. Aguarde alguns minutos.';
     if (c === 'CHECKOUT_FALHOU') return 'Não foi possível abrir o checkout. Tente de novo.';
+    if (c === 'CHECKOUT_NAO_INICIADO') return 'Abra o checkout do cartão antes de atualizar o status.';
+    if (c === 'SEM_TRANSACAO') return 'Pagamento ainda não identificado. Conclua o cartão ou aguarde alguns minutos.';
     return 'Não foi possível concluir. Tente de novo.';
   }
 
@@ -189,7 +194,7 @@
       const recebedor = document.getElementById('pixRecebedor');
       if (recebedor) recebedor.textContent = cfg.nome;
 
-      const valor = p.valor_esperado;
+      const valor = valorBase(p, pub);
       const payload = window.COR_PIX.buildPayload({
         chave: cfg.chave,
         tipoChave: cfg.tipoChave,
@@ -233,7 +238,7 @@
     st.textContent = STATUS_LABEL[p.status] || p.status;
     st.dataset.status = p.status || '';
 
-    document.getElementById('rValor').textContent = money(p.valor_esperado);
+    document.getElementById('rValor').textContent = money(valorBase(p, pub));
 
     const confirmed = p.status === 'confirmado';
     setupMethodsUi(p, pub, confirmed);
@@ -279,8 +284,8 @@
     return window.COR_API.sincronizarInfinitepayCamisa(Object.assign({
       busca: lastBusca,
       orderNsu: current && current.id,
-      transactionNsu: null,
-      slug: null
+      transactionNsu: (current && current.gateway_charge_id) || null,
+      slug: (current && current.gateway_checkout_id) || null
     }, extra || {}));
   }
 
@@ -411,7 +416,7 @@
         await refreshConsulta();
       } catch (err) {
         console.error(err);
-        showErr(payErr, 'Ainda não confirmado. Aguarde e tente de novo.');
+        showErr(payErr, mapErro(err.code || err.message) || 'Ainda não confirmado. Aguarde e tente de novo.');
       } finally {
         cardSyncBtn.disabled = false;
         cardSyncBtn.textContent = 'Atualizar status do cartão';

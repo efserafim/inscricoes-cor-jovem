@@ -20,6 +20,17 @@ function normalizeHandle(raw: string) {
     .toLowerCase();
 }
 
+function slugFromCheckoutUrl(raw: string) {
+  const url = String(raw || '').trim();
+  if (!url) return '';
+  try {
+    const parts = new URL(url).pathname.split('/').filter(Boolean);
+    return parts.length ? parts[parts.length - 1] : '';
+  } catch {
+    return '';
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -76,13 +87,27 @@ Deno.serve(async (req) => {
   }
 
   const orderNsu = String(body.order_nsu || pay.id || '').trim();
-  const transactionNsu = String(
-    body.transaction_nsu || pay.gateway_charge_id || '',
-  ).trim();
-  const slug = String(body.slug || pay.gateway_checkout_id || '').trim();
 
   if (!orderNsu) {
     return json({ ok: false, erro: 'SEM_PEDIDO' }, 400);
+  }
+
+  const table = isContrib ? 'pagamentos_contribuicao' : 'pagamentos_camisas';
+  const { data: gwRow } = await admin
+    .from(table)
+    .select('gateway_checkout_id, gateway_charge_id, gateway_checkout_url')
+    .eq('id', orderNsu)
+    .maybeSingle();
+
+  let transactionNsu = String(
+    body.transaction_nsu || pay.gateway_charge_id || gwRow?.gateway_charge_id || '',
+  ).trim();
+  let slug = String(
+    body.slug || pay.gateway_checkout_id || gwRow?.gateway_checkout_id || '',
+  ).trim();
+
+  if (!slug && gwRow?.gateway_checkout_url) {
+    slug = slugFromCheckoutUrl(String(gwRow.gateway_checkout_url));
   }
 
   const { data: cfgRows } = await admin
@@ -97,21 +122,23 @@ Deno.serve(async (req) => {
     return json({ ok: false, erro: 'CARTAO_INDISPONIVEL' }, 400);
   }
 
-  if (!transactionNsu && !slug) {
-    return json({ ok: false, erro: 'SEM_TRANSACAO' }, 400);
+  if (!transactionNsu && !slug && !gwRow?.gateway_checkout_url) {
+    return json({ ok: false, erro: 'CHECKOUT_NAO_INICIADO' }, 400);
   }
 
   let ipData: Record<string, unknown>;
   try {
+    const checkPayload: Record<string, string> = {
+      handle,
+      order_nsu: orderNsu,
+    };
+    if (transactionNsu) checkPayload.transaction_nsu = transactionNsu;
+    if (slug) checkPayload.slug = slug;
+
     const ipRes = await fetch('https://api.checkout.infinitepay.io/payment_check', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        handle,
-        order_nsu: orderNsu,
-        transaction_nsu: transactionNsu || undefined,
-        slug: slug || undefined,
-      }),
+      body: JSON.stringify(checkPayload),
     });
     ipData = await ipRes.json().catch(() => ({}));
     if (!ipRes.ok) {
