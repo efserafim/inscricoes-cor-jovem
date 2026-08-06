@@ -29,6 +29,28 @@
   const cardBtn = document.getElementById('cardPayBtn');
   const cardSyncBtn = document.getElementById('cardSyncBtn');
 
+  function showClosedWaiting() {
+    closedCard.hidden = false;
+    searchCard.hidden = true;
+    document.body.classList.add('pay-page--closed');
+    const lead = document.querySelector('.pay-lead');
+    if (lead) lead.textContent = 'Aguardando liberação pela coordenação do XVI C.O.R Jovem.';
+  }
+
+  function showClosedError(title, message) {
+    closedCard.hidden = false;
+    searchCard.hidden = true;
+    document.body.classList.add('pay-page--closed');
+    const lead = document.querySelector('.pay-lead');
+    if (lead) lead.textContent = message;
+    const h2 = closedCard.querySelector('h2');
+    const text = closedCard.querySelector('.pay-closed-text');
+    const note = closedCard.querySelector('.pay-closed-note');
+    if (h2) h2.textContent = title;
+    if (text) text.textContent = message;
+    if (note) note.hidden = true;
+  }
+
   function money(n) {
     if (n == null || n === '') return '—';
     return Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -273,16 +295,15 @@
     try {
       const pub = await window.COR_API.getPixPublico();
       if (!pub || !pub.liberado) {
-        closedCard.hidden = false;
-        searchCard.hidden = true;
+        showClosedWaiting();
         return;
       }
     } catch (err) {
       console.error(err);
-      closedCard.hidden = false;
-      searchCard.hidden = true;
-      closedCard.querySelector('h2').textContent = 'Indisponível no momento';
-      closedCard.querySelector('p').textContent = 'Não foi possível verificar se os pagamentos estão liberados.';
+      showClosedError(
+        'Indisponível no momento',
+        'Não foi possível verificar se os pagamentos foram liberados. Tente de novo mais tarde.'
+      );
       return;
     }
 

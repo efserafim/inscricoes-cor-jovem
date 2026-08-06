@@ -21,10 +21,14 @@
 </header>
 
 <main class="pay-main">
-  <div class="pay-card" id="closedCard" hidden>
-    <h2>Pagamentos ainda não liberados</h2>
-    <p>Quando a tesouraria liberar, você poderá consultar e pagar a camisa por aqui.</p>
-    <a class="btn btn-ghost" href="index.html">Voltar ao site</a>
+  <div class="pay-card pay-closed" id="closedCard" hidden>
+    <div class="pay-closed-icon" aria-hidden="true">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    </div>
+    <h2>Pagamentos em breve</h2>
+    <p class="pay-closed-text">Quando a <strong>coordenação</strong> liberar, você poderá consultar pelo WhatsApp ou protocolo e pagar a camisa com cartão ou PIX.</p>
+    <p class="pay-closed-note">Fique de olho no site e no grupo do evento.</p>
+    <a class="btn btn-primary pay-closed-btn" href="index.html">Voltar ao site</a>
   </div>
 
   <div class="pay-card" id="searchCard">

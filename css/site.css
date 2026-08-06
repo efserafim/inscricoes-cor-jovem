@@ -1135,6 +1135,53 @@ select.ctrl{
   font-size:14px;
   margin:0 0 10px;
 }
+.pay-closed{
+  text-align:center;
+  padding:28px 22px 24px;
+}
+.pay-closed-icon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:64px;
+  height:64px;
+  margin:0 auto 16px;
+  border-radius:50%;
+  background:rgba(47,111,143,.1);
+  color:var(--ice);
+}
+.pay-closed h2{
+  margin:0 0 10px;
+  font-size:clamp(19px, 4.5vw, 22px);
+}
+.pay-closed-text{
+  margin:0 auto 10px;
+  max-width:36ch;
+  font-size:14.5px;
+  line-height:1.55;
+  color:var(--slate);
+}
+.pay-closed-text strong{
+  color:var(--ink);
+  font-weight:800;
+}
+.pay-closed-note{
+  margin:0 auto 18px;
+  max-width:34ch;
+  font-size:13px;
+  line-height:1.45;
+  color:var(--slate);
+}
+.pay-closed-btn{
+  width:100%;
+  max-width:280px;
+  margin:0 auto;
+  justify-content:center;
+}
+.pay-page--closed .pay-lead{
+  max-width:34ch;
+  color:var(--slate);
+}
 .pay-search-row{
   display:flex;
   flex-wrap:wrap;
